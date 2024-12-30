@@ -44,31 +44,99 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   try {
     const { password } = req.body;
-    console.log("check dau vao cua email ", req.body.email);
+
     const checkEmail = await USER.findOne({ email: req.body.email });
     if (checkEmail) {
+      const checkPassword = bcrypt.compareSync(password, checkEmail.password);
+      if (checkPassword) {
+        return res.status(200).json({
+          message: "OK",
+          idCode: 0,
+        });
+      } else {
+        return res.status(500).json({
+          message: "Email hoặc mật khẩu không chính xác",
+          idCode: 1,
+        });
+      }
+    } else {
       return res.status(500).json({
-        message: "Email đã tồn tại ",
+        message: "Email hoặc mật khẩu không chính xác",
         idCode: 1,
       });
     }
-    const hashPassword = bcrypt.hashSync(password, 10);
-    const user = await USER.create({ ...req.body, password: hashPassword });
-    return res.status(200).json({
-      message: "OK",
-      idCode: 0,
-      user,
-    });
   } catch (error) {
     console.log("Error", error);
     return res.status(500).json({
-      message: "Tạo tài khoản không thành công ",
+      message: "Loi server",
       idCode: 1,
     });
   }
 };
 
-export const sendEmailToUser = (req, res) => {
-  sendEmail();
-  return res.send("hahaa");
+//  KICH HOAT TAI KHOAN
+export const activateAccount = async (req, res) => {
+  try {
+    const user = await USER.findOne({
+      _id: req.params.id,
+      codeId: req.body.codeId,
+    });
+    if (user) {
+      const checkDay = dayjs().isBefore(user.codeExpired);
+      if (checkDay) {
+        await USER.findByIdAndUpdate(
+          { _id: req.params.id },
+          {
+            isActive: true,
+          }
+        );
+        return res.status(200).json({
+          message: "Kich hoat thanh cong ",
+          idCode: 1,
+        });
+      } else {
+        return res.status(500).json({
+          message: "Mã code cua nguoi dung không hợp lệ hoặc đã hết hạn   ",
+          idCode: 1,
+        });
+      }
+    }
+  } catch (error) {
+    console.log("Error", error);
+    return res.status(500).json({
+      message: "Loi server",
+      idCode: 1,
+    });
+  }
+};
+
+// TAO MA KICH HOAT TAI KHOAN MOI
+export const resetKeyActivateAccount = async (req, res) => {
+  try {
+    const checkEmail = await USER.findOne({ email: req.body.email });
+    if (checkEmail) {
+      const codeId = uuidv4();
+      const user = await USER.findByIdAndUpdate(checkEmail._id, {
+        codeExpired: dayjs().add(5, "minutes"),
+        codeId: codeId,
+      });
+      await sendEmail(user.username, codeId, user.email);
+      return res.status(200).json({
+        message: "OK",
+        idCode: 0,
+        user,
+      });
+    } else {
+      return res.status(500).json({
+        message: "Email không hợp lệ ",
+        idCode: 1,
+      });
+    }
+  } catch (error) {
+    console.log("Error", error);
+    return res.status(500).json({
+      message: "Loi server",
+      idCode: 1,
+    });
+  }
 };
