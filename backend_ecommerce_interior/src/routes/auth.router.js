@@ -1,7 +1,9 @@
 const {
   Register,
   Login,
-  sendEmailToUser,
+
+  activateAccount,
+  resetKeyActivateAccount,
 } = require("../controller/auth.controller");
 
 const router = require("express").Router();
@@ -9,6 +11,7 @@ const router = require("express").Router();
 router.post("/auth/login", Login);
 
 router.post("/auth/register", Register);
-router.get("/auth/sendEmail", sendEmailToUser);
+router.post("/activateAccount/:id", activateAccount);
+router.post("/resetKeyActivateAccount", resetKeyActivateAccount);
 
 module.exports = router;
