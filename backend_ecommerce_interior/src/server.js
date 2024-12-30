@@ -1,6 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import users from "./routes/users.router";
+import auth from "./routes/auth.router";
+
 import bodyParser from "body-parser";
 const app = express();
 require("dotenv").config();
@@ -19,7 +21,7 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
 app.use("/api", users);
-
+app.use("/api", auth);
 // chuyen thong tin user qua bên nguoi dung chuyen doi nguoi qua bên phuong thuc thu 2 của trinh duyet
 app.listen(port, () =>
   console.log("> Server is up and running on port : " + port)
