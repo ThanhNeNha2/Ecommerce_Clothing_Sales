@@ -6,9 +6,11 @@ import Verify from "../../components/Modals/verify";
 const RouterCustom = () => {
   return (
     <Routes>
+      <Route path="/" element={<>vox chis thanh </>} />
+
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/verify" element={<Verify />} />
+      <Route path="/verify/:id" element={<Verify />} />
     </Routes>
   );
 };

@@ -5,7 +5,7 @@ import ResetKeyVerify from "../../Modals/ResetKeyVerify";
 import { useState } from "react";
 
 const Login = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [getEmail, setGetEmail] = useState("");
   return (
     <div>
