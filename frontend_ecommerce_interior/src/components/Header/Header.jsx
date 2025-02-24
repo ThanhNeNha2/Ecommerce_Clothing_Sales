@@ -6,22 +6,22 @@ import { IoMdCart } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 const Header = () => {
   return (
-    <div className=" flex justify-between items-center h-[95px] bg-red-300 px-14 ">
+    <div className=" flex justify-between items-center h-[95px] 2xl:h-[65px] bg-red-300 px-14 fixed z-50 w-full ">
       {/* item 1  */}
       <div className=" flex items-center gap-1 ">
-        <div>
+        <div className="flex items-center">
           <img src={logo} alt="" />
         </div>
-        <span className="text-black font-montserrat font-bold text-[32px]">
+        <span className="text-black font-montserrat font-bold text-[32px] 2xl:text-[26px]">
           Furniro
         </span>
       </div>
 
       {/* item 2  */}
-      <div className="flex items-center gap-[160px] pr-12">
+      <div className="flex items-center gap-[160px] 2xl:gap-[75px] pr-12">
         {/* -- */}
         <div>
-          <ul className="flex items-center gap-[75px]">
+          <ul className="flex items-center gap-[75px] 2xl:gap-[60px]">
             <li className="text-lg font-medium">Home </li>
             <li className="text-lg font-medium">Shop</li>
             <li className="text-lg font-medium">About</li>
@@ -30,17 +30,17 @@ const Header = () => {
         </div>
         {/* -- */}
         <div>
-          <ul className="flex items-center gap-12">
-            <li className="text-[25px] ">
+          <ul className="flex items-center gap-12 2xl:gap-[30px]">
+            <li className="text-[25px] 2xl:text-[18px] ">
               <FaUserAlt />
             </li>
-            <li className="text-[25px] ">
+            <li className="text-[25px] 2xl:text-[18px] ">
               <IoSearchOutline />
             </li>
-            <li className="text-[25px] ">
+            <li className="text-[25px] 2xl:text-[18px] ">
               <FaRegHeart />
             </li>
-            <li className="text-[25px] ">
+            <li className="text-[25px] 2xl:text-[18px] ">
               <FiShoppingCart />
             </li>
           </ul>
