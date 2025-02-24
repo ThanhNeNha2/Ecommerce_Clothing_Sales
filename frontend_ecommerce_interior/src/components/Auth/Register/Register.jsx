@@ -1,8 +1,44 @@
-import { Button, Col, Divider, Form, Input, Row } from "antd";
+import { Button, Col, Divider, Form, Input, notification, Row } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { apiRegister } from "../../../services/api";
 
 const Register = () => {
+  const navigate = useNavigate();
+
+  //  Click Register
+  const onFinish = async (values) => {
+    const { confirmpassword, ...info } = values;
+    if (info.password !== confirmpassword) {
+      notification.error({
+        message: "Mật khẩu không khớp",
+        description:
+          "Vui lòng kiểm tra lại mật khẩu và mật khẩu xác nhận của bạn.",
+      });
+    } else {
+      try {
+        const res = await apiRegister(info);
+        console.log("check register ", res);
+
+        notification.success({
+          message: "Đăng ký thành công",
+          description: "Bạn đã đăng ký thành công!",
+        });
+
+        if (res && res.user && res.user._id) {
+          navigate(`/verify/${res.user._id}`);
+        } else {
+          console.error("User ID không hợp lệ");
+        }
+      } catch (error) {
+        console.log("Error", error);
+        notification.error({
+          message: "Đăng ký thất bại",
+          description: "Có lỗi xảy ra khi đăng ký, vui lòng thử lại.",
+        });
+      }
+    }
+  };
   return (
     <div>
       <Row justify={"center"} style={{ marginTop: "30px" }}>
@@ -18,10 +54,11 @@ const Register = () => {
             <legend>Đăng Ký Tài Khoản</legend>
             <Form
               name="basic"
-              // onFinish={onFinish}
+              onFinish={onFinish}
               autoComplete="off"
               layout="vertical"
             >
+              {/*  EMAIL */}
               <Form.Item
                 label="Email"
                 name="email"
@@ -35,6 +72,7 @@ const Register = () => {
                 <Input />
               </Form.Item>
 
+              {/*   PASSWORD */}
               <Form.Item
                 label="Password"
                 name="password"
@@ -48,7 +86,31 @@ const Register = () => {
                 <Input.Password />
               </Form.Item>
 
-              <Form.Item label="Name" name="name">
+              {/*  CONFIRM PASSWORD */}
+              <Form.Item
+                label="Confirm Password"
+                name="confirmpassword"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your confirm password!",
+                  },
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+
+              {/* NAME */}
+              <Form.Item
+                label="Name"
+                name="username"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your name!",
+                  },
+                ]}
+              >
                 <Input />
               </Form.Item>
 

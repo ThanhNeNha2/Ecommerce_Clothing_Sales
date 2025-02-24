@@ -9,10 +9,27 @@ import {
   Row,
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { activateAccount, reSendKey } from "../../services/api";
 
 const Verify = () => {
-  const id = "23223";
+  const { id } = useParams();
+  //   HÀM KÍCH HOẠT TÀI KHOẢN
+  const onFinish = async (values) => {
+    const { code } = values;
+    const res = await activateAccount(id, code);
+  };
+  const handleSubmit = (values) => {
+    const { code } = values;
+    console.log("Check id và code: ", id, code);
+    onFinish(values);
+  };
+
+  // HÀM RESEND KEY
+  const handleResend = async () => {
+    const res = await reSendKey(id);
+  };
+
   return (
     <div>
       <Row justify={"center"} style={{ marginTop: "30px" }}>
@@ -28,7 +45,7 @@ const Verify = () => {
             <legend>Kích hoạt tài khoản </legend>
             <Form
               name="basic"
-              // onFinish={onFinish}
+              onFinish={handleSubmit}
               autoComplete="off"
               layout="vertical"
             >
@@ -56,8 +73,15 @@ const Verify = () => {
               </Form.Item>
 
               <Form.Item>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ marginRight: "10px" }}
+                >
                   Submit
+                </Button>
+                <Button type="default" onClick={handleResend}>
+                  Resend
                 </Button>
               </Form.Item>
             </Form>
