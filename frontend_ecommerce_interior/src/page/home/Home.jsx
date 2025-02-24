@@ -1,7 +1,12 @@
 import React from "react";
+import Header from "../../components/Header/Header";
 
 const Home = () => {
-  return <div className="text-red-200 bg-green-300">Trang chu ne nha</div>;
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 };
 
 export default Home;
