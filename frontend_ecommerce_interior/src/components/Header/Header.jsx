@@ -2,11 +2,11 @@ import React from "react";
 import logo from "../../../public/Logo/Meubel House_Logos-05 (1).png";
 import { FaRegHeart, FaUserAlt } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
-import { IoMdCart } from "react-icons/io";
+
 import { FiShoppingCart } from "react-icons/fi";
 const Header = () => {
   return (
-    <div className=" flex justify-between items-center h-[95px] 2xl:h-[65px] bg-red-300 px-14 fixed z-50 w-full ">
+    <div className=" flex justify-between items-center h-[95px] 2xl:h-[65px]  bg-white px-14 fixed z-50 w-full ">
       {/* item 1  */}
       <div className=" flex items-center gap-1 ">
         <div className="flex items-center">
