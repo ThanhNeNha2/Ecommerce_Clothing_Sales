@@ -4,6 +4,7 @@ import imgslide from "../../../public/home/home.png";
 import img1 from "../../../public/home/Image-living room.png";
 import img2 from "../../../public/home/Mask Group (1).png";
 import img3 from "../../../public/home/Mask Group.png";
+import Products from "../../components/Products/Products";
 
 const Home = () => {
   return (
@@ -41,7 +42,7 @@ const Home = () => {
         </div>
       </div>
       {/* Browse the range */}
-      <div className=" flex flex-col justify-center w-full bg-red-50 items-center pt-14 gap-16 2xl:gap-10">
+      <div className=" flex flex-col justify-center w-full  items-center pt-14 gap-16 2xl:gap-10">
         <div className="flex flex-col items-center">
           <span className="font-poppins font-bold text-[32px] 2xl:text-[26px] ">
             Browse the range
@@ -75,6 +76,12 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <div>
+        <span className="font-poppins text-[28px] font-bold flex justify-center mt-16 mb-8">
+          Our Products
+        </span>
+      </div>
+      <Products />
     </div>
   );
 };
