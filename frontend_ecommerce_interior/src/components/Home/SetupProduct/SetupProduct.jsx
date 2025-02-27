@@ -2,10 +2,12 @@ import React from "react";
 
 const SetupProduct = () => {
   return (
-    <div>
-      <div>
-        <span>Share your setup with</span>
-        <h1>#FuniroFurniture</h1>
+    <div className="mt-24">
+      <div className="flex flex-col justify-center items-center">
+        <span className="font-poppins font-semibold text-[18px] leading-[150%]">
+          Share your setup with
+        </span>
+        <h1 className="text-[28px] font-bold">#FuniroFurniture</h1>
       </div>
       <div className="w-full flex gap-3 h-[600px] overflow-hidden">
         <div className="w-[40%] flex flex-col gap-3">
