@@ -3,7 +3,7 @@ import React from "react";
 const SliceProduct = () => {
   return (
     <div
-      className="pl-16 bg-red-500 flex h-[600px] "
+      className="pl-16 bg-red-500 flex h-[600px] mt-16 "
       style={{ background: "#FCF8F3" }}
     >
       <div className="w-[calc(100%/3)] flex flex-col pr-8 gap-3 items-center justify-center">

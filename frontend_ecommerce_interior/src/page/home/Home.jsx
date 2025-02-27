@@ -5,7 +5,8 @@ import img1 from "../../../public/home/Image-living room.png";
 import img2 from "../../../public/home/Mask Group (1).png";
 import img3 from "../../../public/home/Mask Group.png";
 import Products from "../../components/Products/Products";
-import SliceProduct from "../../components/SliceProduct/SliceProduct";
+import SliceProduct from "../../components/Home/SliceProduct/SliceProduct";
+import SetupProduct from "../../components/Home/SetupProduct/SetupProduct";
 
 const Home = () => {
   const [addProduct, setaddProduct] = useState(4);
@@ -93,6 +94,7 @@ const Home = () => {
         </button>
       </div>
       <SliceProduct />
+      <SetupProduct />
     </div>
   );
 };
