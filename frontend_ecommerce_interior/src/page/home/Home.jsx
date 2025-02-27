@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header/Header";
 import imgslide from "../../../public/home/home.png";
 import img1 from "../../../public/home/Image-living room.png";
 import img2 from "../../../public/home/Mask Group (1).png";
 import img3 from "../../../public/home/Mask Group.png";
 import Products from "../../components/Products/Products";
+import SliceProduct from "../../components/SliceProduct/SliceProduct";
 
 const Home = () => {
+  const [addProduct, setaddProduct] = useState(4);
   return (
     <div>
       <Header />
@@ -81,7 +83,16 @@ const Home = () => {
           Our Products
         </span>
       </div>
-      <Products />
+      <Products value={addProduct} />
+      <div className="flex justify-center items-center mt-7 ">
+        <button
+          className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
+          onClick={() => setaddProduct(addProduct + 4)}
+        >
+          Show More
+        </button>
+      </div>
+      <SliceProduct />
     </div>
   );
 };
