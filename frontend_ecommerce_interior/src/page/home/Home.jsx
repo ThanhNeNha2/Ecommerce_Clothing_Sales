@@ -7,6 +7,7 @@ import img3 from "../../../public/home/Mask Group.png";
 import Products from "../../components/Products/Products";
 import SliceProduct from "../../components/Home/SliceProduct/SliceProduct";
 import SetupProduct from "../../components/Home/SetupProduct/SetupProduct";
+import Footer from "../../components/Footer/Footer";
 
 const Home = () => {
   const [addProduct, setaddProduct] = useState(4);
@@ -95,6 +96,7 @@ const Home = () => {
       </div>
       <SliceProduct />
       <SetupProduct />
+      <Footer />
     </div>
   );
 };
