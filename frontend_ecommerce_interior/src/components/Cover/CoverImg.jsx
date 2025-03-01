@@ -18,7 +18,7 @@ const CoverImg = ({ namePage }) => {
       {/* Nội dung trên ảnh */}
       <div className="absolute top-1/2 left-1/2 flex flex-col items-center justify-center gap-2 -translate-x-1/2 -translate-y-1/2">
         <img src={logo} alt="" />
-        <span className="text-4xl font-semibold ">{namePage}</span>
+        <span className="text-4xl font-medium ">{namePage}</span>
         <div className="flex items-center gap-2">
           <span className="font-medium">Home</span>
           <FaAngleRight />
