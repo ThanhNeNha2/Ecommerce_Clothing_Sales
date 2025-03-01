@@ -5,34 +5,14 @@ import logo from "../../../public/Logo/Meubel House_Logos-05 (1).png";
 import { FaAngleRight, FaTag, FaUser } from "react-icons/fa";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { IoSearchSharp } from "react-icons/io5";
+import CoverImg from "../../components/Cover/CoverImg";
 
 const Blog = () => {
   return (
     <div>
       <Header />
       {/* slider */}
-      <div className="relative pt-[65px]">
-        {/* Ảnh nền */}
-        <img
-          src="https://images.pexels.com/photos/2062427/pexels-photo-2062427.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-          alt=""
-          className="h-[250px] w-full object-cover"
-        />
-
-        {/* Overlay màu trắng mờ */}
-        <div className="absolute inset-0 bg-white/50"></div>
-
-        {/* Nội dung trên ảnh */}
-        <div className="absolute top-1/2 left-1/2 flex flex-col items-center justify-center gap-2 -translate-x-1/2 -translate-y-1/2">
-          <img src={logo} alt="" />
-          <span className="text-4xl font-semibold ">Blog</span>
-          <div className="flex items-center gap-2">
-            <span className="font-medium">Home</span>
-            <FaAngleRight />
-            <p>Blog</p>
-          </div>
-        </div>
-      </div>
+      <CoverImg namePage="Blog" />
       {/*  */}
       <div className="  px-[120px] pt-16 flex gap-10">
         <div className="flex-[5]   flex justify-center flex-col gap-20 ">
