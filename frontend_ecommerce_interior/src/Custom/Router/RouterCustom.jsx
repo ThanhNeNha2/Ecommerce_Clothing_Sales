@@ -4,6 +4,7 @@ import Login from "../../components/Auth/Login/Login";
 import Verify from "../../components/Modals/verify";
 import Home from "../../page/home/Home";
 import Blog from "../../page/Blog/Blog";
+import SingleProduct from "../../page/SingleProduct/SingleProduct";
 
 const RouterCustom = () => {
   return (
@@ -13,6 +14,7 @@ const RouterCustom = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/verify/:id" element={<Verify />} />
+      <Route path="SingleProduct" element={<SingleProduct />} />
     </Routes>
   );
 };
