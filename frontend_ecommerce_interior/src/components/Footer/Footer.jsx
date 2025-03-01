@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="mt-10 border-t border-gray-200">
+    <div className=" border-t border-gray-200">
       <div className="py-10 mx-[150px] flex gap-20 border-b border-gray-200 ">
         <div className="flex flex-col gap-10">
           <h1 className="font-poppins font-bold text-[20px]">Funiro.</h1>

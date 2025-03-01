@@ -2,6 +2,8 @@ import React from "react";
 import Header from "../../components/Header/Header";
 import CoverImg from "../../components/Cover/CoverImg";
 import { FaTrash } from "react-icons/fa";
+import Quality from "../../components/Quality/Quality";
+import Footer from "../../components/Footer/Footer";
 
 const Cart = () => {
   return (
@@ -76,6 +78,8 @@ const Cart = () => {
           </div>
         </div>
       </div>
+      <Quality />
+      <Footer />
     </div>
   );
 };
