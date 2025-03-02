@@ -7,6 +7,7 @@ import Blog from "../../page/Blog/Blog";
 import SingleProduct from "../../page/SingleProduct/SingleProduct";
 import Cart from "../../page/Cart/Cart";
 import Checkout from "../../page/Checkout/Checkout";
+import Contact from "../../page/Contact/Contact";
 
 const RouterCustom = () => {
   return (
@@ -19,6 +20,7 @@ const RouterCustom = () => {
       <Route path="SingleProduct" element={<SingleProduct />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/Checkout" element={<Checkout />} />
+      <Route path="/Contact" element={<Contact />} />
     </Routes>
   );
 };
