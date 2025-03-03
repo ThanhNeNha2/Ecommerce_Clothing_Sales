@@ -9,6 +9,7 @@ import Cart from "../../page/Cart/Cart";
 import Checkout from "../../page/Checkout/Checkout";
 import Contact from "../../page/Contact/Contact";
 import ProductComparison from "../../page/ProductComparison/ProductComparison";
+import ListProduct from "../../page/ListProduct/ListProduct";
 
 const RouterCustom = () => {
   return (
@@ -23,6 +24,7 @@ const RouterCustom = () => {
       <Route path="/Checkout" element={<Checkout />} />
       <Route path="/Contact" element={<Contact />} />
       <Route path="/ProductComparison" element={<ProductComparison />} />
+      <Route path="ListProduct" element={<ListProduct />} />
     </Routes>
   );
 };
