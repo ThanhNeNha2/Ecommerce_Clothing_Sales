@@ -13,12 +13,9 @@ const ListProduct = () => {
     <div>
       <Header />
       <CoverImg namePage={"Shop"} />
-      <div>
+      <div className="px-[150px] pb-7 mb-10" style={{ background: "#F9F1E7" }}>
         {/* tren */}
-        <div
-          className=" w-full h-[65px] flex items-center justify-between px-[150px] mb-10"
-          style={{ background: "#F9F1E7" }}
-        >
+        <div className=" w-full h-[65px] flex items-center justify-between ">
           {/* trai */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
@@ -45,6 +42,41 @@ const ListProduct = () => {
           </div>
         </div>
         {/* duoi */}
+        <div>
+          <div className="flex flex-col  items-center py-3 ">
+            <span className="font-poppins font-medium text-xl">
+              Search item{" "}
+            </span>
+          </div>
+          <div className="flex  justify-center gap-5">
+            <div className="flex flex-col">
+              <span>Type</span>
+              <select className="border border-gray-400 py-[5px] px-3 rounded">
+                <option value="">Sofa</option>
+                <option value="">Bàn gỗ </option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <span> Min Price</span>
+              <input
+                type="text"
+                className="border border-gray-400 py-[5px] px-3 rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span> Max Price</span>
+              <input
+                type="text"
+                className="border border-gray-400 py-[5px] px-3 rounded"
+              />
+            </div>
+            <div className="flex items-end justify-center ">
+              <button className="px-5 py-2 bg-colorMain text-white font-medium hover:opacity-90">
+                Search
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <Products value={16} />
       <Quality />
