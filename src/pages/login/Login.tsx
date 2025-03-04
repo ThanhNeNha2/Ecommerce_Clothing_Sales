@@ -1,7 +1,5 @@
 const Login = () => {
-  return (
-    <div>Login</div>
-  )
-}
+  return <div>vo chi thanh</div>;
+};
 
-export default Login
+export default Login;
