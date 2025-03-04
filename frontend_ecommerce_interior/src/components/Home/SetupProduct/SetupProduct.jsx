@@ -2,7 +2,7 @@ import React from "react";
 
 const SetupProduct = () => {
   return (
-    <div className="mt-24">
+    <div className="mt-24 mb-8">
       <div className="flex flex-col justify-center items-center">
         <span className="font-poppins font-semibold text-[18px] leading-[150%]">
           Share your setup with
