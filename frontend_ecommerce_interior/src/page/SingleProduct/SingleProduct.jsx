@@ -4,7 +4,6 @@ import DetailProduct from "../../components/SingleProduct/DetailProduct";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import Products from "../../components/Products/Products";
 import Footer from "../../components/Footer/Footer";
-import { Link } from "react-router-dom";
 
 const SingleProduct = () => {
   const [addProduct, setaddProduct] = useState(4);
@@ -18,11 +17,10 @@ const SingleProduct = () => {
           background: "#F9F1E7",
         }}
       >
-        <Link>
-          <div className="flex items-center">
-            <span>Home</span> <MdKeyboardArrowRight />
-          </div>
-        </Link>
+        <div className="flex items-center">
+          <span>Home</span> <MdKeyboardArrowRight />
+        </div>
+
         <div className="flex items-center">
           <span>Shop</span> <MdKeyboardArrowRight />
         </div>
