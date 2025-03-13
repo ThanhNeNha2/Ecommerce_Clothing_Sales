@@ -289,3 +289,14 @@ export const SingleItem = {
     "A luxurious sofa with a modern design, soft cushioning, and a sturdy wooden frame, providing maximum comfort and relaxation. Perfect for living rooms, offices, or cozy spaces.",
   listColor: ["red", "black", "green"],
 };
+
+export const infoUser = {
+  avataUser:
+    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  username: "Võ Chí Thanh",
+  email: "Thanh123@gmail.com",
+  phone: "03338635587",
+  address: "Hòa Cường Nam Hải Châu Đà Nẵng",
+  sex: "male",
+  dateBirthday: "12/2/2002",
+};

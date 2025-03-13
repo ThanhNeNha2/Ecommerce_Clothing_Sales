@@ -18,7 +18,12 @@ const Products = ({ value }) => {
               alt=""
               className=" h-full w-full object-cover rounded"
             />
-            <div className="absolute top-3 right-3 w-[40px] h-[40px] bg-red-400 rounded-full flex justify-center items-center  ">
+
+            <div
+              className={`absolute top-3 right-3 w-[40px] h-[40px] ${
+                product.salePercentage !== "New" ? "bg-red-400" : "bg-green-400"
+              }  rounded-full flex justify-center items-center text-sm font-medium`}
+            >
               {product.salePercentage}
             </div>
           </div>
@@ -28,10 +33,13 @@ const Products = ({ value }) => {
             </span>
             <p className="text-gray-600">Stylish cafe chair </p>
             <div className="flex gap-2 items-center">
-              <span className="font-poppins font-medium text-[14px]">
-                {product.salePrice}
+              <span className="font-poppins font-semibold text-[15px] ">
+                Rp {product.salePrice}
               </span>{" "}
-              <del>{product.originalPrice}</del>
+              <del className="text-[14px]  font-medium text-gray-400">
+                {" "}
+                Rp {product.originalPrice}
+              </del>
             </div>
           </div>
           <div className="absolute inset-0 bg-gray-600/70 rounded flex flex-col justify-center items-center gap-5 opacity-0 group-hover:opacity-100">
@@ -41,6 +49,12 @@ const Products = ({ value }) => {
                 style={{ color: "#B88E2F" }}
               >
                 Add to cart
+              </button>{" "}
+              <button
+                className="bg-white py-2 px-5 font-poppins font-medium rounded hover:bg-gray-300"
+                style={{ color: "#B88E2F" }}
+              >
+                Show Detail
               </button>
             </div>
 
