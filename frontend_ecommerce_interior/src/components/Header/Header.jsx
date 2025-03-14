@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import logo from "../../../public/Logo/Meubel House_Logos-05 (1).png";
 import { FaHeart, FaRegHeart, FaUserAlt, FaUserEdit } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
-
+import { productsFavourite } from "../../services/fakeApi";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { TbLogout } from "react-icons/tb";
@@ -108,30 +108,36 @@ const Header = () => {
                   </div>
                   <hr />
                   <div className="mt-2 flex flex-col  ">
-                    {/*  */}
-                    <div className=" flex justify-between items-center px-5   hover:bg-gray-300  py-2">
-                      <div className="w-[70px] h-[70px] ">
-                        <img
-                          src="https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg"
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
+                    {productsFavourite.map((productsFavourite, i) => (
+                      <div
+                        key={i}
+                        className=" flex justify-between items-center px-5   hover:bg-gray-300  py-2"
+                      >
+                        <div className="w-[70px] h-[70px] ">
+                          <img
+                            src={productsFavourite.imgProduct}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className=" flex flex-col">
+                          <span className="">
+                            {" "}
+                            {productsFavourite.productName}{" "}
+                          </span>
+                          <span className="text-sm font-normal">
+                            Giá : {productsFavourite.salePrice} VNĐ
+                          </span>
+                        </div>
+                        <div>
+                          <span
+                            className="text-red-500  cursor-pointer hover:text-red-400"
+                            title="Xóa khỏi danh sách "
+                          >
+                            <FaHeart />
+                          </span>
+                        </div>
                       </div>
-                      <div className=" flex flex-col">
-                        <span className="">Ghế sofa gia đình </span>
-                        <span className="text-sm font-normal">
-                          Giá : 20.000.000 VNĐ
-                        </span>
-                      </div>
-                      <div>
-                        <span
-                          className="text-red-500  cursor-pointer hover:text-red-400"
-                          title="Xóa khỏi danh sách "
-                        >
-                          <FaHeart />
-                        </span>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
