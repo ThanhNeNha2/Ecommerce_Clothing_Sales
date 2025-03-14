@@ -5,7 +5,8 @@ import { IoSearch } from "react-icons/io5";
 import { productsFavourite } from "../../services/fakeApi";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { TbLogout } from "react-icons/tb";
+import { TbLogin, TbLogout } from "react-icons/tb";
+import { MdAssignmentInd } from "react-icons/md";
 const Header = () => {
   const [checkShow, setCheckShow] = useState({
     openUser: false,
@@ -25,9 +26,8 @@ const Header = () => {
       }));
     }
   };
-  const [checkValue, setCheckValue] = useState(0);
 
-  //  Chia Trang
+  //  CHIA TRANG
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Số lượng sản phẩm trên mỗi trang
@@ -44,6 +44,18 @@ const Header = () => {
   // Lọc danh sách sản phẩm hiển thị trên trang hiện tại
   const displayedProducts = productsFavourite.slice(startIndex, endIndex);
 
+  // CHECK XEM CO NGUOI DUNG DANG NHAP CHUA
+  // const infoUser = {
+  //   avataUser:
+  //     "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  //   username: "Võ Chí Thanh",
+  //   email: "Thanh123@gmail.com",
+  //   phone: "03338635587",
+  //   address: "Hòa Cường Nam Hải Châu Đà Nẵng",
+  //   sex: "male",
+  //   dateBirthday: "12/2/2002",
+  // };
+  const infoUser = null;
   return (
     <div className=" flex justify-between items-center h-[95px] 2xl:h-[60px] bg-gray-50 px-14 fixed z-50 w-full ">
       {/* item 1  */}
@@ -82,6 +94,7 @@ const Header = () => {
         {/* -- */}
         <div>
           <ul className="flex items-center gap-12 2xl:gap-[30px]">
+            {/* User */}
             <li className=" relative ">
               <div
                 className="hover:text-gray-400 text-[25px] 2xl:text-[18px]"
@@ -90,19 +103,38 @@ const Header = () => {
                 <FaUserAlt />
               </div>
               {checkShow.openUser && (
+                // cum 1
                 <div className="absolute bg-gray-100 top-[39px] left-[-70px] w-[200px] h-auto">
-                  <Link to={"/ProfileUser"}>
+                  <Link to={`${infoUser !== null ? "/ProfileUser" : "/login"}`}>
                     {" "}
                     <button
-                      className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 "
+                      className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins "
                       // style={{ background: "red" }}
                     >
-                      Profile <FaUserEdit />
+                      {infoUser !== null ? (
+                        <>
+                          {" "}
+                          Profile <FaUserEdit />{" "}
+                        </>
+                      ) : (
+                        <>
+                          Login <TbLogin />
+                        </>
+                      )}
                     </button>
                   </Link>
-                  <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 ">
-                    Logout <TbLogout />
-                  </button>
+                  {/* cụm 2 */}
+                  {infoUser !== null ? (
+                    <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
+                      Logout <TbLogout />
+                    </button>
+                  ) : (
+                    <Link to="/register">
+                      <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
+                        Register <MdAssignmentInd />
+                      </button>
+                    </Link>
+                  )}
                 </div>
               )}
             </li>

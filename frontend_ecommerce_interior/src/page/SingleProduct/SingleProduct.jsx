@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import DetailProduct from "../../components/SingleProduct/DetailProduct";
 import { MdKeyboardArrowRight } from "react-icons/md";
@@ -7,7 +7,9 @@ import Footer from "../../components/Footer/Footer";
 
 const SingleProduct = () => {
   const [addProduct, setaddProduct] = useState(4);
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="flex flex-col">
       <Header />
