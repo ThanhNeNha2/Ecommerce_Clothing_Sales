@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../components/Header/Header";
 import CoverImg from "../../components/Cover/CoverImg";
 import { FaTrash } from "react-icons/fa";
@@ -6,6 +6,9 @@ import Quality from "../../components/Quality/Quality";
 import Footer from "../../components/Footer/Footer";
 
 const Cart = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="">
       <Header />

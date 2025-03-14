@@ -334,4 +334,70 @@ export const productsFavourite = [
     productName: "Sofa Phòng Khách",
     salePrice: "20.000.000",
   },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
 ];

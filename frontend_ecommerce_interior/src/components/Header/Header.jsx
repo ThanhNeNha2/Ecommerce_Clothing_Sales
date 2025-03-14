@@ -25,6 +25,25 @@ const Header = () => {
       }));
     }
   };
+  const [checkValue, setCheckValue] = useState(0);
+
+  //  Chia Trang
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Số lượng sản phẩm trên mỗi trang
+
+  // Tính tổng số trang
+  const totalPages = Math.ceil(productsFavourite.length / itemsPerPage);
+
+  // Xác định vị trí bắt đầu và kết thúc của sản phẩm cần hiển thị
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  console.log("check diem bat dau ", startIndex);
+  console.log("check diem ket thuc  ", endIndex);
+
+  // Lọc danh sách sản phẩm hiển thị trên trang hiện tại
+  const displayedProducts = productsFavourite.slice(startIndex, endIndex);
+
   return (
     <div className=" flex justify-between items-center h-[95px] 2xl:h-[60px] bg-gray-50 px-14 fixed z-50 w-full ">
       {/* item 1  */}
@@ -63,8 +82,11 @@ const Header = () => {
         {/* -- */}
         <div>
           <ul className="flex items-center gap-12 2xl:gap-[30px]">
-            <li className=" relative " onClick={() => handleCheckOpen("user")}>
-              <div className="hover:text-gray-400 text-[25px] 2xl:text-[18px]">
+            <li className=" relative ">
+              <div
+                className="hover:text-gray-400 text-[25px] 2xl:text-[18px]"
+                onClick={() => handleCheckOpen("user")}
+              >
                 <FaUserAlt />
               </div>
               {checkShow.openUser && (
@@ -89,53 +111,77 @@ const Header = () => {
                 <IoSearch />
               </li>
             </Link>
-            <li
-              className="relative"
-              onClick={() => handleCheckOpen("favourite")}
-            >
-              <div className="text-[25px] 2xl:text-[18px] hover:text-gray-400">
+            {/* Yêu Thích  */}
+            <li className="relative">
+              <div
+                className="text-[25px] 2xl:text-[18px] hover:text-gray-400"
+                onClick={() => handleCheckOpen("favourite")}
+              >
                 <FaRegHeart />
               </div>
               {checkShow.openFavourite && (
-                <div className="absolute bg-gray-100 top-[39px] left-[-150px] w-[320px] h-auto pt-5">
-                  <div className="flex items-center justify-between mb-3 px-5">
-                    <span className="font-poppins font-medium text-lg">
-                      Products Favourite
-                    </span>
-                    <span>
-                      <FaRegHeart />
-                    </span>
-                  </div>
-                  <hr />
-                  <div className="mt-2 flex flex-col  ">
-                    {productsFavourite.map((productsFavourite, i) => (
-                      <div
-                        key={i}
-                        className=" flex justify-between items-center px-5   hover:bg-gray-300  py-2"
-                      >
-                        <div className="w-[70px] h-[70px] ">
-                          <img
-                            src={productsFavourite.imgProduct}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className=" flex flex-col">
-                          <span className="">
-                            {" "}
-                            {productsFavourite.productName}{" "}
-                          </span>
-                          <span className="text-sm font-normal">
-                            Giá : {productsFavourite.salePrice} VNĐ
-                          </span>
-                        </div>
-                        <div>
-                          <span
-                            className="text-red-500  cursor-pointer hover:text-red-400"
-                            title="Xóa khỏi danh sách "
+                <div className="absolute bg-gray-100 top-[39px] left-[-150px] w-[320px] h-[543px] pt-5  flex flex-col justify-between  ">
+                  <div>
+                    <div className="flex items-center justify-between mb-3 px-5 h-auto">
+                      <span className="font-poppins font-medium text-lg">
+                        Products Favourite
+                      </span>
+                      <span>
+                        <FaRegHeart />
+                      </span>
+                    </div>
+                    <hr />
+                    <div className="mt-2 flex flex-col justify-between  ">
+                      <div>
+                        {displayedProducts.map((product, i) => (
+                          <div
+                            key={i}
+                            className="flex justify-between items-center px-5 hover:bg-gray-300 py-2"
                           >
-                            <FaHeart />
-                          </span>
-                        </div>
+                            <div className="w-[70px] h-[70px]">
+                              <img
+                                src={product.imgProduct}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="flex flex-col">
+                              <span>{product.productName}</span>
+                              <span className="text-sm font-normal">
+                                Giá: {product.salePrice} VNĐ
+                              </span>
+                            </div>
+                            <div>
+                              <span
+                                className="text-red-500 cursor-pointer hover:text-red-400"
+                                title="Xóa khỏi danh sách"
+                              >
+                                <FaHeart />
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {/*  Phần chia trang  */}
+                  <div className=" py-3 flex justify-center  ">
+                    {Array.from({ length: totalPages }).map((_, index) => (
+                      <div
+                        key={index}
+                        className={`p-1 ${
+                          currentPage === index + 1
+                            ? "border border-colorMain rounded-full"
+                            : ""
+                        }`}
+                        onClick={() => setCurrentPage(index + 1)}
+                      >
+                        <div
+                          className={`w-[10px] h-[10px] rounded-full ${
+                            currentPage === index + 1
+                              ? "bg-colorMain"
+                              : "bg-gray-400"
+                          }`}
+                        ></div>
                       </div>
                     ))}
                   </div>
