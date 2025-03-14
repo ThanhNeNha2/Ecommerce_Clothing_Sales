@@ -269,3 +269,135 @@ export const listProducts = [
     salePrice: 1500000,
   },
 ];
+
+export const SingleItem = {
+  listImg: [
+    "https://images.pexels.com/photos/1125135/pexels-photo-1125135.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  ],
+  salePercentage: "-50%",
+  productName: "Sofa Phòng Khách",
+  imgItem: imgItem,
+  productStyle: "Stylish cafe chair",
+  originalPrice: "30,000.00",
+  salePrice: "15,000.00",
+  listSize: ["L", "XL", "XS"],
+  descriptionsProducts:
+    "A luxurious sofa with a modern design, soft cushioning, and a sturdy wooden frame, providing maximum comfort and relaxation. Perfect for living rooms, offices, or cozy spaces.",
+  listColor: ["red", "black", "green"],
+};
+
+export const infoUser = {
+  avataUser:
+    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  username: "Võ Chí Thanh",
+  email: "Thanh123@gmail.com",
+  phone: "03338635587",
+  address: "Hòa Cường Nam Hải Châu Đà Nẵng",
+  sex: "male",
+  dateBirthday: "12/2/2002",
+};
+
+// api header
+
+export const productsFavourite = [
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+  {
+    imgProduct:
+      "https://i.pinimg.com/736x/a1/96/3e/a1963ed40878030b67b79fde8152ec35.jpg",
+    productName: "Sofa Phòng Khách",
+    salePrice: "20.000.000",
+  },
+];

@@ -36,7 +36,7 @@ const SingleProduct = () => {
         </span>
       </div>
       <Products value={addProduct} />
-      <div className="flex justify-center items-center mt-7 ">
+      <div className="flex justify-center items-center mt-7 mb-16">
         <button
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
           onClick={() => setaddProduct(addProduct + 4)}
