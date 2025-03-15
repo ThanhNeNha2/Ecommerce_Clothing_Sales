@@ -26,9 +26,9 @@ const RouterCustom = () => {
       <Route path="/Checkout" element={<Checkout />} />
       <Route path="/Contact" element={<Contact />} />
       <Route path="/ProductComparison" element={<ProductComparison />} />
-      <Route path="ListProduct" element={<ListProduct />} />
-      <Route path="ProfileUser" element={<ProfileUser />} />
-      <Route path="DetailBlog" element={<DetailBlog />} />
+      <Route path="/ListProduct" element={<ListProduct />} />
+      <Route path="/ProfileUser" element={<ProfileUser />} />
+      <Route path="/DetailBlog/:id" element={<DetailBlog />} />
     </Routes>
   );
 };

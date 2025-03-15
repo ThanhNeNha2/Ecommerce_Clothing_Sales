@@ -10,6 +10,7 @@ import Quality from "../../components/Quality/Quality";
 import Footer from "../../components/Footer/Footer";
 import ReactPaginate from "react-paginate";
 import { listBlog } from "../../services/fakeApi";
+import { Link } from "react-router-dom";
 const items = listBlog;
 const Blog = () => {
   // We start with an empty list of items.
@@ -46,7 +47,10 @@ const Blog = () => {
           {/* bai 1  */}
 
           {currentItems?.map((item, index) => (
-            <div key={index} className="flex  flex-col gap-3  w-full">
+            <div
+              key={index}
+              className="flex  flex-col gap-3  w-full cursor-pointer group "
+            >
               {/* anh */}
               <div className="flex justify-center bg-red-50 w-full rounded">
                 <img
@@ -67,20 +71,22 @@ const Blog = () => {
                   <FaTag /> Wood
                 </div>
               </div>
-              <h1 className="font-poppins font-semibold text-xl">
+              <h1 className="font-poppins font-semibold text-xl group-hover:text-blue-400">
                 {item.titleBlog}
               </h1>
               <span className="text-sm text-gray-400">
                 {item.descripShotBlog}
               </span>
-              <div>
-                <span
-                  className="relative w-[20%] after:content-[''] after:absolute 
+              <Link to={"/DetailBlog/123"}>
+                <div>
+                  <span
+                    className="relative w-[20%] after:content-[''] after:absolute 
                 after:left-0 after:bottom-[-10px] after:w-full after:h-[2px] after:bg-black font-medium cursor-pointer"
-                >
-                  Read more
-                </span>
-              </div>
+                  >
+                    Read more
+                  </span>
+                </div>
+              </Link>
             </div>
           ))}
           <div className=" flex justify-center">
