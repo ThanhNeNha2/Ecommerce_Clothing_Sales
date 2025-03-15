@@ -38,8 +38,6 @@ const Header = () => {
   // Xác định vị trí bắt đầu và kết thúc của sản phẩm cần hiển thị
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  console.log("check diem bat dau ", startIndex);
-  console.log("check diem ket thuc  ", endIndex);
 
   // Lọc danh sách sản phẩm hiển thị trên trang hiện tại
   const displayedProducts = productsFavourite.slice(startIndex, endIndex);
