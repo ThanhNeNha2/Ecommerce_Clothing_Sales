@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import imgmain from "../../../public/blog/Rectangle 1.png";
 import logo from "../../../public/Logo/Meubel House_Logos-05 (1).png";
@@ -8,8 +8,34 @@ import { IoSearchSharp } from "react-icons/io5";
 import CoverImg from "../../components/Cover/CoverImg";
 import Quality from "../../components/Quality/Quality";
 import Footer from "../../components/Footer/Footer";
-
+import ReactPaginate from "react-paginate";
+import { listBlog } from "../../services/fakeApi";
+import { Link } from "react-router-dom";
+const items = listBlog;
 const Blog = () => {
+  // We start with an empty list of items.
+  const [currentItems, setCurrentItems] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
+  // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+  const [itemOffset, setItemOffset] = useState(0);
+  const itemsPerPage = 4;
+  useEffect(() => {
+    // Fetch items from another resources.
+    const endOffset = itemOffset + itemsPerPage;
+    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+    setCurrentItems(items.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(items.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage]);
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % items.length;
+    console.log(" check newoff là gì ", newOffset);
+    console.log(" check thong tin currentItems", currentItems);
+
+    setItemOffset(newOffset);
+  };
   return (
     <div>
       <Header />
@@ -19,172 +45,72 @@ const Blog = () => {
       <div className="  px-[200px] pt-16 flex gap-10">
         <div className="flex-[4]   flex justify-center flex-col gap-20 ">
           {/* bai 1  */}
-          <div className="flex  flex-col gap-3  w-full">
-            {/* anh */}
-            <div className="flex justify-center bg-red-50 w-full rounded">
-              <img
-                src="https://images.pexels.com/photos/1422286/pexels-photo-1422286.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt=""
-                className=" w-full h-[400px] rounded"
-              />
-            </div>
-            {/*  */}
-            <div className="flex gap-5 text-sm">
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaUser /> Admin
+
+          {currentItems?.map((item, index) => (
+            <div
+              key={index}
+              className="flex  flex-col gap-3  w-full cursor-pointer group "
+            >
+              {/* anh */}
+              <div className="flex justify-center bg-red-50 w-full rounded">
+                <img
+                  src={item.listImgProductBlog}
+                  alt=""
+                  className=" w-full h-[400px] rounded"
+                />
               </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <BsCalendar2DateFill /> 14 Oct 2022
+              {/*  */}
+              <div className="flex gap-5 text-sm">
+                <div className="flex items-center gap-1 text-gray-500">
+                  <FaUser /> Admin
+                </div>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <BsCalendar2DateFill /> {item.postDate}
+                </div>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <FaTag /> Wood
+                </div>
               </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaTag /> Wood
-              </div>
-            </div>
-            <h1 className="font-poppins font-semibold text-xl">
-              Going all-in with millennial design
-            </h1>
-            <span className="text-sm text-gray-400">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus
-              mauris vitae ultricies leo integer malesuada nunc. In nulla
-              posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus
-              at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis
-              in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar
-              mattis nunc sed blandit libero. Pellentesque elit ullamcorper
-              dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean
-              euismod elementum.
-            </span>
-            <div>
-              <span className="relative w-[20%] after:content-[''] after:absolute after:left-0 after:bottom-[-10px] after:w-full after:h-[2px] after:bg-black">
-                Read more
+              <h1 className="font-poppins font-semibold text-xl group-hover:text-blue-400">
+                {item.titleBlog}
+              </h1>
+              <span className="text-sm text-gray-400">
+                {item.descripShotBlog}
               </span>
+              <Link to={"/DetailBlog/123"}>
+                <div>
+                  <span
+                    className="relative w-[20%] after:content-[''] after:absolute 
+                after:left-0 after:bottom-[-10px] after:w-full after:h-[2px] after:bg-black font-medium cursor-pointer"
+                  >
+                    Read more
+                  </span>
+                </div>
+              </Link>
             </div>
-          </div>
-          {/* bai 1  */}
-          <div className="flex  flex-col gap-3  w-full">
-            {/* anh */}
-            <div className="flex justify-center bg-red-50 w-full rounded">
-              <img
-                src="https://images.pexels.com/photos/1422286/pexels-photo-1422286.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt=""
-                className=" w-full h-[400px] rounded"
-              />
-            </div>
-            {/*  */}
-            <div className="flex gap-5 text-sm">
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaUser /> Admin
-              </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <BsCalendar2DateFill /> 14 Oct 2022
-              </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaTag /> Wood
-              </div>
-            </div>
-            <h1 className="font-poppins font-semibold text-xl">
-              Going all-in with millennial design
-            </h1>
-            <span className="text-sm text-gray-400">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus
-              mauris vitae ultricies leo integer malesuada nunc. In nulla
-              posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus
-              at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis
-              in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar
-              mattis nunc sed blandit libero. Pellentesque elit ullamcorper
-              dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean
-              euismod elementum.
-            </span>
-            <div>
-              <span className="relative w-[20%] after:content-[''] after:absolute after:left-0 after:bottom-[-10px] after:w-full after:h-[2px] after:bg-black">
-                Read more
-              </span>
-            </div>
-          </div>
-          {/* bai 1  */}
-          <div className="flex  flex-col gap-3  w-full">
-            {/* anh */}
-            <div className="flex justify-center bg-red-50 w-full rounded">
-              <img
-                src="https://images.pexels.com/photos/1422286/pexels-photo-1422286.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt=""
-                className=" w-full h-[400px] rounded"
-              />
-            </div>
-            {/*  */}
-            <div className="flex gap-5 text-sm">
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaUser /> Admin
-              </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <BsCalendar2DateFill /> 14 Oct 2022
-              </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaTag /> Wood
-              </div>
-            </div>
-            <h1 className="font-poppins font-semibold text-xl">
-              Going all-in with millennial design
-            </h1>
-            <span className="text-sm text-gray-400">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus
-              mauris vitae ultricies leo integer malesuada nunc. In nulla
-              posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus
-              at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis
-              in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar
-              mattis nunc sed blandit libero. Pellentesque elit ullamcorper
-              dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean
-              euismod elementum.
-            </span>
-            <div>
-              <span className="relative w-[20%] after:content-[''] after:absolute after:left-0 after:bottom-[-10px] after:w-full after:h-[2px] after:bg-black">
-                Read more
-              </span>
-            </div>
-          </div>
-          {/* bai 1  */}
-          <div className="flex  flex-col gap-3  w-full">
-            {/* anh */}
-            <div className="flex justify-center bg-red-50 w-full rounded">
-              <img
-                src="https://images.pexels.com/photos/1422286/pexels-photo-1422286.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt=""
-                className=" w-full h-[400px] rounded"
-              />
-            </div>
-            {/*  */}
-            <div className="flex gap-5 text-sm">
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaUser /> Admin
-              </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <BsCalendar2DateFill /> 14 Oct 2022
-              </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <FaTag /> Wood
-              </div>
-            </div>
-            <h1 className="font-poppins font-semibold text-xl">
-              Going all-in with millennial design
-            </h1>
-            <span className="text-sm text-gray-400">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Mus
-              mauris vitae ultricies leo integer malesuada nunc. In nulla
-              posuere sollicitudin aliquam ultrices. Morbi blandit cursus risus
-              at ultrices mi tempus imperdiet. Libero enim sed faucibus turpis
-              in. Cursus mattis molestie a iaculis at erat. Nibh cras pulvinar
-              mattis nunc sed blandit libero. Pellentesque elit ullamcorper
-              dignissim cras tincidunt. Pharetra et ultrices neque ornare aenean
-              euismod elementum.
-            </span>
-            <div>
-              <span className="relative w-[20%] after:content-[''] after:absolute after:left-0 after:bottom-[-10px] after:w-full after:h-[2px] after:bg-black">
-                Read more
-              </span>
-            </div>
+          ))}
+          <div className=" flex justify-center">
+            {" "}
+            <ReactPaginate
+              nextLabel="next "
+              onPageChange={handlePageClick}
+              pageRangeDisplayed={3}
+              marginPagesDisplayed={2}
+              pageCount={pageCount}
+              previousLabel=" previous"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              previousClassName="page-item"
+              previousLinkClassName="page-link"
+              nextClassName="page-item"
+              nextLinkClassName="page-link"
+              breakLabel="..."
+              breakClassName="page-item"
+              breakLinkClassName="page-link"
+              containerClassName="pagination"
+              activeClassName="active"
+              renderOnZeroPageCount={null}
+            />
           </div>
         </div>
         <div className="flex-[2] flex flex-col gap-5 ">

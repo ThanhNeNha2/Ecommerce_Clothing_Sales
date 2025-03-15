@@ -3,6 +3,7 @@ import img1 from "../../../public/home/Mask Group (1).png";
 import { listProducts } from "../../services/fakeApi";
 import { IoHeartOutline, IoShareSocial } from "react-icons/io5";
 import { RiArrowLeftRightLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
 const Products = ({ value }) => {
   return (
     <div className="flex flex-wrap justify-between px-[150px] gap-[24px] ">
@@ -50,12 +51,14 @@ const Products = ({ value }) => {
               >
                 Add to cart
               </button>{" "}
-              <button
-                className="bg-white py-2 px-5 font-poppins font-medium rounded hover:bg-gray-300"
-                style={{ color: "#B88E2F" }}
-              >
-                Show Detail
-              </button>
+              <Link to={"/SingleProduct"}>
+                <button
+                  className="bg-white py-2 px-5 font-poppins font-medium rounded hover:bg-gray-300"
+                  style={{ color: "#B88E2F" }}
+                >
+                  Show Detail
+                </button>
+              </Link>
             </div>
 
             <div className="flex gap-4">

@@ -40,8 +40,8 @@ const Footer = () => {
             Newsletter
           </span>
           <div className="flex  ">
-            <input type="text" className="py-1 px-2 ring-1 ring-gray-500  " />
-            <button className="py-1 px-2 bg-gray-400 ring-1 ring-gray-400">
+            <input type="text" className="py-1 px-2 ring-1 ring-gray-300  " />
+            <button className="py-1 px-2 text-sm font-medium bg-gray-300 ring-1 ring-gray-300">
               SUBSCRIBE
             </button>
           </div>
