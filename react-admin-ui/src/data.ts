@@ -43,7 +43,7 @@ export const menu = [
         id: 4,
         title: "Posts",
         url: "/posts",
-        icon: "post2.svg",
+        icon: "post.svg",
       },
     ],
   },
@@ -554,8 +554,6 @@ export const products = [
     inStock: true,
   },
 ];
-
-
 
 export const singleUser = {
   id: 1,
