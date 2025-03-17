@@ -32,11 +32,17 @@ export const createUser = async (req, res) => {
 // GET ALL USER
 export const getUser = async (req, res) => {
   try {
-    const getAllUser = await USER.find({}).select("-password");
+    const getAllUser = await USER.find({}).select("-password").lean();
+    const users = getAllUser.map((user) => ({
+      ...user,
+      id: user._id,
+      _id: undefined, // Loại bỏ _id
+    }));
+
     return res.status(200).json({
       message: "OK",
       idCode: 0,
-      getAllUser,
+      users, // Trả về danh sách đã thay đổi
     });
   } catch (error) {
     console.log("Error", error);

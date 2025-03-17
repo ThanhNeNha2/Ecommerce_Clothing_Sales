@@ -9,9 +9,9 @@ require("dotenv").config();
 const port = process.env.PORT || 8080;
 mongoose
   .connect(process.env.URL_CONNECT_MONGODB)
-  // .then(() => {
-  //   console.log("Connect success!");
-  // })
+  .then(() => {
+    console.log("Connect success!");
+  })
   .catch((error) => {
     console.log("Connect error!", error);
   });
