@@ -3,7 +3,8 @@ import DataTable from "../../components/dataTable/DataTable";
 import "./Users.scss";
 import { useState } from "react";
 import Add from "../../components/add/Add";
-import { userRows } from "../../data";
+// import { userRows } from "../../data";
+import { useQuery } from "@tanstack/react-query";
 // import { useQuery } from "@tanstack/react-query";
 
 const columns: GridColDef[] = [
@@ -17,17 +18,12 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: "firstName",
+    field: "username",
     type: "string",
-    headerName: "First name",
+    headerName: "User Name",
     width: 150,
   },
-  {
-    field: "lastName",
-    type: "string",
-    headerName: "Last name",
-    width: 150,
-  },
+
   {
     field: "email",
     type: "string",
@@ -41,15 +37,27 @@ const columns: GridColDef[] = [
     width: 200,
   },
   {
-    field: "createdAt",
-    headerName: "Created At",
+    field: "address",
+    type: "string",
+    headerName: "Address",
     width: 200,
+  },
+  {
+    field: "createdAt",
+    type: "string",
+    headerName: "CreatedAt",
+    width: 200,
+  },
+  {
+    field: "role",
+    headerName: "Role",
+    width: 100,
     type: "string",
   },
   {
-    field: "verified",
+    field: "isActive",
     headerName: "Verified",
-    width: 150,
+    width: 100,
     type: "boolean",
   },
 ];
@@ -59,13 +67,15 @@ const Users = () => {
 
   // TEST THE API
 
-  // const { isLoading, data } = useQuery({
-  //   queryKey: ["allusers"],
-  //   queryFn: () =>
-  //     fetch("http://localhost:8800/api/users").then(
-  //       (res) => res.json()
-  //     ),
-  // });
+  const { isLoading, data } = useQuery({
+    queryKey: ["allusers"],
+    queryFn: () =>
+      fetch("http://localhost:8080/api/user").then((res) => res.json()),
+  });
+  console.log(data);
+
+  const userRows = data?.users || [];
+  console.log(" check ", userRows);
 
   return (
     <div className="users">

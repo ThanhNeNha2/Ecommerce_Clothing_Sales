@@ -1,8 +1,4 @@
-import {
-  DataGrid,
-  GridColDef,
-  GridToolbar,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import "./dataTable.scss";
 import { Link } from "react-router-dom";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +10,6 @@ type Props = {
 };
 
 const DataTable = (props: Props) => {
-
   // TEST THE API
 
   // const queryClient = useQueryClient();
@@ -37,7 +32,7 @@ const DataTable = (props: Props) => {
   const actionColumn: GridColDef = {
     field: "action",
     headerName: "Action",
-    width: 200,
+    width: 100,
     renderCell: (params) => {
       return (
         <div className="action">
