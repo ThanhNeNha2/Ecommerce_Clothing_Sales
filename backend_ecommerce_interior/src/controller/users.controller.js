@@ -5,7 +5,7 @@ import * as bcrypt from "bcrypt";
 export const createUser = async (req, res) => {
   try {
     const { password } = req.body;
-    console.log("check dau vao cua email ", req.body.email);
+
     const checkEmail = await USER.findOne({ email: req.body.email });
     if (checkEmail) {
       return res.status(500).json({
@@ -54,6 +54,35 @@ export const getUser = async (req, res) => {
   }
 };
 
+// GET USER BY ID
+export const getUserById = async (req, res) => {
+  try {
+    console.log("check req", req.params.id);
+
+    const user = await USER.findOne({ _id: req.params.id }).select(
+      "phone address email username -_id"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        idCode: 1,
+      });
+    }
+
+    return res.status(200).json({
+      message: "OK",
+      idCode: 0,
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Truy cap danh sach nguoi dung khong thanh cong",
+      idCode: 1,
+    });
+  }
+};
+
 //  UPDATE USER
 export const updateUser = async (req, res) => {
   try {
@@ -64,7 +93,10 @@ export const updateUser = async (req, res) => {
         idCode: 1,
       });
     }
-    const updateUser = await USER.findByIdAndUpdate(req.params.id, req.body);
+    const updateUser = await USER.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     return res.status(200).json({
       message: "OK",
