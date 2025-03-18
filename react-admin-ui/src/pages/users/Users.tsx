@@ -72,10 +72,8 @@ const Users = () => {
     queryFn: () =>
       fetch("http://localhost:8080/api/user").then((res) => res.json()),
   });
-  console.log(data);
 
   const userRows = data?.users || [];
-  console.log(" check ", userRows);
 
   return (
     <div className="users">

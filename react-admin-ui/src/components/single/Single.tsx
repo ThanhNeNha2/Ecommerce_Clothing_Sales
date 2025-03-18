@@ -8,6 +8,10 @@ import {
   YAxis,
 } from "recharts";
 import "./single.scss";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { apiCustom } from "../../custom/customApi";
 
 type Props = {
   id: number;
@@ -22,6 +26,49 @@ type Props = {
 };
 
 const Single = (props: Props) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [info, setInfo] = useState(props.info); // Lưu props.info vào state
+
+  const { id } = useParams();
+  const { isLoading, data } = useQuery({
+    queryKey: ["singleUser"],
+    // queryFn: () => customFetch(`/user/${id}`),
+    queryFn: () => apiCustom.get(`/user/${id}`).then((res) => res.data), // Dùng axios
+  });
+
+  useEffect(() => {
+    const updateInfo = () => {
+      setInfo({
+        username: data?.user.username,
+        email: data?.user.email,
+      });
+    };
+    updateInfo();
+  }, [data]);
+
+  // Xử lý khi nhấn "Update"
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+  // Xử lý khi thay đổi input
+  const handleChange = (key: any, value: any) => {
+    setInfo((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+  const mutation = useMutation({
+    mutationFn: (infoUpdate: {}) => {
+      return apiCustom.put(`/user/${id}`, infoUpdate);
+    },
+  });
+
+  // Xử lý khi nhấn "Save"
+  const handleSave = () => {
+    setIsEditing(false);
+    console.log("Updated Data:", info); // Bạn có thể gửi lên API ở đây
+    mutation.mutate(info);
+  };
   return (
     <div className="single">
       <div className="view">
@@ -29,13 +76,25 @@ const Single = (props: Props) => {
           <div className="topInfo">
             {props.img && <img src={props.img} alt="" />}
             <h1>{props.title}</h1>
-            <button>Update</button>
+            {isEditing ? (
+              <button onClick={handleSave}>Save</button>
+            ) : (
+              <button onClick={handleEdit}>Update</button>
+            )}
           </div>
           <div className="details">
-            {Object.entries(props.info).map((item) => (
-              <div className="item" key={item[0]}>
-                <span className="itemTitle">{item[0]}</span>
-                <span className="itemValue">{item[1]}</span>
+            {Object.entries(info).map(([key, value]) => (
+              <div className="item" key={key}>
+                <span className="itemTitle">{key} </span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={value}
+                    onChange={(e) => handleChange(key, e.target.value)}
+                  />
+                ) : (
+                  <span className="itemValue">{value}</span>
+                )}
               </div>
             ))}
           </div>
