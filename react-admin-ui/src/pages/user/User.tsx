@@ -5,7 +5,7 @@ import "./user.scss";
 const User = () => {
   return (
     <div className="user">
-      <Single {...singleUser} />
+      <Single {...singleUser} path={"user"} />
     </div>
   );
 };

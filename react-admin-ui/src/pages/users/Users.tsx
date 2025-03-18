@@ -68,7 +68,7 @@ const Users = () => {
   // TEST THE API
 
   const { isLoading, data } = useQuery({
-    queryKey: ["allusers"],
+    queryKey: ["alluser"],
     queryFn: () =>
       fetch("http://localhost:8080/api/user").then((res) => res.json()),
   });
@@ -81,7 +81,7 @@ const Users = () => {
         <h1>Users</h1>
         <button onClick={() => setOpen(true)}>Add New User</button>
       </div>
-      <DataTable slug="users" columns={columns} rows={userRows} />
+      <DataTable slug="user" columns={columns} rows={userRows} />
       {/* TEST THE API */}
 
       {/* {isLoading ? (

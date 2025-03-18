@@ -23,9 +23,12 @@ type Props = {
     data: object[];
   };
   activities?: { time: string; text: string }[];
+  path: string;
 };
 
 const Single = (props: Props) => {
+  console.log(" check props", props.path);
+
   const [isEditing, setIsEditing] = useState(false);
   const [info, setInfo] = useState(props.info); // Lưu props.info vào state
 
@@ -33,7 +36,8 @@ const Single = (props: Props) => {
   const { isLoading, data } = useQuery({
     queryKey: ["singleUser"],
     // queryFn: () => customFetch(`/user/${id}`),
-    queryFn: () => apiCustom.get(`/user/${id}`).then((res) => res.data), // Dùng axios
+    queryFn: () =>
+      apiCustom.get(`/${props.path}/${id}`).then((res) => res.data), // Dùng axios
   });
 
   useEffect(() => {
@@ -59,7 +63,7 @@ const Single = (props: Props) => {
   };
   const mutation = useMutation({
     mutationFn: (infoUpdate: {}) => {
-      return apiCustom.put(`/user/${id}`, infoUpdate);
+      return apiCustom.put(`/${props.path}/${id}`, infoUpdate);
     },
   });
 

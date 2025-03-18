@@ -56,7 +56,7 @@ function App() {
           element: <Posts />,
         },
         {
-          path: "/users/:id",
+          path: "/user/:id",
           element: <User />,
         },
         {
