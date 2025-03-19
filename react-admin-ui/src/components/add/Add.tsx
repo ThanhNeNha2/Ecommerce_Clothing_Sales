@@ -1,7 +1,10 @@
 import { GridColDef } from "@mui/x-data-grid";
 import "./add.scss";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiCustom } from "../../custom/customApi";
+import { useState } from "react";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import toast, { Toaster } from "react-hot-toast";
 type Props = {
   slug: string;
   columns: GridColDef[];
@@ -9,42 +12,73 @@ type Props = {
 };
 
 const Add = (props: Props) => {
-  // TEST THE API
+  const [infoCreate, setInfoCreate] = useState({
+    username: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    phone: "",
+    address: "",
+    role: "USER",
+  });
+  console.log("check thông tin ", infoCreate);
 
-  // const queryClient = useQueryClient();
-
-  // const mutation = useMutation({
-  //   mutationFn: () => {
-  //     return fetch(`http://localhost:8800/api/${props.slug}s`, {
-  //       method: "post",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         id: 111,
-  //         img: "",
-  //         lastName: "Hello",
-  //         firstName: "Test",
-  //         email: "testme@gmail.com",
-  //         phone: "123 456 789",
-  //         createdAt: "01.02.2023",
-  //         verified: true,
-  //       }),
-  //     });
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries([`all${props.slug}s`]);
-  //   },
-  // });
+  const handleChangeInfoCreate = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    key: string
+  ) => {
+    setInfoCreate((prev) => ({ ...prev, [key]: e.target.value }));
+  };
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (info: {}) => {
+      return apiCustom.post(`/${props.slug}`, info);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries([`all${props.slug}`]);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //add new item
-    // mutation.mutate();
+    // Kiểm tra có trường nào bị bỏ trống không
+    for (const key in infoCreate) {
+      if (infoCreate[key as keyof typeof infoCreate].trim() === "") {
+        toast.error(`Trường ${key} không được để trống!`);
+        return;
+      }
+    }
+
+    // Kiểm tra độ dài mật khẩu (phải từ 6 ký tự trở lên)
+    if (infoCreate.password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự!");
+      return;
+    }
+
+    // Kiểm tra số điện thoại (phải từ 9 đến 12 số)
+    const phoneRegex = /^[0-9]{9,12}$/;
+    if (!phoneRegex.test(infoCreate.phone)) {
+      toast.error("Số điện thoại phải từ 9 đến 12 chữ số!");
+      return;
+    }
+
+    // Kiểm tra xác nhận mật khẩu
+    if (infoCreate.password !== infoCreate.passwordConfirm) {
+      toast.error("Mật khẩu xác nhận không khớp!");
+      return;
+    }
+
+    // Nếu tất cả hợp lệ, loại bỏ passwordConfirm và gửi dữ liệu
+    const { passwordConfirm, ...infoCreateChoose } = infoCreate;
+    console.log("Thông tin hợp lệ gửi lên server:", infoCreateChoose);
+
+    toast.success("Đăng ký thành công!");
     props.setOpen(false);
+
+    mutation.mutate(infoCreateChoose); // Gửi dữ liệu lên server
   };
+
   return (
     <div className="add">
       <div className="modal">
@@ -63,27 +97,60 @@ const Add = (props: Props) => {
             ))} */}
           <div className="item">
             <label>UserName</label>
-            <input type="text" placeholder="Enter user name" />
+            <input
+              type="text"
+              placeholder="Enter user name"
+              value={infoCreate.username}
+              onChange={(e) => handleChangeInfoCreate(e, "username")}
+            />
           </div>{" "}
           <div className="item">
             <label>Email</label>
-            <input type="text" placeholder="Enter Email" />
+            <input
+              type="email"
+              value={infoCreate.email}
+              placeholder="Enter Email"
+              onChange={(e) => handleChangeInfoCreate(e, "email")}
+            />
           </div>{" "}
           <div className="item">
             <label>Password</label>
-            <input type="text" placeholder="Enter Password" />
+            <input
+              type="password"
+              placeholder="Enter Password"
+              onChange={(e) => handleChangeInfoCreate(e, "password")}
+            />
           </div>{" "}
           <div className="item">
             <label>Password Confirm</label>
-            <input type="text" placeholder="Enter Password Confirm" />
+            <input
+              type="password"
+              placeholder="Enter Password Confirm"
+              onChange={(e) => handleChangeInfoCreate(e, "passwordConfirm")}
+            />
           </div>
           <div className="item">
             <label>Phone</label>
-            <input type="text" placeholder="Enter phone" />
+            <input
+              type="text"
+              placeholder="Enter phone"
+              onChange={(e) => handleChangeInfoCreate(e, "phone")}
+            />
+          </div>{" "}
+          <div className="item">
+            <label>Address</label>
+            <input
+              type="text"
+              placeholder="Enter address"
+              onChange={(e) => handleChangeInfoCreate(e, "address")}
+            />
           </div>{" "}
           <div className="item">
             <label>Role</label>
-            <input type="text" placeholder="Enter user name" />
+            <select onChange={(e) => handleChangeInfoCreate(e, "role")}>
+              <option value="USER">USER</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
           </div>
           <button>Send</button>
         </form>
