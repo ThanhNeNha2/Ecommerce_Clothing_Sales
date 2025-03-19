@@ -9,7 +9,6 @@ type Props = {
 };
 
 const Add = (props: Props) => {
-
   // TEST THE API
 
   // const queryClient = useQueryClient();
@@ -44,7 +43,7 @@ const Add = (props: Props) => {
 
     //add new item
     // mutation.mutate();
-    props.setOpen(false)
+    props.setOpen(false);
   };
   return (
     <div className="add">
@@ -54,14 +53,38 @@ const Add = (props: Props) => {
         </span>
         <h1>Add new {props.slug}</h1>
         <form onSubmit={handleSubmit}>
-          {props.columns
+          {/* {props.columns
             .filter((item) => item.field !== "id" && item.field !== "img")
             .map((column) => (
               <div className="item">
                 <label>{column.headerName}</label>
                 <input type={column.type} placeholder={column.field} />
               </div>
-            ))}
+            ))} */}
+          <div className="item">
+            <label>UserName</label>
+            <input type="text" placeholder="Enter user name" />
+          </div>{" "}
+          <div className="item">
+            <label>Email</label>
+            <input type="text" placeholder="Enter Email" />
+          </div>{" "}
+          <div className="item">
+            <label>Password</label>
+            <input type="text" placeholder="Enter Password" />
+          </div>{" "}
+          <div className="item">
+            <label>Password Confirm</label>
+            <input type="text" placeholder="Enter Password Confirm" />
+          </div>
+          <div className="item">
+            <label>Phone</label>
+            <input type="text" placeholder="Enter phone" />
+          </div>{" "}
+          <div className="item">
+            <label>Role</label>
+            <input type="text" placeholder="Enter user name" />
+          </div>
           <button>Send</button>
         </form>
       </div>
