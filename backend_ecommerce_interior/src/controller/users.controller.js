@@ -57,8 +57,6 @@ export const getUser = async (req, res) => {
 // GET USER BY ID
 export const getUserById = async (req, res) => {
   try {
-    console.log("check req", req.params.id);
-
     const user = await USER.findOne({ _id: req.params.id }).select(
       "phone address email username -_id"
     );
