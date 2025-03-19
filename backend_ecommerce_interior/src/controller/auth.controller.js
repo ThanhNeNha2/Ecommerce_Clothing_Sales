@@ -8,7 +8,7 @@ import { sendEmail } from "../service/nodeMailer";
 export const Register = async (req, res) => {
   try {
     const { password } = req.body;
-    console.log("check dau vao cua email ", req.body.email);
+    console.log("check dau vao cua req ", req.body);
     const checkEmail = await USER.findOne({ email: req.body.email });
     if (checkEmail) {
       return res.status(500).json({
@@ -34,8 +34,8 @@ export const Register = async (req, res) => {
   } catch (error) {
     console.log("Error", error);
     return res.status(500).json({
-      message: "Tạo tài khoản không thành công ",
-      idCode: 1,
+      message: "Loi server",
+      idCode: 2,
     });
   }
 };
@@ -69,7 +69,7 @@ export const Login = async (req, res) => {
     console.log("Error", error);
     return res.status(500).json({
       message: "Loi server",
-      idCode: 1,
+      idCode: 2,
     });
   }
 };
@@ -92,10 +92,10 @@ export const activateAccount = async (req, res) => {
         );
         return res.status(200).json({
           message: "Kich hoat thanh cong ",
-          idCode: 1,
+          idCode: 0,
         });
       } else {
-        return res.status(500).json({
+        return res.status(400).json({
           message: "Mã code cua nguoi dung không hợp lệ hoặc đã hết hạn   ",
           idCode: 1,
         });
@@ -105,7 +105,38 @@ export const activateAccount = async (req, res) => {
     console.log("Error", error);
     return res.status(500).json({
       message: "Loi server",
-      idCode: 1,
+      idCode: 2,
+    });
+  }
+};
+
+// Resend
+export const reSendKey = async (req, res) => {
+  try {
+    const checkUser = await USER.findOne({ _id: req.params.id });
+    if (checkUser) {
+      const codeId = uuidv4();
+      const user = await USER.findByIdAndUpdate(req.params.id, {
+        codeExpired: dayjs().add(5, "minutes"),
+        codeId: codeId,
+      });
+      await sendEmail(user.username, codeId, user.email);
+      return res.status(200).json({
+        message: "OK",
+        idCode: 0,
+        user,
+      });
+    } else {
+      return res.status(500).json({
+        message: "Tai khoan không hợp lệ ",
+        idCode: 1,
+      });
+    }
+  } catch (error) {
+    console.log("Error", error);
+    return res.status(500).json({
+      message: "Loi server",
+      idCode: 2,
     });
   }
 };
@@ -136,7 +167,7 @@ export const resetKeyActivateAccount = async (req, res) => {
     console.log("Error", error);
     return res.status(500).json({
       message: "Loi server",
-      idCode: 1,
+      idCode: 2,
     });
   }
 };
