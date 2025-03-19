@@ -9,11 +9,9 @@ import Login from "./pages/login/Login";
 import "./styles/global.scss";
 import User from "./pages/user/User";
 import Product from "./pages/product/Product";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Posts from "./pages/posts/Posts";
+import toast, { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +19,7 @@ function App() {
   const Layout = () => {
     return (
       <div className="main">
+        <Toaster position="top-right" />
         <Navbar />
         <div className="container">
           <div className="menuContainer">
@@ -55,7 +54,11 @@ function App() {
           element: <Products />,
         },
         {
-          path: "/users/:id",
+          path: "/posts",
+          element: <Posts />,
+        },
+        {
+          path: "/user/:id",
           element: <User />,
         },
         {

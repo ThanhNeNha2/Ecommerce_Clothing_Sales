@@ -1,10 +1,9 @@
-import {
-  DataGrid,
-  GridColDef,
-  GridToolbar,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
 import "./dataTable.scss";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiCustom } from "../../custom/customApi";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
@@ -14,44 +13,54 @@ type Props = {
 };
 
 const DataTable = (props: Props) => {
-
   // TEST THE API
 
-  // const queryClient = useQueryClient();
-  // // const mutation = useMutation({
-  // //   mutationFn: (id: number) => {
-  // //     return fetch(`http://localhost:8800/api/${props.slug}/${id}`, {
-  // //       method: "delete",
-  // //     });
-  // //   },
-  // //   onSuccess: ()=>{
-  // //     queryClient.invalidateQueries([`all${props.slug}`]);
-  // //   }
-  // // });
+  const [showModal, setShowModal] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState("");
+  const [getIdDelete, setGetIdDelete] = useState("");
 
-  const handleDelete = (id: number) => {
-    //delete the item
-    // mutation.mutate(id)
+  const handleDelete = (email: string, id: string) => {
+    setSelectedEmail(email);
+    setGetIdDelete(id);
+    setShowModal(true);
   };
 
-  const actionColumn: GridColDef = {
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (id: string) => {
+      return apiCustom.delete(`/${props.slug}/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries([`all${props.slug}`]);
+    },
+  });
+  const handleConfirm = (id: string) => {
+    mutation.mutate(id);
+    setShowModal(false);
+  };
+  const actionColumn = {
     field: "action",
     headerName: "Action",
-    width: 200,
-    renderCell: (params) => {
+    width: 100,
+    renderCell: (params: any) => {
       return (
         <div className="action">
           <Link to={`/${props.slug}/${params.row.id}`}>
             <img src="/view.svg" alt="" />
           </Link>
-          <div className="delete" onClick={() => handleDelete(params.row.id)}>
+          <div
+            className="delete"
+            onClick={() => handleDelete(params.row.email, params.row.id)}
+          >
             <img src="/delete.svg" alt="" />
           </div>
         </div>
       );
     },
   };
-
   return (
     <div className="dataTable">
       <DataGrid
@@ -78,7 +87,31 @@ const DataTable = (props: Props) => {
         disableColumnFilter
         disableDensitySelector
         disableColumnSelector
-      />
+      />{" "}
+      {showModal && (
+        <div className="modalOverlay">
+          <div className="contentP">
+            <h2>Delete User</h2>
+            <hr />
+            <p>
+              Bạn chắc chắn muốn xóa người dùng với gmail là: {selectedEmail}
+            </p>
+            <div className="btnP">
+              <button className="pCancel" onClick={handleCloseModal}>
+                Cancel
+              </button>
+              <button
+                className="pConfirm"
+                onClick={() => {
+                  handleConfirm(getIdDelete);
+                }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
