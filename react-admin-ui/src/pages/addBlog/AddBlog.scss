@@ -1,0 +1,76 @@
+@import "../../styles/variables.scss";
+.addblog {
+  .contentP {
+    background-color: white;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    justify-content: space-between;
+    border-radius: 4px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    color: black;
+    .managerInputP {
+      margin-top: 20px;
+      flex-direction: column;
+      display: flex;
+      flex-wrap: wrap;
+      .item {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 20px;
+        margin-bottom: 20px;
+        input {
+          padding: 10px;
+          background-color: transparent;
+
+          outline: none;
+          border: 1px solid $soft-color;
+          border-radius: 3px;
+        }
+        textarea {
+          height: 100px;
+          padding: 10px 7px;
+        }
+      }
+    }
+    h2 {
+      display: flex;
+      justify-content: center;
+      padding-top: 20px;
+    }
+    p {
+      padding: 0 20px;
+    }
+    .btnP {
+      display: flex;
+      justify-content: end;
+      gap: 12px;
+      padding: 15px 20px;
+      button {
+        padding: 9px 17px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.8;
+      }
+      .pCancel {
+        background-color: rgb(83, 158, 83);
+        color: white;
+        font-weight: 600;
+      }
+
+      .pConfirm {
+        background-color: rgb(79, 173, 16);
+        color: white;
+        font-weight: 600;
+      }
+    }
+  }
+}
+.mce-content-body {
+  direction: ltr !important; /* Buộc text từ trái sang phải */
+}

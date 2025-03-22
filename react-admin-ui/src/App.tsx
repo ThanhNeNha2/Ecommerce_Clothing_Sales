@@ -10,8 +10,10 @@ import "./styles/global.scss";
 import User from "./pages/user/User";
 import Product from "./pages/product/Product";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Posts from "./pages/posts/Posts";
+import Posts from "./pages/blogs/Blogs";
 import toast, { Toaster } from "react-hot-toast";
+import AddBlog from "./pages/addBlog/AddBlog";
+import BlogUpdate from "./pages/blogUpdate/BlogUpdate";
 
 const queryClient = new QueryClient();
 
@@ -54,8 +56,16 @@ function App() {
           element: <Products />,
         },
         {
-          path: "/posts",
+          path: "/blogs",
           element: <Posts />,
+        },
+        {
+          path: "/blog/:id",
+          element: <BlogUpdate />,
+        },
+        {
+          path: "/addBlog",
+          element: <AddBlog />,
         },
         {
           path: "/user/:id",

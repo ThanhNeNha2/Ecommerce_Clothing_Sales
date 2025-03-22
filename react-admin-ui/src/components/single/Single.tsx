@@ -27,8 +27,6 @@ type Props = {
 };
 
 const Single = (props: Props) => {
-  console.log(" check props", props.path);
-
   const [isEditing, setIsEditing] = useState(false);
   const [info, setInfo] = useState(props.info); // Lưu props.info vào state
 

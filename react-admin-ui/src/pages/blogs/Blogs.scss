@@ -1,4 +1,6 @@
-.users {
+@import "../../styles/variables.scss";
+
+.posts {
   .info {
     display: flex;
     align-items: center;
@@ -23,9 +25,9 @@
     z-index: 1000;
   }
   .contentP {
-    width: 500px;
-    background: rgb(59, 59, 59);
-    height: 170px;
+    width: 800px;
+    background-color: $main-bg;
+    height: auto;
     display: flex;
     flex-direction: column;
     gap: 7px;
@@ -78,4 +80,29 @@
       transform: scale(1);
     }
   }
+  .managerInputP {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    .item {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 48%;
+      padding: 0 20px;
+      margin-bottom: 20px;
+      input {
+        padding: 10px;
+        background-color: transparent;
+        color: white;
+        outline: none;
+        border: 1px solid $soft-color;
+        border-radius: 3px;
+      }
+    }
+  }
+}
+
+.imgPost {
+  border-radius: 5px !important;
 }
