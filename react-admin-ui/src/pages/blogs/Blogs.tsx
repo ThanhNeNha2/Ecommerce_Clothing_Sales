@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiCustom } from "../../custom/customApi";
 
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 90 },
   {
@@ -43,13 +44,16 @@ const columns: GridColDef[] = [
 ];
 const Posts = () => {
   const { isLoading, data } = useQuery({
-    queryKey: ["allBlog"],
+    queryKey: ["allblog"],
     queryFn: () => apiCustom.get("/blog").then((res) => res.data),
   });
   console.log("check data ", data);
 
   const userRows = data?.blogs || [];
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="posts">
       <div className="info">
@@ -59,7 +63,12 @@ const Posts = () => {
           <button>Add New Post</button>
         </Link>
       </div>
-      <DataTable slug="user" columns={columns} rows={userRows} />
+      <DataTable
+        slug="blog"
+        columns={columns}
+        rows={userRows}
+        infoSearch="titleBlog"
+      />
     </div>
   );
 };

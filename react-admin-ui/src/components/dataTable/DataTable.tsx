@@ -10,17 +10,20 @@ type Props = {
   columns: GridColDef[];
   rows: object[];
   slug: string;
+  infoSearch: string;
 };
 
 const DataTable = (props: Props) => {
+  console.log("check ", props);
+
   // TEST THE API
 
   const [showModal, setShowModal] = useState(false);
-  const [selectedEmail, setSelectedEmail] = useState("");
+  const [selectedInfo, setSelectedInfo] = useState("");
   const [getIdDelete, setGetIdDelete] = useState("");
 
-  const handleDelete = (email: string, id: string) => {
-    setSelectedEmail(email);
+  const handleDelete = (info: string, id: string) => {
+    setSelectedInfo(info);
     setGetIdDelete(id);
     setShowModal(true);
   };
@@ -41,11 +44,15 @@ const DataTable = (props: Props) => {
     mutation.mutate(id);
     setShowModal(false);
   };
+
   const actionColumn = {
     field: "action",
     headerName: "Action",
     width: 100,
     renderCell: (params: any) => {
+      // thong tin search
+      const search = props.infoSearch;
+
       return (
         <div className="action">
           <Link to={`/${props.slug}/${params.row.id}`}>
@@ -53,7 +60,7 @@ const DataTable = (props: Props) => {
           </Link>
           <div
             className="delete"
-            onClick={() => handleDelete(params.row.email, params.row.id)}
+            onClick={() => handleDelete(params.row[search], params.row.id)}
           >
             <img src="/delete.svg" alt="" />
           </div>
@@ -94,7 +101,8 @@ const DataTable = (props: Props) => {
             <h2>Delete User</h2>
             <hr />
             <p>
-              Bạn chắc chắn muốn xóa người dùng với gmail là: {selectedEmail}
+              Bạn chắc chắn muốn xóa {props.slug} với {props.infoSearch} là:{" "}
+              {selectedInfo}
             </p>
             <div className="btnP">
               <button className="pCancel" onClick={handleCloseModal}>

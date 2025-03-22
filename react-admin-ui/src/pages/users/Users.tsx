@@ -81,7 +81,12 @@ const Users = () => {
         <h1>Users</h1>
         <button onClick={() => setOpen(true)}>Add New User</button>
       </div>
-      <DataTable slug="user" columns={columns} rows={userRows} />
+      <DataTable
+        slug="user"
+        columns={columns}
+        rows={userRows}
+        infoSearch="email"
+      />
       {/* TEST THE API */}
 
       {/* {isLoading ? (
