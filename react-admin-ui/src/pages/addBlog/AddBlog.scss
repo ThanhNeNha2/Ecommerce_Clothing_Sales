@@ -24,13 +24,14 @@
         input {
           padding: 10px;
           background-color: transparent;
-          color: white;
+
           outline: none;
           border: 1px solid $soft-color;
           border-radius: 3px;
         }
         textarea {
           height: 100px;
+          padding: 10px 7px;
         }
       }
     }
@@ -63,7 +64,7 @@
       }
 
       .pConfirm {
-        background-color: rgb(173, 16, 16);
+        background-color: rgb(79, 173, 16);
         color: white;
         font-weight: 600;
       }

@@ -10,7 +10,7 @@ import "./styles/global.scss";
 import User from "./pages/user/User";
 import Product from "./pages/product/Product";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Posts from "./pages/posts/Blogs";
+import Posts from "./pages/blogs/Blogs";
 import toast, { Toaster } from "react-hot-toast";
 import AddBlog from "./pages/addBlog/AddBlog";
 
