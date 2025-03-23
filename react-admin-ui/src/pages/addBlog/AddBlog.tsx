@@ -57,8 +57,7 @@ const AddBlog = () => {
       toast.error("⚠️ Vui lòng điền đầy đủ thông tin tất cả các trường!");
       return;
     }
-    const url = await upload(file);
-    console.log("check url", url);
+    const url = await upload(file, "blog");
 
     // Nếu đủ thông tin thì gọi mutation
     mutation.mutate({ ...listInfoBlog, imgMainBlog: url });

@@ -22,8 +22,6 @@ const Posts = () => {
       headerName: "ImagePost",
       width: 100,
       renderCell: (params) => {
-        console.log("check thong tin ", params);
-
         return (
           <img
             className="imgPost"

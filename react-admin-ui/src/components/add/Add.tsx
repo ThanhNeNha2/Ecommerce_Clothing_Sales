@@ -5,6 +5,7 @@ import { apiCustom } from "../../custom/customApi";
 import { useState } from "react";
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast, { Toaster } from "react-hot-toast";
+import upload from "../../utils/upload";
 type Props = {
   slug: string;
   columns: GridColDef[];
@@ -12,6 +13,8 @@ type Props = {
 };
 
 const Add = (props: Props) => {
+  const [file, setFile] = useState<File | null>(null);
+
   const [infoCreate, setInfoCreate] = useState({
     username: "",
     email: "",
@@ -20,6 +23,7 @@ const Add = (props: Props) => {
     phone: "",
     address: "",
     role: "USER",
+    image: "",
   });
   console.log("check thông tin ", infoCreate);
 
@@ -39,12 +43,15 @@ const Add = (props: Props) => {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Kiểm tra có trường nào bị bỏ trống không
+    // Kiểm tra có trường nào bị bỏ trống không (trừ trường "image")
     for (const key in infoCreate) {
-      if (infoCreate[key as keyof typeof infoCreate].trim() === "") {
+      if (
+        key !== "image" &&
+        infoCreate[key as keyof typeof infoCreate].trim() === ""
+      ) {
         toast.error(`Trường ${key} không được để trống!`);
         return;
       }
@@ -71,12 +78,10 @@ const Add = (props: Props) => {
 
     // Nếu tất cả hợp lệ, loại bỏ passwordConfirm và gửi dữ liệu
     const { passwordConfirm, ...infoCreateChoose } = infoCreate;
-    console.log("Thông tin hợp lệ gửi lên server:", infoCreateChoose);
-
     toast.success("Đăng ký thành công!");
     props.setOpen(false);
-
-    mutation.mutate(infoCreateChoose); // Gửi dữ liệu lên server
+    const url = await upload(file, "user");
+    mutation.mutate({ ...infoCreateChoose, image: url }); // Gửi dữ liệu lên server
   };
 
   return (
@@ -87,14 +92,17 @@ const Add = (props: Props) => {
         </span>
         <h1>Add new {props.slug}</h1>
         <form onSubmit={handleSubmit}>
-          {/* {props.columns
-            .filter((item) => item.field !== "id" && item.field !== "img")
-            .map((column) => (
-              <div className="item">
-                <label>{column.headerName}</label>
-                <input type={column.type} placeholder={column.field} />
-              </div>
-            ))} */}
+          <div className="item">
+            <label>Image Blog</label>
+            <input
+              type="file"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setFile(e.target.files[0]);
+                }
+              }}
+            />
+          </div>{" "}
           <div className="item">
             <label>UserName</label>
             <input
