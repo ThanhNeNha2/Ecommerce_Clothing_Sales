@@ -6,13 +6,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiCustom } from "../../custom/customApi";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import upload from "../../utils/upload";
 const BlogUpdate = () => {
   // quan ly thong tin nhap vao
   const [listInfoBlog, setListInfoBlog] = useState({
     titleBlog: "",
+    imgMainBlog: "",
     descripShort: "",
     description: "",
   });
+  const [file, setFile] = useState<File | null>(null);
+
   const [initValue, setInitValue] = useState("");
   // Lấy thông tin của blog ra để in ra
   const { id } = useParams();
@@ -28,6 +32,7 @@ const BlogUpdate = () => {
         titleBlog: data?.blog?.titleBlog || "",
         descripShort: data?.blog?.descripShort || "",
         description: data?.blog?.description || "",
+        imgMainBlog: data?.blog?.imgMainBlog || "",
       });
       setInitValue(data?.blog?.description || ""); // ✅ Chỉ set 1 lần
     }
@@ -70,7 +75,7 @@ const BlogUpdate = () => {
   });
 
   // XÁC NHẬN UPDATE BLOG
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const { titleBlog, descripShort, description } = listInfoBlog;
 
     // Kiểm tra nếu thiếu thông tin
@@ -78,8 +83,10 @@ const BlogUpdate = () => {
       toast.error("⚠️ Vui lòng điền đầy đủ thông tin tất cả các trường!");
       return;
     }
+    const url = await upload(file, "blog");
+
     // Nếu đủ thông tin thì gọi mutation
-    mutation.mutate(listInfoBlog);
+    mutation.mutate({ ...listInfoBlog, imgMainBlog: url });
   };
   return (
     <div className="addblog">
@@ -87,6 +94,27 @@ const BlogUpdate = () => {
         <h2>Update Blog</h2>
         <hr />
         <div className="managerInputP">
+          <div className="fileUpdate">
+            <div
+              className="item"
+              style={{
+                color: "black",
+              }}
+            >
+              <label>Image Blog</label>
+              <input
+                type="file"
+                //  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                //    if (e.target.files && e.target.files.length > 0) {
+                //      setFile(e.target.files[0]);
+                //    }
+                //  }}
+              />
+            </div>
+            <div className="manageImg">
+              <img src={listInfoBlog.imgMainBlog} alt="" />
+            </div>
+          </div>
           <div
             className="item"
             style={{

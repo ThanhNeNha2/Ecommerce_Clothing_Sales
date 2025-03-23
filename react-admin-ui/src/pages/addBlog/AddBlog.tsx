@@ -6,12 +6,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiCustom } from "../../custom/customApi";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import upload from "../../utils/upload";
+// import upload from "../../utils/upload.js";
 const AddBlog = () => {
+  const [file, setFile] = useState<File | null>(null);
   const editorRef = useRef<any>(null);
 
   // quan ly thong tin nhap vao
   const [listInfoBlog, setListInfoBlog] = useState({
     titleBlog: "",
+    imgMainBlog: "",
     descripShort: "",
     description: "",
   });
@@ -29,7 +33,6 @@ const AddBlog = () => {
   // API CREATE
 
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (info: {}) => {
@@ -47,17 +50,17 @@ const AddBlog = () => {
   });
 
   // xác nhận tạo blog mới
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const { titleBlog, descripShort, description } = listInfoBlog;
-
     // Kiểm tra nếu thiếu thông tin
     if (!titleBlog.trim() || !descripShort.trim() || !description.trim()) {
       toast.error("⚠️ Vui lòng điền đầy đủ thông tin tất cả các trường!");
       return;
     }
+    const url = await upload(file, "blog");
 
     // Nếu đủ thông tin thì gọi mutation
-    mutation.mutate(listInfoBlog);
+    mutation.mutate({ ...listInfoBlog, imgMainBlog: url });
   };
   return (
     <div className="addblog">
@@ -65,6 +68,22 @@ const AddBlog = () => {
         <h2>Create Blog</h2>
         <hr />
         <div className="managerInputP">
+          <div
+            className="item"
+            style={{
+              color: "black",
+            }}
+          >
+            <label>Image Blog</label>
+            <input
+              type="file"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setFile(e.target.files[0]);
+                }
+              }}
+            />
+          </div>{" "}
           <div
             className="item"
             style={{
