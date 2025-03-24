@@ -13,6 +13,7 @@
     "@babel/core": "^7.26.0",
     "@babel/node": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
+    "axios": "^1.8.4",
     "backend_ecommerce_interior": "file:",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",

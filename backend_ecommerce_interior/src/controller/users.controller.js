@@ -58,7 +58,7 @@ export const getUser = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const user = await USER.findOne({ _id: req.params.id }).select(
-      "phone address email username -_id"
+      "-_id -password"
     );
 
     if (!user) {

@@ -1,4 +1,5 @@
 import BLOG from "../models/Blog.model";
+import deleteImage from "../utils/delete";
 
 //  CREATE USER
 export const createBlog = async (req, res) => {
@@ -22,11 +23,16 @@ export const createBlog = async (req, res) => {
 export const getAllBlog = async (req, res) => {
   try {
     const getAllBlog = await BLOG.find({}).lean();
+    const blogs = getAllBlog.map((user) => ({
+      ...user,
+      id: user._id,
+      _id: undefined, // Loại bỏ _id
+    }));
 
     return res.status(200).json({
       message: "OK",
       idCode: 0,
-      getAllBlog, // Trả về danh sách đã thay đổi
+      blogs, // Trả về danh sách đã thay đổi
     });
   } catch (error) {
     console.log("Error", error);
@@ -72,6 +78,7 @@ export const updateUser = async (req, res) => {
         idCode: 1,
       });
     }
+
     const updateBlog = await BLOG.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -92,27 +99,30 @@ export const updateUser = async (req, res) => {
   }
 };
 
-//  DELETE BLOG
+// DELETE BLOG
 export const deleteUser = async (req, res) => {
   try {
     const checkExitId = await BLOG.findOne({ _id: req.params.id });
     if (!checkExitId) {
-      return res.status(200).json({
-        message: "Blog khong ton tai ",
+      return res.status(404).json({
+        message: "Blog không tồn tại",
         idCode: 1,
       });
     }
-    await BLOG.findByIdAndDelete(req.params.id);
+    // Gọi hàm xóa ảnh trên Cloudinary
+    // const kq = await deleteImage(checkExitId.public_id_image);
 
+    // Nếu xóa thành công thì xóa Blog
+
+    await BLOG.findByIdAndDelete(req.params.id);
     return res.status(200).json({
-      message: "OK",
+      message: "Xóa blog thành công",
       idCode: 0,
     });
   } catch (error) {
-    console.log("Error", error);
-
+    console.log("⚠️ Error:", error);
     return res.status(500).json({
-      message: "Delete blog không thành công ",
+      message: "Delete blog không thành công",
       idCode: 1,
     });
   }

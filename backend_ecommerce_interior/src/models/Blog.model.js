@@ -17,6 +17,10 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    public_id_image: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );
