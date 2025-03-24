@@ -55,7 +55,7 @@ const Header = () => {
   // };
   const infoUser = null;
   return (
-    <div className=" flex justify-between items-center h-[95px] 2xl:h-[60px] bg-gray-50 px-14 fixed z-50 w-full ">
+    <div className=" flex justify-between items-center h-[95px] 2xl:h-[60px] bg-gray-50 px-14 fixed z-40 w-full ">
       {/* item 1  */}
       <Link to={"/"}>
         <div className=" flex items-center gap-1 ">

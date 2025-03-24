@@ -47,37 +47,35 @@ const Blog = () => {
           {/* bai 1  */}
 
           {currentItems?.map((item, index) => (
-            <div
-              key={index}
-              className="flex  flex-col gap-3  w-full cursor-pointer group "
-            >
-              {/* anh */}
-              <div className="flex justify-center bg-red-50 w-full rounded">
-                <img
-                  src={item.listImgProductBlog}
-                  alt=""
-                  className=" w-full h-[400px] rounded"
-                />
-              </div>
-              {/*  */}
-              <div className="flex gap-5 text-sm">
-                <div className="flex items-center gap-1 text-gray-500">
-                  <FaUser /> Admin
+            <Link key={index} to={"/DetailBlog/123"}>
+              <div className="flex  flex-col gap-3  w-full cursor-pointer group ">
+                {/* anh */}
+                <div className="flex justify-center bg-red-50 w-full rounded">
+                  <img
+                    src={item.listImgProductBlog}
+                    alt=""
+                    className=" w-full h-[400px] rounded"
+                  />
                 </div>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <BsCalendar2DateFill /> {item.postDate}
+                {/*  */}
+                <div className="flex gap-5 text-sm">
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <FaUser /> Admin
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <BsCalendar2DateFill /> {item.postDate}
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <FaTag /> Wood
+                  </div>
                 </div>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <FaTag /> Wood
-                </div>
-              </div>
-              <h1 className="font-poppins font-semibold text-xl group-hover:text-blue-400">
-                {item.titleBlog}
-              </h1>
-              <span className="text-sm text-gray-400">
-                {item.descripShotBlog}
-              </span>
-              <Link to={"/DetailBlog/123"}>
+                <h1 className="font-poppins font-semibold text-xl group-hover:text-blue-400">
+                  {item.titleBlog}
+                </h1>
+                <span className="text-sm text-gray-400">
+                  {item.descripShotBlog}
+                </span>
+
                 <div>
                   <span
                     className="relative w-[20%] after:content-[''] after:absolute 
@@ -86,8 +84,8 @@ const Blog = () => {
                     Read more
                   </span>
                 </div>
-              </Link>
-            </div>
+              </div>
+            </Link>
           ))}
           <div className=" flex justify-center">
             {" "}
