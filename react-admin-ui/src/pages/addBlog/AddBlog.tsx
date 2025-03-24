@@ -31,7 +31,6 @@ const AddBlog = () => {
   };
 
   // API CREATE
-
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const mutation = useMutation({
