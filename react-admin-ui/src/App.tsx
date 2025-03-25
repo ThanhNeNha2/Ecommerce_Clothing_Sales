@@ -14,6 +14,7 @@ import Posts from "./pages/blogs/Blogs";
 import toast, { Toaster } from "react-hot-toast";
 import AddBlog from "./pages/addBlog/AddBlog";
 import BlogUpdate from "./pages/blogUpdate/BlogUpdate";
+import Messages from "./pages/Messages/Messages";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,10 @@ function App() {
         {
           path: "/blogs",
           element: <Posts />,
+        },
+        {
+          path: "/messages",
+          element: <Messages />,
         },
         {
           path: "/blog/:id",
