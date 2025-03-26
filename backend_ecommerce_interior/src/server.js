@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import users from "./routes/users.router";
 import auth from "./routes/auth.router";
 import blog from "./routes/blogs.router";
+import chat from "./routes/chat.router";
+import mess from "./routes/messages.router";
 
 var cors = require("cors");
 import bodyParser from "body-parser";
@@ -27,6 +29,9 @@ app.use(cors());
 app.use("/api", users);
 app.use("/api", blog);
 app.use("/api", auth);
+app.use("/api", mess);
+app.use("/api", chat);
+
 // chuyen thong tin user qua bên nguoi dung chuyen doi nguoi qua bên phuong thuc thu 2 của trinh duyet
 app.listen(port, () =>
   console.log("> Server is up and running on port : " + port)
