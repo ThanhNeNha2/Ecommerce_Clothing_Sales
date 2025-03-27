@@ -7,10 +7,9 @@ const {
 
 const router = require("express").Router();
 
-router.get("/chat", getAllChat);
-router.get("/chat/:id", getChatById);
-
-router.post("/chat", createChat);
-router.post("/read/:id", readChat);
+router.get("/chats/:userId", getAllChat);
+router.get("/chat/:chatId", getChatById);
+router.get("/chat/:userId", getAllChat);
+router.post("/read/:chatId", readChat);
 
 module.exports = router;

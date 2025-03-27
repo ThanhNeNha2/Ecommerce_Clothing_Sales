@@ -5,10 +5,12 @@ const messageSchema = new mongoose.Schema(
     chatId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Chat",
-    }, // Mã cuộc trò chuyện
+      required: true,
+    },
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     text: {
       type: String,
@@ -16,7 +18,7 @@ const messageSchema = new mongoose.Schema(
     },
     isRead: {
       type: Boolean,
-      default: false,
+      default: false, // Mặc định là chưa đọc
     },
   },
   { timestamps: true }
