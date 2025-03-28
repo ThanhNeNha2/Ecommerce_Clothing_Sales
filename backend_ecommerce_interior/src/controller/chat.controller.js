@@ -2,37 +2,12 @@ import CHAT from "../models/Chat.model";
 import MESSAGE from "../models/Message.model.js";
 
 export const getAllChat = async (req, res) => {
-  const { userId } = req.params; // Lấy userId từ params
-
   try {
-    // Lấy tất cả các cuộc trò chuyện mà user tham gia
-    const chats = await CHAT.find({ members: userId })
-      .populate("members", "username email image") // Lấy thông tin người dùng
-      .sort({ updatedAt: -1 }); // Sắp xếp theo thời gian cập nhật mới nhất
-
-    // Lấy số lượng tin nhắn chưa đọc cho từng chat
-    const chatsWithUnreadCount = await Promise.all(
-      chats.map(async (chat) => {
-        const unreadCount = await Message.countDocuments({
-          chatId: chat._id,
-          senderId: { $ne: userId }, // Tin nhắn từ người khác
-          isRead: false,
-        });
-
-        return {
-          _id: chat._id,
-          members: chat.members,
-          lastMessage: chat.lastMessage,
-          unreadCount,
-          updatedAt: chat.updatedAt,
-        };
-      })
-    );
-
+    const chat = await CHAT.find();
     return res.status(200).json({
       message: "Lấy danh sách chat thành công",
       idCode: 0,
-      data: chatsWithUnreadCount,
+      chat,
     });
   } catch (error) {
     console.log("Error:", error);
