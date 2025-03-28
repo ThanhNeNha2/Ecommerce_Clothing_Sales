@@ -15,6 +15,7 @@ import toast, { Toaster } from "react-hot-toast";
 import AddBlog from "./pages/addBlog/AddBlog";
 import BlogUpdate from "./pages/blogUpdate/BlogUpdate";
 import Messages from "./pages/Messages/Messages";
+import PrivateRoute from "./utils/PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -41,53 +42,62 @@ function App() {
 
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: <Layout />,
-      children: [
-        {
-          path: "/",
-          element: <Home />,
-        },
-        {
-          path: "/users",
-          element: <Users />,
-        },
-        {
-          path: "/products",
-          element: <Products />,
-        },
-        {
-          path: "/blogs",
-          element: <Posts />,
-        },
-        {
-          path: "/messages",
-          element: <Messages />,
-        },
-        {
-          path: "/blog/:id",
-          element: <BlogUpdate />,
-        },
-        {
-          path: "/addBlog",
-          element: <AddBlog />,
-        },
-        {
-          path: "/user/:id",
-          element: <User />,
-        },
-        {
-          path: "/products/:id",
-          element: <Product />,
-        },
-      ],
-    },
-    {
       path: "/login",
       element: <Login />,
     },
+    {
+      path: "/register",
+      element: <Login />,
+    },
+    {
+      path: "/",
+      element: <PrivateRoute />, // Kiểm tra đăng nhập
+      children: [
+        {
+          path: "/",
+          element: <Layout />, // Layout chứa các thành phần chính
+          children: [
+            {
+              path: "/",
+              element: <Home />,
+            },
+            {
+              path: "/users",
+              element: <Users />,
+            },
+            {
+              path: "/products",
+              element: <Products />,
+            },
+            {
+              path: "/blogs",
+              element: <Posts />,
+            },
+            {
+              path: "/messages",
+              element: <Messages />,
+            },
+            {
+              path: "/blog/:id",
+              element: <BlogUpdate />,
+            },
+            {
+              path: "/addBlog",
+              element: <AddBlog />,
+            },
+            {
+              path: "/user/:id",
+              element: <User />,
+            },
+            {
+              path: "/products/:id",
+              element: <Product />,
+            },
+          ],
+        },
+      ],
+    },
   ]);
-
   return <RouterProvider router={router} />;
 }
 
