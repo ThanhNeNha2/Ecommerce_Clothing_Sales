@@ -9,6 +9,7 @@
   background: rgb(230, 230, 230);
   padding: 10px;
   border-radius: 5px;
+
   .MLeft {
     width: 30%;
     background: white;
@@ -83,6 +84,15 @@
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         position: relative;
+        &:hover {
+          cursor: pointer;
+          background-color: rgb(190, 190, 190);
+        }
+
+        /* ✅ Khi click sẽ đổi màu */
+        &.active {
+          background-color: rgb(207, 207, 207);
+        }
       }
 
       &__avatar {
@@ -163,7 +173,7 @@
     padding: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 160px);
     display: flex;
     flex-direction: column;
     .chat-date {
