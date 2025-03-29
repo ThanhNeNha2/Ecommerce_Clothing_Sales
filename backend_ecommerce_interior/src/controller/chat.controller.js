@@ -24,11 +24,13 @@ export const getChatById = async (req, res) => {
   const { chatId } = req.params; // Lấy chatId từ params
 
   try {
-    // Lấy thông tin của cuộc trò chuyện
-    const chat = await CHAT.findById(chatId).populate(
-      "members",
-      "username email image"
-    );
+    // 1. Lấy thông tin của cuộc trò chuyện và reset unreadCount về 0
+    const chat = await CHAT.findByIdAndUpdate(
+      chatId,
+      { unreadCount: 0 }, // Đặt lại về 0
+      { new: true } // Trả về bản ghi đã cập nhật
+    ).populate("members", "username email image");
+
     if (!chat) {
       return res.status(404).json({
         message: "Không tìm thấy cuộc trò chuyện",
@@ -36,7 +38,7 @@ export const getChatById = async (req, res) => {
       });
     }
 
-    // Lấy danh sách tin nhắn liên quan
+    // 2. Lấy danh sách tin nhắn liên quan
     const messages = await MESSAGE.find({ chatId }).sort({ createdAt: 1 }); // Sắp xếp theo thời gian tăng dần
 
     return res.status(200).json({
@@ -92,21 +94,6 @@ export const createChat = async (req, res) => {
       message: "Tạo chat không thành công",
       idCode: 1,
       error: error.message,
-    });
-  }
-};
-export const readChat = async (req, res) => {
-  try {
-    return res.status(200).json({
-      message: "OK",
-      idCode: 0,
-    });
-  } catch (error) {
-    console.log("Error", error);
-
-    return res.status(500).json({
-      message: "Truy cap danh sach CHAT khong thanh cong",
-      idCode: 1,
     });
   }
 };

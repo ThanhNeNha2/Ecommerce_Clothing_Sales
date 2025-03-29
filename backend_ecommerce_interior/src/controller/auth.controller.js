@@ -6,6 +6,8 @@ import { sendEmail } from "../service/nodeMailer";
 
 //  REGISTER
 export const Register = async (req, res) => {
+  console.log("  req.body", req.body);
+
   try {
     const { password } = req.body;
     console.log("check dau vao cua req ", req.body);
@@ -48,19 +50,24 @@ export const Login = async (req, res) => {
     const checkEmail = await USER.findOne({ email: req.body.email });
     if (checkEmail) {
       const checkPassword = bcrypt.compareSync(password, checkEmail.password);
+
       if (checkPassword) {
+        // Loại bỏ password khỏi user
+        const { password, ...userWithoutPassword } = checkEmail._doc;
+
         return res.status(200).json({
           message: "OK",
           idCode: 0,
+          user: userWithoutPassword,
         });
       } else {
-        return res.status(500).json({
+        return res.status(401).json({
           message: "Email hoặc mật khẩu không chính xác",
           idCode: 1,
         });
       }
     } else {
-      return res.status(500).json({
+      return res.status(401).json({
         message: "Email hoặc mật khẩu không chính xác",
         idCode: 1,
       });
@@ -68,7 +75,7 @@ export const Login = async (req, res) => {
   } catch (error) {
     console.log("Error", error);
     return res.status(500).json({
-      message: "Loi server",
+      message: "Lỗi server",
       idCode: 2,
     });
   }
