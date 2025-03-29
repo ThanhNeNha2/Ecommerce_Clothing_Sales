@@ -30,7 +30,7 @@ const upload = async (file: any, value: string) => {
       throw new Error("Upload failed: Missing secure_url or public_id");
     }
 
-    return { public_id_image: public_id, url: secure_url };
+    return secure_url;
   } catch (err) {
     console.error("Error uploading file:", err);
   }

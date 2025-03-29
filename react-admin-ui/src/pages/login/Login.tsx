@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Login.scss";
 import { apiCustom } from "../../custom/customApi";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
   const [isActive, setIsActive] = useState(false);
@@ -25,6 +25,11 @@ const Login = () => {
   const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
+      if (!valueLogin.email || !valueLogin.password) {
+        toast.error("Vui lòng nhập đầy đủ thông tin !");
+        return;
+      }
+
       const response = await apiCustom.post("/auth/login", valueLogin);
       toast.success("Đăng nhập thành công ");
       console.log("Login successful:", response.data);
@@ -32,6 +37,7 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(response));
     } catch (error) {
       console.error("Login failed:", error);
+      toast.error("Đăng nhập không thành công ");
     }
   };
 
@@ -40,7 +46,7 @@ const Login = () => {
     username: "",
     email: "",
     password: "",
-    pconfirmPassword: "",
+    confirmPassword: "",
   });
   const handleChangeRegister = (e: any) => {
     setValueRegister((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -50,11 +56,11 @@ const Login = () => {
   const handleRegister = async (e: any) => {
     e.preventDefault();
 
-    const { username, email, password, pconfirmPassword } = valueRegister;
+    const { username, email, password, confirmPassword } = valueRegister;
 
     // Kiểm tra input
-    if (!username || !email || !password || !pconfirmPassword) {
-      toast.error("Vui lòng điền đầy đủ thông tin!");
+    if (!username || !email || !password || !confirmPassword) {
+      toast.error("Vui lòng nhập đầy đủ thông tin !");
       return;
     }
 
@@ -66,21 +72,26 @@ const Login = () => {
     }
 
     // Kiểm tra mật khẩu
-    if (password.length < 6) {
-      toast.error("Mật khẩu phải có ít nhất 6 ký tự!");
+    if (password.length < 7) {
+      toast.error("Password ít nhất 7 ký tự !");
       return;
     }
 
     // Kiểm tra xác nhận mật khẩu
-    if (password !== pconfirmPassword) {
-      toast.error("Mật khẩu không khớp!");
+    if (password !== confirmPassword) {
+      alert(" Confirm Password không chính xác  ");
       return;
     }
-
+    // alert(" hahahha");
+    // console.log("valueRegister:", valueRegister);
     try {
-      const response = await apiCustom.post("/auth/register", valueRegister);
+      const response = await apiCustom.post("/auth/register", {
+        username,
+        email,
+        password,
+      });
       toast.success("Đăng ký thành công!"); // Thông báo đăng ký thành công
-      console.log("Register successful:", response.data);
+      console.log("Register successful:", response);
       navigate("/login"); // Chuyển về trang đăng nhập
     } catch (error: any) {
       console.error("Register failed:", error);
@@ -91,6 +102,8 @@ const Login = () => {
   };
   return (
     <div className="Login">
+      <Toaster position="top-right" />
+
       <div className={`container ${isActive ? "active" : ""}`} id="container">
         {/* Register */}
         <div className="form-container sign-up">
@@ -130,7 +143,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="Password"
-              name="email"
+              name="password"
               onChange={(e) => handleChangeRegister(e)}
             />
             <input

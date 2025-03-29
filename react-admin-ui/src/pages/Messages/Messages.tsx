@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Messages.scss";
 import { LuPencilLine } from "react-icons/lu";
 import { IoSearchSharp, IoVideocamOutline } from "react-icons/io5";
@@ -10,54 +10,13 @@ import {
   MdOutlineInsertPhoto,
   MdOutlinePhotoSizeSelectActual,
 } from "react-icons/md";
+import dayjs from "dayjs";
+
 import { FaRegFaceSmile, FaRegFaceSmileBeam } from "react-icons/fa6";
 import { FiDownload, FiSend } from "react-icons/fi";
+import { useQuery } from "@tanstack/react-query";
+import { apiCustom } from "../../custom/customApi";
 const Messages = () => {
-  const users = [
-    {
-      name: "Nurpixel",
-      message: "yes I will check out",
-      time: "8:30 pm",
-      notification: 5,
-    },
-    {
-      name: "Albert Flores",
-      message: "Typing...",
-      time: "5:05 pm",
-      notification: 3,
-    },
-    {
-      name: "Devon Lane",
-      message: "yes I will check out",
-      time: "9:05 pm",
-      notification: 1,
-    },
-    { name: "Jerome Bell", message: "yes I will check out", time: "3:05 pm" },
-    { name: "Guy Hawkins", message: "Typing...", time: "5:05 pm" },
-    { name: "Wade Warren", message: "yes I will check out", time: "4:05 pm" },
-    { name: "Esther Howard", message: "yes I will check out", time: "3:05 pm" },
-    { name: "Annette Black", message: "yes I will check out", time: "3:05 pm" },
-  ];
-  const usersChat = [
-    {
-      name: "Nurpixel",
-      message: "yes I will check out",
-      time: "8:30 pm",
-      notification: 5,
-    },
-    {
-      name: "Albert Flores",
-      message: "Typing...",
-      time: "5:05 pm",
-      notification: 3,
-    },
-    {
-      name: "Devon Lane",
-      message: "yes I will check out",
-      time: "9:05 pm",
-      notification: 1,
-    },
-  ];
   const messages = [
     {
       isSender: false,
@@ -109,7 +68,31 @@ const Messages = () => {
         "https://i.pinimg.com/736x/a3/b4/55/a3b45590b1de233e747f037283efaf3f.jpg",
     },
   ];
+  const [chats, setChats] = useState({});
+  const { isLoading, data } = useQuery({
+    queryKey: ["allChat"],
+    queryFn: () => apiCustom.get("/chat").then((res) => res.data),
+  });
 
+  // useEffect sẽ chạy khi "data" thay đổi
+  useEffect(() => {
+    if (data?.chat) {
+      // Chỉ cập nhật khi có dữ liệu
+      setChats(data.chat);
+    }
+  }, [data]);
+
+  const date = new Date(); // Lấy ngày hiện tại
+  // Sử dụng literal types thay vì string
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long", // "long" | "short" | "narrow"
+    year: "numeric", // "numeric" | "2-digit"
+    month: "long", // "long" | "short" | "narrow" | "2-digit" | "numeric"
+    day: "2-digit", // "2-digit" | "numeric"
+  };
+  // Định dạng ngày kiểu "Sunday, 25 May, 2025"
+  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(date);
+  console.log(formattedDate);
   return (
     <div className="Messages">
       {/*  */}
@@ -118,7 +101,7 @@ const Messages = () => {
         <div className="MLeftUp">
           <div className="MLeftUpContent">
             <span>Messages </span>
-            <p>Sunday, 25 May, 2025</p>
+            <p>{formattedDate}</p>
           </div>
           <div className="MLeftUpIcon">
             <LuPencilLine />
@@ -133,43 +116,57 @@ const Messages = () => {
         </div>
         {/* Mess OF User */}
         <div className="userMessage">
-          {usersChat.map((user, index) => (
-            <div key={index} className="userMessage__item">
-              <div className="userMessage__avatar">{user.name[0]}</div>
-              <div className="userMessage__details">
-                <h4>{user.name}</h4>
-                <p>{user.message}</p>
-              </div>
-              <div className="userMessage__index">
-                {" "}
-                <div className="userMessage__time">{user.time}</div>
-                {user.notification && (
-                  <div className="userMessage__notification">
-                    {user.notification}
+          {Array.isArray(chats) &&
+            chats
+              .filter((chat) => chat.unreadCount > 0) // Lọc các phần tử có unreadCount > 0
+              .map((chat, index) => (
+                <div key={index} className="userMessage__item">
+                  <div className="userMessage__avatar">
+                    <img src={chat.members[0]?.image} alt="avatar" />
                   </div>
-                )}
-              </div>
-            </div>
-          ))}
+                  <div className="userMessage__details">
+                    <h4>{chat.members[0]?.username}</h4>
+                    <p>{chat.lastMessage}</p>
+                  </div>
+                  <div className="userMessage__index">
+                    <div className="userMessage__time">
+                      {dayjs(chat.updatedAt).format("hh:mm A")}
+                    </div>
+                    <div className="userMessage__notification">
+                      {chat.unreadCount}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
           <div className="AllMess">
             <div>
               <RiMessage2Line />
             </div>
             <span>All Message</span>
           </div>
-          {users.map((user, index) => (
-            <div key={index} className="userMessage__item">
-              <div className="userMessage__avatar">{user.name[0]}</div>
-              <div className="userMessage__details">
-                <h4>{user.name}</h4>
-                <p>{user.message}</p>
-              </div>
-              <div className="userMessage__index">
-                {" "}
-                <div className="userMessage__time">{user.time}</div>
-              </div>
-            </div>
-          ))}
+          {Array.isArray(chats) &&
+            chats
+              .filter((chat) => chat.unreadCount < 1) // Lọc các phần tử có unreadCount > 0
+              .map((chat, index) => (
+                <div key={index} className="userMessage__item">
+                  <div className="userMessage__avatar">
+                    <img src={chat.members[0]?.image} alt="avatar" />
+                  </div>
+                  <div className="userMessage__details">
+                    <h4>{chat.members[0]?.username}</h4>
+                    <p>{chat.lastMessage}</p>
+                  </div>
+                  <div className="userMessage__index">
+                    <div className="userMessage__time">
+                      {dayjs(chat.updatedAt).format("hh:mm A")}
+                    </div>
+                    {/* <div className="userMessage__notification">
+                      {chat.unreadCount}
+                    </div> */}
+                  </div>
+                </div>
+              ))}
         </div>
       </div>
       {/*  */}

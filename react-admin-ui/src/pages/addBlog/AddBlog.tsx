@@ -57,16 +57,17 @@ const AddBlog = () => {
       toast.error("⚠️ Vui lòng điền đầy đủ thông tin tất cả các trường!");
       return;
     }
-    const { url, public_id_image } = (await upload(file, "blog")) as {
-      public_id_image: any;
-      url: any;
-    };
+    // const { url, public_id_image } = (await upload(file, "blog")) as {
+    //   public_id_image: any;
+    //   url: any;
+    // };
+    const url = await upload(file, "blog");
 
     // Nếu đủ thông tin thì gọi mutation
     mutation.mutate({
       ...listInfoBlog,
       imgMainBlog: url,
-      public_id_image: public_id_image,
+      // public_id_image: public_id_image,
     });
   };
   return (

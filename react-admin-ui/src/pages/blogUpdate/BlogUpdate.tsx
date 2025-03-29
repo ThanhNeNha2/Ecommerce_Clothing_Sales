@@ -86,7 +86,7 @@ const BlogUpdate = () => {
     const url = await upload(file, "blog");
 
     // Nếu đủ thông tin thì gọi mutation
-    mutation.mutate({ ...listInfoBlog, imgMainBlog: url?.url });
+    mutation.mutate({ ...listInfoBlog, imgMainBlog: url });
   };
   return (
     <div className="addblog">
