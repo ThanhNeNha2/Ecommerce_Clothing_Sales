@@ -8,17 +8,22 @@ import { MdOutlineInsertPhoto } from "react-icons/md";
 import { FaRegFaceSmile } from "react-icons/fa6";
 import { FiDownload, FiSend } from "react-icons/fi";
 import { TbPointFilled } from "react-icons/tb";
+import emojiData from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import dayjs from "dayjs";
 type ContentMessageProps = {
   chatId: string;
 };
 
 const ContentMessage = ({ chatId }: ContentMessageProps) => {
-  console.log("Check chatId: ", chatId);
-
   // ✅ 1. Khởi tạo đúng kiểu dữ liệu (Array)
   const [messagess, setMessages] = useState<any>([]);
+  const [textMess, setTextMess] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+  const handleEmojiSelect = (emoji: any) => {
+    setTextMess((prev) => prev + emoji.native);
+  };
   // ✅ 2. Lấy dữ liệu bằng useQuery
   const { isLoading, data, isError, error } = useQuery({
     queryKey: ["message", chatId], // Thêm chatId để cache theo từng phòng chat
@@ -42,6 +47,7 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
   // ✅ 5. Xử lý trạng thái loading và lỗi
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error: {(error as any)?.message}</p>;
+
   return (
     <div className="MRight">
       {/* UP */}
@@ -112,15 +118,35 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
       {/* BELOW */}
       <div className="MRightBelow">
         <div className="MRightBelowInput">
-          <input type="text" placeholder="Type a message" />
+          <input
+            type="text"
+            placeholder="Type a message"
+            value={textMess}
+            onChange={(e) => setTextMess(e.target.value)}
+          />
           <div className="MRightBelowIcon">
             <MdOutlineInsertPhoto />
-            <FaRegFaceSmile />
+            <FaRegFaceSmile
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              style={{ cursor: "pointer" }}
+            />
             <FiDownload />
           </div>
+
+          {showEmojiPicker && (
+            <div className="emoji-picker">
+              <Picker
+                data={emojiData}
+                onEmojiSelect={(emoji) =>
+                  setTextMess((prev) => prev + emoji.native)
+                } // ✅ Cập nhật input khi chọn emoji
+                theme="light"
+              />
+            </div>
+          )}
         </div>
         <div className="MRightBelowIconSend">
-          <FiSend />
+          <FiSend onClick={() => console.log(textMess)} />
         </div>
       </div>
     </div>
