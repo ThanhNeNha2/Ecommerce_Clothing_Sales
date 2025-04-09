@@ -8,6 +8,7 @@ import mess from "./routes/messages.router";
 
 var cors = require("cors");
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 8080;
@@ -26,6 +27,7 @@ app.get("/test", (req, res) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 app.use("/api", users);
 app.use("/api", blog);
 app.use("/api", auth);

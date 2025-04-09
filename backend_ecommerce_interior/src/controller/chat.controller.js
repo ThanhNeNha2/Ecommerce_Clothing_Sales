@@ -3,7 +3,7 @@ import MESSAGE from "../models/Message.model.js";
 
 export const getAllChat = async (req, res) => {
   try {
-    const chat = await CHAT.find();
+    const chat = await CHAT.find().populate("members", "username image");
     return res.status(200).json({
       message: "Lấy danh sách chat thành công",
       idCode: 0,
