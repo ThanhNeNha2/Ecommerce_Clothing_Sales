@@ -106,7 +106,8 @@ export const blog = [
   },
 ];
 
-import imgItem from "../../public/home/Mask Group (1).png";
+const imgItem =
+  "https://i.pinimg.com/736x/8c/74/90/8c749082904833964ebb89f966119888.jpg";
 export const listProducts = [
   {
     salePercentage: "-50%",

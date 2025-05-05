@@ -62,7 +62,7 @@ function App() {
   const handleClickUp = () => {
     window.scrollTo(0, 0);
   };
-  const [openMessage, setOpenMessage] = useState(true);
+  const [openMessage, setOpenMessage] = useState(false);
 
   return (
     <div className="relative">

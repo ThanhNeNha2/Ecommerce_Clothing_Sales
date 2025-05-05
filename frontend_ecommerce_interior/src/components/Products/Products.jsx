@@ -1,78 +1,72 @@
 import React from "react";
-import img1 from "../../../public/home/Mask Group (1).png";
 import { listProducts } from "../../services/fakeApi";
 import { IoHeartOutline, IoShareSocial } from "react-icons/io5";
 import { RiArrowLeftRightLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
+
 const Products = ({ value }) => {
   return (
-    <div className="flex flex-wrap justify-between px-[150px] gap-[24px] ">
+    <div className="flex flex-wrap justify-center px-6 sm:px-10 md:px-20 gap-6 py-8 bg-gray-50">
       {listProducts.slice(0, value).map((product, i) => (
         <div
           key={i}
-          className="w-[calc(25%-18px)]  h-[400px] rounded relative group"
-          style={{ background: "#F4F5F7" }}
+          className="w-full sm:w-[calc(25%-18px)] md:w-[calc(25%-24px)] h-[450px] rounded-lg shadow-md overflow-hidden bg-white transition-all duration-300 hover:shadow-xl group relative"
         >
-          <div className="h-[300px] relative">
+          <div className="h-[70%] relative">
             <img
               src={product.imgItem}
-              alt=""
-              className=" h-full w-full object-cover rounded"
+              alt={product.productName}
+              className="w-full h-full object-cover rounded-t-lg"
             />
-
             <div
-              className={`absolute top-3 right-3 w-[40px] h-[40px] ${
-                product.salePercentage !== "New" ? "bg-red-400" : "bg-green-400"
-              }  rounded-full flex justify-center items-center text-sm font-medium`}
+              className={`absolute top-4 right-4 w-10 h-10 ${
+                product.salePercentage !== "New" ? "bg-red-500" : "bg-green-500"
+              } rounded-full flex justify-center items-center text-white text-xs font-medium`}
             >
               {product.salePercentage}
             </div>
           </div>
-          <div className=" flex flex-col mt-3 px-3">
-            <span className="font-poppins text-[18px]  font-semibold">
-              rp {product.productName}
-            </span>
-            <p className="text-gray-600">Stylish cafe chair </p>
-            <div className="flex gap-2 items-center">
-              <span className="font-poppins font-semibold text-[15px] ">
+          <div className="flex flex-col p-4 h-[30%] justify-between">
+            <div>
+              <span className="font-poppins text-lg font-semibold text-gray-900">
+                {product.productName}
+              </span>
+              <p className="text-gray-600 text-sm mt-1">Stylish cafe chair</p>
+            </div>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="font-poppins font-semibold text-base text-gray-800">
                 Rp {product.salePrice}
-              </span>{" "}
-              <del className="text-[14px]  font-medium text-gray-400">
-                {" "}
+              </span>
+              <del className="text-sm font-medium text-gray-400">
                 Rp {product.originalPrice}
               </del>
             </div>
           </div>
-          <div className="absolute inset-0 bg-gray-600/70 rounded flex flex-col justify-center items-center gap-5 opacity-0 group-hover:opacity-100">
-            <div>
-              <button
-                className="bg-white py-2 px-5 font-poppins font-medium rounded hover:bg-gray-300"
-                style={{ color: "#B88E2F" }}
-              >
-                Add to cart
-              </button>{" "}
-              <Link to={"/SingleProduct"}>
-                <button
-                  className="bg-white py-2 px-5 font-poppins font-medium rounded hover:bg-gray-300"
-                  style={{ color: "#B88E2F" }}
-                >
+          <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="flex gap-3">
+              <button className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600">
+                Add to Cart
+              </button>
+              <Link to="/SingleProduct">
+                <button className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600">
                   Show Detail
                 </button>
               </Link>
             </div>
-
-            <div className="flex gap-4">
-              <div className="flex items-center gap-1 text-white hover:text-gray-600 font-poppins font-medium cursor-pointer ">
+            <div className="flex gap-6 text-white">
+              <div className="flex items-center gap-1 hover:text-gray-200 cursor-pointer">
                 <IoShareSocial />
-                share
+                <span className="font-poppins font-medium text-sm">Share</span>
               </div>
-              <div className="flex items-center gap-1 text-white hover:text-gray-600 font-poppins font-medium cursor-pointer ">
+              <div className="flex items-center gap-1 hover:text-gray-200 cursor-pointer">
                 <RiArrowLeftRightLine />
-                compare
+                <span className="font-poppins font-medium text-sm">
+                  Compare
+                </span>
               </div>
-              <div className="flex items-center gap-1 text-white hover:text-gray-600 font-poppins font-medium cursor-pointer ">
+              <div className="flex items-center gap-1 hover:text-gray-200 cursor-pointer">
                 <IoHeartOutline />
-                Love
+                <span className="font-poppins font-medium text-sm">Love</span>
               </div>
             </div>
           </div>
