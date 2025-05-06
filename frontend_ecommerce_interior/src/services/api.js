@@ -20,6 +20,18 @@ export const apiRegister = async (values) => {
   }
 };
 
+export const apiLogin = async (values) => {
+  try {
+    const res = await instance.post("auth/login", values); // Gửi yêu cầu đăng ký
+    console.log("check trong login ", res);
+
+    return res.data; // Trả về dữ liệu từ response
+  } catch (error) {
+    // Xử lý lỗi khi gọi API
+    console.error("Lỗi khi gọi API đăng nhập: ", error);
+  }
+};
+
 // Kích hoạt tài khoản
 export const activateAccount = async (id, codeId) => {
   try {

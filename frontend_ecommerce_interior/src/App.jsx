@@ -67,7 +67,7 @@ function App() {
   return (
     <div className="relative">
       <RouterCustom />
-      <div className="  bottom-16 right-16 flex flex-col gap-3  fixed ">
+      <div className="  bottom-16 right-16 flex flex-col gap-3  fixed z-10 ">
         <div
           className="w-[45px] h-[45px] flex justify-center items-center 
         text-2xl rounded-full hover:opacity-[0.8] cursor-pointer"

@@ -10,7 +10,7 @@ const Products = ({ value }) => {
       {listProducts.slice(0, value).map((product, i) => (
         <div
           key={i}
-          className="w-full sm:w-[calc(25%-18px)] md:w-[calc(25%-24px)] h-[450px] rounded-lg shadow-md overflow-hidden bg-white transition-all duration-300 hover:shadow-xl group relative"
+          className="group relative w-full sm:w-[calc(25%-18px)] md:w-[calc(25%-24px)] h-[450px] rounded-lg shadow-md overflow-hidden bg-white transition-all duration-300 hover:shadow-xl"
         >
           <div className="h-[70%] relative">
             <img
@@ -31,23 +31,27 @@ const Products = ({ value }) => {
               <span className="font-poppins text-lg font-semibold text-gray-900">
                 {product.productName}
               </span>
-              <p className="text-gray-600 text-sm mt-1">Stylish cafe chair</p>
+              <p className="text-gray-600 text-sm mt-1">
+                {product.productStyle}
+              </p>
             </div>
             <div className="flex items-center gap-2 mt-2">
               <span className="font-poppins font-semibold text-base text-gray-800">
-                Rp {product.salePrice}
+                {product.salePrice} $
               </span>
               <del className="text-sm font-medium text-gray-400">
-                Rp {product.originalPrice}
+                {product.originalPrice} $
               </del>
             </div>
           </div>
-          <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+
+          {/* Overlay on hover */}
+          <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center gap-6 opacity-0 group-hover:!opacity-100 transition-opacity duration-300 z-[5]">
             <div className="flex gap-3">
               <button className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600">
                 Add to Cart
               </button>
-              <Link to="/SingleProduct">
+              <Link to={`/SingleProduct/${product.id}`}>
                 <button className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600">
                   Show Detail
                 </button>

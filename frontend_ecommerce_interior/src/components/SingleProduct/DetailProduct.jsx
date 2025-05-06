@@ -52,10 +52,13 @@ const DetailProduct = () => {
           <span className="font-poppins text-[28px] font-medium">
             {SingleItem.productName}
           </span>
-          <p className="font-poppins text-[18px] text-gray-400">
-            {" "}
-            Rs. {SingleItem.salePrice}
+          <p className="font-poppins text-[18px]">
+            <span className="text-red-500 font-semibold mr-2">
+              {SingleItem.salePrice}$
+            </span>
+            <del className="text-gray-400">{SingleItem.originalPrice}$</del>
           </p>
+
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1 text-yellow-500">
               <IoStar />
@@ -68,6 +71,20 @@ const DetailProduct = () => {
             <span className="text-[14px] text-gray-400">5 Customer Review</span>
           </div>
           <span>{SingleItem.descriptionsProducts}</span>
+          <ul className="flex flex-col justify-center gap-3">
+            <li className="flex   ">
+              <span className="w-[15%]">Brand</span> <p>: {SingleItem.brand}</p>
+            </li>
+            <li className="flex">
+              <span className="w-[15%]">Category</span>
+              <p className="ml-2">
+                :{" "}
+                {SingleItem.category && SingleItem.category.length > 0
+                  ? SingleItem.category.join(", ")
+                  : "No category"}
+              </p>
+            </li>
+          </ul>
           {/* size */}
           <div className="flex flex-col gap-2">
             <span className="text-[15px] text-gray-400">Size</span>
@@ -88,14 +105,7 @@ const DetailProduct = () => {
             </div>
           </div>
           {/* Color */}
-          <div className=" flex flex-col gap-2">
-            <span className="text-[15px] text-gray-400">Color</span>
-            <div className=" flex gap-3">
-              <button className="w-[30px] h-[30px] bg-black rounded-full"></button>
-              <button className="w-[30px] h-[30px] bg-red-500 rounded-full"></button>
-              <button className="w-[30px] h-[30px] bg-green-500 rounded-full"></button>
-            </div>
-          </div>
+
           {/* button */}
           <div className="flex items-center gap-3">
             <div className=" flex items-center ">
@@ -139,26 +149,7 @@ const DetailProduct = () => {
           {/* đường kẻ  */}
           <hr className="mt-7 mb-7" />
           {/* info */}
-          <div>
-            <ul className="flex flex-col justify-center gap-3">
-              <li className="flex   ">
-                <span className="w-[15%]">SKU</span> <p>: SS001</p>
-              </li>
-              <li className="flex">
-                <span className="w-[15%]">Category</span> <p>: Sofas</p>
-              </li>
-              <li className="flex">
-                <span className="w-[15%]">Tags</span>
-                <p>: Sofa, Chair, Home, Shop</p>
-              </li>
-              <li className="flex">
-                <span className="w-[15%]">Share</span>
-                <p className="flex items-center gap-3">
-                  : <FaFacebook /> <RiInstagramFill /> <BsTwitter />
-                </p>
-              </li>
-            </ul>
-          </div>
+          <div></div>
         </div>
       </div>
       <hr className="my-7" />
