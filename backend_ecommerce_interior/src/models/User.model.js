@@ -22,19 +22,23 @@ const userSchema = new mongoose.Schema(
     },
 
     phone: {
-      type: Number,
+      type: String,
     },
 
     address: {
       type: String,
     },
-
+    sex: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+      default: "Other",
+    },
     image: {
       type: String,
     },
-
     role: {
       type: String,
+      enum: ["ADMIN", "USER"],
       default: "USER",
     },
 

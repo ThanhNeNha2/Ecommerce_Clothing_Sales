@@ -1,4 +1,8 @@
 const {
+  verifyAdminAndIdAccess,
+  verifyAdminAccess,
+} = require("../controller/middlewareController");
+const {
   createUser,
   getUser,
   updateUser,
@@ -8,11 +12,11 @@ const {
 
 const router = require("express").Router();
 
-router.get("/user", getUser);
-router.get("/user/:id", getUserById);
+router.get("/user", verifyAdminAccess(), getUser);
+router.get("/user/:id", verifyAdminAndIdAccess(), getUserById);
 
-router.post("/user", createUser);
-router.put("/user/:id", updateUser);
-router.delete("/user/:id", deleteUser);
+router.post("/user", verifyAdminAccess(), createUser);
+router.put("/user/:id", verifyAdminAndIdAccess(), updateUser);
+router.delete("/user/:id", verifyAdminAccess(), deleteUser);
 
 module.exports = router;
