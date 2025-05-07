@@ -16,6 +16,7 @@ export const createProduct = async (req, res) => {
       category_id,
       image_url,
       sizes,
+      tags,
     } = req.body;
 
     // Kiểm tra category_id
@@ -80,6 +81,7 @@ export const createProduct = async (req, res) => {
       category_id,
       image_url,
       sizes,
+      tags,
     });
 
     return res.status(200).json({
