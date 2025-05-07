@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { apiCustom } from "../../custom/customApi";
 import { IoVideocamOutline } from "react-icons/io5";
@@ -11,6 +11,7 @@ import { TbPointFilled } from "react-icons/tb";
 import emojiData from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import dayjs from "dayjs";
+import toast from "react-hot-toast";
 type ContentMessageProps = {
   chatId: string;
 };
@@ -20,6 +21,7 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
   const [messagess, setMessages] = useState<any>([]);
   const [textMess, setTextMess] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [checkTextMess, setCheckTextMess] = useState(false);
 
   const handleEmojiSelect = (emoji: any) => {
     setTextMess((prev) => prev + emoji.native);
@@ -28,26 +30,68 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
   const { isLoading, data, isError, error } = useQuery({
     queryKey: ["message", chatId], // Thêm chatId để cache theo từng phòng chat
     queryFn: () => apiCustom.get(`/chat/${chatId}`).then((res) => res.data),
+    enabled: !!chatId, // Chỉ chạy khi chatId có giá trị hợp lệ
   });
 
   // ✅ 3. Cập nhật state trong useEffect
   useEffect(() => {
-    if (data && data.data && data.data.messages) {
+    if (
+      data?.data?.messages &&
+      JSON.stringify(messagess) !== JSON.stringify(data.data.messages)
+    ) {
       setMessages(data.data.messages);
       console.log("✅ Đã cập nhật tin nhắn: ", data.data.messages);
     }
-  }, [data]); // Chỉ chạy khi data thay đổi
+  }, [data]);
 
   // ✅ 4. Lấy thông tin user từ localStorage
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user")!)
-    : null;
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
+    }
+  })();
   const idUser = user?.data?.user?._id;
 
   // ✅ 5. Xử lý trạng thái loading và lỗi
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error: {(error as any)?.message}</p>;
 
+  // API CREATE
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: ({
+      chatId,
+      senderId,
+      text,
+    }: {
+      chatId: any;
+      senderId: any;
+      text: any;
+    }) => {
+      return apiCustom.post(`message`, {
+        chatId,
+        senderId,
+        text,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["allChat"]); // Cập nhật lại tin nhắn sau khi gửi
+    },
+  });
+  const handlePostMessage = () => {
+    if (!chatId || !idUser || !textMess?.trim()) {
+      setCheckTextMess(true);
+      return;
+    }
+    mutation.mutate({
+      chatId,
+      senderId: idUser,
+      text: textMess,
+    });
+  };
   return (
     <div className="MRight">
       {/* UP */}
@@ -93,7 +137,10 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
             >
               {!(idUser === msg.senderId) && (
                 <img
-                  src={data?.data?.chat?.members?.[0]?.image || null}
+                  src={
+                    data?.data?.chat?.members?.[0]?.image ||
+                    "https://i.pinimg.com/736x/3c/ae/07/3cae079ca0b9e55ec6bfc1b358c9b1e2.jpg"
+                  }
                   alt="avatar"
                   className="avatar"
                 />
@@ -107,7 +154,10 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
               </div>
               {idUser === msg.senderId && (
                 <img
-                  src={data?.data?.chat?.members?.[1]?.image || null}
+                  src={
+                    data?.data?.chat?.members?.[1]?.image ||
+                    "https://i.pinimg.com/736x/3c/ae/07/3cae079ca0b9e55ec6bfc1b358c9b1e2.jpg"
+                  }
                   alt="avatar"
                   className="avatar"
                 />
@@ -120,9 +170,15 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
         <div className="MRightBelowInput">
           <input
             type="text"
-            placeholder="Type a message"
+            className={checkTextMess ? "inputError" : "inputSuccess"}
+            placeholder={
+              checkTextMess ? "Please , Enter text message " : "Type a message"
+            }
             value={textMess}
-            onChange={(e) => setTextMess(e.target.value)}
+            onChange={(e) => {
+              setTextMess(e.target.value);
+              setCheckTextMess(false);
+            }}
           />
           <div className="MRightBelowIcon">
             <MdOutlineInsertPhoto />
@@ -137,7 +193,7 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
             <div className="emoji-picker">
               <Picker
                 data={emojiData}
-                onEmojiSelect={(emoji) =>
+                onEmojiSelect={(emoji: any) =>
                   setTextMess((prev) => prev + emoji.native)
                 } // ✅ Cập nhật input khi chọn emoji
                 theme="light"
@@ -146,7 +202,7 @@ const ContentMessage = ({ chatId }: ContentMessageProps) => {
           )}
         </div>
         <div className="MRightBelowIconSend">
-          <FiSend onClick={() => console.log(textMess)} />
+          <FiSend onClick={() => handlePostMessage()} />
         </div>
       </div>
     </div>

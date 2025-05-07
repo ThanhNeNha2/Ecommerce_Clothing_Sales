@@ -8,7 +8,9 @@ import { useQuery } from "@tanstack/react-query";
 import { apiCustom } from "../../custom/customApi";
 import ContentMessage from "../../components/ContentMessage/ContentMessage";
 const Messages = () => {
-  const [chats, setChats] = useState({});
+  const [chats, setChats] = useState<any[]>([]); // ✅ Khởi tạo đúng kiểu dữ liệu
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+
   const { isLoading, data } = useQuery({
     queryKey: ["allChat"],
     queryFn: () => apiCustom.get("/chat").then((res) => res.data),
@@ -16,11 +18,11 @@ const Messages = () => {
 
   // useEffect sẽ chạy khi "data" thay đổi
   useEffect(() => {
-    if (data?.chat) {
-      // Chỉ cập nhật khi có dữ liệu
+    if (data?.chat && JSON.stringify(chats) !== JSON.stringify(data.chat)) {
       setChats(data.chat);
     }
   }, [data]);
+  console.log(chats);
 
   // Config ngày
   const date = new Date(); // Lấy ngày hiện tại
@@ -41,7 +43,6 @@ const Messages = () => {
     console.log("check id trả về:", id);
     setChatId(id);
   };
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
   return (
     <div className="Messages">
       {/*  */}
@@ -83,7 +84,7 @@ const Messages = () => {
                   </div>
                   <div className="userMessage__index">
                     <div className="userMessage__time">
-                      {dayjs(chat.updatedAt).format("hh:mm A")}
+                      {dayjs(chat.lastMessageAt).format("hh:mm A")}
                     </div>
                     <div className="userMessage__notification">
                       {chat.unreadCount}
@@ -121,7 +122,7 @@ const Messages = () => {
                   </div>
                   <div className="userMessage__index">
                     <div className="userMessage__time">
-                      {dayjs(chat.updatedAt).format("hh:mm A")}
+                      {dayjs(chat.lastMessageAt).format("hh:mm A")}
                     </div>
                   </div>
                 </div>

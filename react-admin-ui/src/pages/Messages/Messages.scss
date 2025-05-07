@@ -341,7 +341,7 @@
       }
     }
 
-    .MRightBelowInput input {
+    .MRightBelowInput .inputSuccess {
       width: 100%;
       padding: 10px 45px 10px 15px;
       border: 1px solid #ddd;
@@ -350,7 +350,19 @@
       font-size: 16px;
       background-color: #fff;
     }
+    .MRightBelowInput .inputError {
+      width: 100%;
+      padding: 10px 45px 10px 15px;
+      border: 1px solid #c41313;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
 
+      background-color: #fff;
+      &::placeholder {
+        color: red;
+      }
+    }
     /* Icon nằm trong input */
     .MRightBelowIcon {
       position: absolute;
