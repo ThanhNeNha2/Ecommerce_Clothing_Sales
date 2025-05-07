@@ -300,7 +300,8 @@ export const SingleItem = {
     "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
   ],
   salePercentage: "-50%",
-  productName: "Sofa Phòng Khách",
+  productName:
+    "Haven men's and women's cargo shorts, khaki, black, white, red, gray, big size",
 
   originalPrice: "2000",
   salePrice: "1000",
@@ -326,8 +327,7 @@ export const SingleItem = {
   ],
   listSize: ["L", "XL", "XS"],
   descriptionsProducts:
-    "A luxurious sofa with a modern design, soft cushioning, and a sturdy wooden frame, providing maximum comfort and relaxation. Perfect for living rooms, offices, or cozy spaces.",
-  listColor: ["red", "black", "green"],
+    "A stylish and modern design that blends elegance with comfort. Made from soft, high-quality materials, it offers maximum comfort for all-day wear. Perfect for casual outings, work, or a stroll around the city",
   stock: 120,
   Material: "Cotton",
   isAvailable: true, // Còn hàng không?

@@ -5,7 +5,7 @@ const Footer = () => {
     <div className=" border-t border-gray-200">
       <div className="py-10 mx-[150px] flex gap-20 border-b border-gray-200 ">
         <div className="flex flex-col gap-10">
-          <h1 className="font-poppins font-bold text-[20px]">Funiro.</h1>
+          <h1 className="font-poppins font-bold text-[20px]">TRENDORY.</h1>
           <span className="text-[16px]  text-gray-400">
             400 University Drive Suite 200 Coral Gables, FL 33134 USA
           </span>
@@ -48,7 +48,9 @@ const Footer = () => {
         </div>
       </div>
       <div className="mx-[150px] py-5">
-        <span className="text-[16px]   ">2023 furino. All rights reverved</span>
+        <span className="text-[16px]   ">
+          2025 trendory. All rights reverved
+        </span>
       </div>
     </div>
   );

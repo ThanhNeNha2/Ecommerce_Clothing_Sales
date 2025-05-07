@@ -61,3 +61,23 @@ export const resetKeyActivateAccount = async (email) => {
     console.log("Error"), error;
   }
 };
+
+//  USER
+
+export const getUserById = async (id) => {
+  try {
+    const res = await instance.get(`/user/${id}`);
+    return res;
+  } catch (error) {
+    console.log("Error"), error;
+  }
+};
+
+export const updateUser = async (id, infoUpdate) => {
+  try {
+    const res = await instance.put(`/user/${id}`, infoUpdate);
+    return res;
+  } catch (error) {
+    console.log("Error"), error;
+  }
+};

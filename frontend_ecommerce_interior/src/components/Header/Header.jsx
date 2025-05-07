@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../../public/Logo/Meubel House_Logos-05 (1).png";
+import logo from "../../../public/Logo/logoweb.png";
 import { FaHeart, FaRegHeart, FaUserAlt, FaUserEdit } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import { productsFavourite } from "../../services/fakeApi";
@@ -7,74 +7,69 @@ import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { TbLogin, TbLogout } from "react-icons/tb";
 import { MdAssignmentInd } from "react-icons/md";
+
 const Header = () => {
   const [checkShow, setCheckShow] = useState({
     openUser: false,
     openFavourite: false,
   });
+
   const handleCheckOpen = (value) => {
     if (value === "favourite") {
-      setCheckShow((pev) => ({
+      setCheckShow((prev) => ({
         openFavourite: !checkShow.openFavourite,
         openUser: false,
       }));
     }
     if (value === "user") {
-      setCheckShow((pev) => ({
+      setCheckShow((prev) => ({
         openFavourite: false,
         openUser: !checkShow.openUser,
       }));
     }
   };
 
-  //  CHIA TRANG
-
+  // CHIA TRANG
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Số lượng sản phẩm trên mỗi trang
-
-  // Tính tổng số trang
   const totalPages = Math.ceil(productsFavourite.length / itemsPerPage);
-
-  // Xác định vị trí bắt đầu và kết thúc của sản phẩm cần hiển thị
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-
-  // Lọc danh sách sản phẩm hiển thị trên trang hiện tại
   const displayedProducts = productsFavourite.slice(startIndex, endIndex);
 
-  // CHECK XEM CO NGUOI DUNG DANG NHAP CHUA
-  // const infoUser = {
-  //   avataUser:
-  //     "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  //   username: "Võ Chí Thanh",
-  //   email: "Thanh123@gmail.com",
-  //   phone: "03338635587",
-  //   address: "Hòa Cường Nam Hải Châu Đà Nẵng",
-  //   sex: "male",
-  //   dateBirthday: "12/2/2002",
-  // };
-  const infoUser = null;
+  // Kiểm tra trạng thái đăng nhập từ localStorage
+  const isAuthenticated = () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const user = localStorage.getItem("user");
+    return accessToken && user; // Trả về true nếu đã đăng nhập
+  };
+
+  // Hàm xử lý đăng xuất
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    // Chuyển hướng về trang chủ hoặc trang đăng nhập sau khi đăng xuất
+    window.location.href = "/login";
+  };
+
   return (
-    <div className=" flex justify-between items-center h-[95px] 2xl:h-[60px] bg-gray-50 px-14 fixed z-40 w-full ">
-      {/* item 1  */}
+    <div className="flex justify-between items-center h-[95px] 2xl:h-[60px] bg-gray-50 px-14 fixed z-40 w-full">
+      {/* item 1 */}
       <Link to={"/"}>
-        <div className=" flex items-center gap-1 ">
-          <div className="flex items-center">
-            <img src={logo} alt="" />
+        <div className="flex items-center gap-1">
+          <div className="flex items-center w-[150px] h-[120px]">
+            <img src={logo} alt="" className="w-full h-full object-cover" />
           </div>
-          <span className="text-black font-montserrat font-bold text-[32px] 2xl:text-[26px]">
-            Furniro
-          </span>
         </div>
       </Link>
 
-      {/* item 2  */}
+      {/* item 2 */}
       <div className="flex items-center gap-[160px] 2xl:gap-[75px] pr-12">
         {/* -- */}
         <div>
           <ul className="flex items-center gap-[75px] 2xl:gap-[60px]">
             <Link to={"/"}>
-              <li className="text-lg font-medium hover:text-gray-400">Home </li>
+              <li className="text-lg font-medium hover:text-gray-400">Home</li>
             </Link>
             <Link to={"/ListProduct"}>
               <li className="text-lg font-medium hover:text-gray-400">Shop</li>
@@ -93,7 +88,7 @@ const Header = () => {
         <div>
           <ul className="flex items-center gap-12 2xl:gap-[30px]">
             {/* User */}
-            <li className=" relative ">
+            <li className="relative">
               <div
                 className="hover:text-gray-400 text-[25px] 2xl:text-[18px]"
                 onClick={() => handleCheckOpen("user")}
@@ -101,18 +96,13 @@ const Header = () => {
                 <FaUserAlt />
               </div>
               {checkShow.openUser && (
-                // cum 1
+                // Cụm 1
                 <div className="absolute bg-gray-100 top-[39px] left-[-70px] w-[200px] h-auto">
-                  <Link to={`${infoUser !== null ? "/ProfileUser" : "/login"}`}>
-                    {" "}
-                    <button
-                      className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins "
-                      // style={{ background: "red" }}
-                    >
-                      {infoUser !== null ? (
+                  <Link to={isAuthenticated() ? "/ProfileUser" : "/login"}>
+                    <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
+                      {isAuthenticated() ? (
                         <>
-                          {" "}
-                          Profile <FaUserEdit />{" "}
+                          Profile <FaUserEdit />
                         </>
                       ) : (
                         <>
@@ -121,9 +111,12 @@ const Header = () => {
                       )}
                     </button>
                   </Link>
-                  {/* cụm 2 */}
-                  {infoUser !== null ? (
-                    <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
+                  {/* Cụm 2 */}
+                  {isAuthenticated() ? (
+                    <button
+                      className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins"
+                      onClick={handleLogout}
+                    >
                       Logout <TbLogout />
                     </button>
                   ) : (
@@ -141,7 +134,7 @@ const Header = () => {
                 <IoSearch />
               </li>
             </Link>
-            {/* Yêu Thích  */}
+            {/* Yêu Thích */}
             <li className="relative">
               <div
                 className="text-[25px] 2xl:text-[18px] hover:text-gray-400"
@@ -150,7 +143,7 @@ const Header = () => {
                 <FaRegHeart />
               </div>
               {checkShow.openFavourite && (
-                <div className="absolute bg-gray-100 top-[39px] left-[-150px] w-[320px] h-[543px] pt-5  flex flex-col justify-between  ">
+                <div className="absolute bg-gray-100 top-[39px] left-[-150px] w-[320px] h-[543px] pt-5 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-3 px-5 h-auto">
                       <span className="font-poppins font-medium text-lg">
@@ -161,7 +154,7 @@ const Header = () => {
                       </span>
                     </div>
                     <hr />
-                    <div className="mt-2 flex flex-col justify-between  ">
+                    <div className="mt-2 flex flex-col justify-between">
                       <div>
                         {displayedProducts.map((product, i) => (
                           <div
@@ -193,8 +186,8 @@ const Header = () => {
                       </div>
                     </div>
                   </div>
-                  {/*  Phần chia trang  */}
-                  <div className=" py-3 flex justify-center  ">
+                  {/* Phần chia trang */}
+                  <div className="py-3 flex justify-center">
                     {Array.from({ length: totalPages }).map((_, index) => (
                       <div
                         key={index}
