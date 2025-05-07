@@ -5,25 +5,15 @@ const {
   updateUser,
   deleteUser,
 } = require("../controller/blogs.controller");
-const {
-  verifyTokenAndPermission,
-} = require("../controller/middlewareController");
+const { verifyAdminAccess } = require("../controller/middlewareController");
 
 const router = require("express").Router();
 
 router.get("/blog", getAllBlog);
 router.get("/blog/:id", getBlogById);
 
-router.post("/blog", createBlog);
-router.put(
-  "/blog/:id",
-  verifyTokenAndPermission(["ADMIN", "STAFF"]),
-  updateUser
-);
-router.delete(
-  "/blog/:id",
-  verifyTokenAndPermission(["ADMIN", "STAFF"]),
-  deleteUser
-);
+router.post("/blog", verifyAdminAccess(), createBlog);
+router.put("/blog/:id", verifyAdminAccess(), updateUser);
+router.delete("/blog/:id", verifyAdminAccess(), deleteUser);
 
 module.exports = router;

@@ -78,8 +78,23 @@ export const Login = async (req, res) => {
     const { email, password } = req.body;
     const user = await USER.findOne({ email });
 
-    if (!user || !bcrypt.compareSync(password, user.password)) {
-      return res.status(401).json({
+    if (!user) {
+      return res.status(200).json({
+        message: "Email hoặc mật khẩu không chính xác",
+        idCode: 1,
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(200).json({
+        message:
+          "Tài khoản chưa được kích hoạt. Vui lòng kích hoạt trước khi đăng nhập",
+        idCode: 3,
+      });
+    }
+
+    if (!bcrypt.compareSync(password, user.password)) {
+      return res.status(200).json({
         message: "Email hoặc mật khẩu không chính xác",
         idCode: 1,
       });
@@ -111,7 +126,6 @@ export const Login = async (req, res) => {
     });
   }
 };
-
 //  KICH HOAT TAI KHOAN
 export const activateAccount = async (req, res) => {
   try {

@@ -1,34 +1,38 @@
 import jwt from "jsonwebtoken";
-// kiem tra dang nhap chua
-export let verifyToken = (req, res, next) => {
-  const token = req.headers.authorization;
-  console.log("check token", token);
 
-  if (token) {
-    const accessToken = token.split(" ")[1];
-    jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
-      if (err) {
-        // het han
-        return res.status(403).json("Token not valid");
-      }
-      // truyen req.user  xuong du dung
-      req.user = user;
-      next();
-    });
-  } else {
-    return res.status(401).json("You are not authenticated");
+export const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (
+    !authHeader ||
+    typeof authHeader !== "string" ||
+    !authHeader.startsWith("Bearer ")
+  ) {
+    return res.status(401).json("Token không hợp lệ hoặc thiếu");
   }
+
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.JWT_ACCESS_KEY, (err, user) => {
+    if (err) {
+      console.error("Token verification error:", err.message);
+      return res.status(403).json("Token không hợp lệ hoặc đã hết hạn");
+    }
+
+    req.user = user;
+    next();
+  });
 };
 
-/*Truyền quyền vào và đồng thời người nào thực hiện  
-tác động vào người đó ( ví dụ xóa chỉ xóa được mình ... ) */
-export const verifyTokenAndRole = (roles = []) => {
+export const verifyAdminAccess = () => {
   return (req, res, next) => {
     verifyToken(req, res, () => {
-      const isOwner = req.user.id == req.params.id;
-      const hasRole = roles.includes(req.user.role);
+      const isAdmin = req.user.role === "ADMIN";
 
-      if (isOwner || hasRole) {
+      if (!req.user.role) {
+        return res.status(403).json("Vai trò người dùng không được định nghĩa");
+      }
+      if (isAdmin) {
         next();
       } else {
         return res.status(403).json("Bạn không có quyền hạn này");
@@ -37,14 +41,13 @@ export const verifyTokenAndRole = (roles = []) => {
   };
 };
 
-//  PHÂN QUYỀN ( Truyền vào role muốn thực hiện )
-export const verifyTokenAndPermission = (allowedRoles = []) => {
+export const verifyAdminAndIdAccess = () => {
   return (req, res, next) => {
     verifyToken(req, res, () => {
-      const hasRole = allowedRoles.includes(req.user.role);
-      console.log("check req.user", req.user);
-      console.log("check req.user.role", req.user.role);
-      if (hasRole) {
+      const isOwner = req.user.id == req.params.id;
+      const isAdmin = req.user.role === "ADMIN";
+
+      if (isOwner || isAdmin) {
         next();
       } else {
         return res.status(403).json("Bạn không có quyền hạn này");

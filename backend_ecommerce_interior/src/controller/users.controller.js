@@ -32,28 +32,38 @@ export const createUser = async (req, res) => {
 // GET ALL USER
 export const getUser = async (req, res) => {
   try {
-    const getAllUser = await USER.find({}).select("-password").lean();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const getAllUser = await USER.find({})
+      .select("-password")
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
     const users = getAllUser.map((user) => ({
       ...user,
       id: user._id,
-      _id: undefined, // Loại bỏ _id
+      _id: undefined,
     }));
+
+    const total = await USER.countDocuments();
 
     return res.status(200).json({
       message: "OK",
       idCode: 0,
-      users, // Trả về danh sách đã thay đổi
+      users,
+      pagination: { page, limit, total },
     });
   } catch (error) {
     console.log("Error", error);
-
     return res.status(500).json({
       message: "Truy cap danh sach nguoi dung khong thanh cong",
       idCode: 1,
     });
   }
 };
-
 // GET USER BY ID
 export const getUserById = async (req, res) => {
   try {
