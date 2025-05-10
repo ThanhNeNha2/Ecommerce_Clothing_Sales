@@ -31,10 +31,11 @@ const Login = () => {
       }
 
       const response = await apiCustom.post("/auth/login", valueLogin);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       toast.success("Đăng nhập thành công ");
-      console.log("Login successful:", response.data);
+
       navigate("/");
-      localStorage.setItem("user", JSON.stringify(response));
     } catch (error) {
       console.error("Login failed:", error);
       toast.error("Đăng nhập không thành công ");

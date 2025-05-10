@@ -113,9 +113,9 @@ export const menu = [
       },
       {
         id: 2,
-        title: "Logs",
+        title: "Logout",
         url: "/",
-        icon: "log.svg",
+        icon: "backup.svg",
       },
     ],
   },

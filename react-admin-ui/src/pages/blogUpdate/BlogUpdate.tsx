@@ -7,8 +7,9 @@ import { apiCustom } from "../../custom/customApi";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import upload from "../../utils/upload";
+
 const BlogUpdate = () => {
-  // quan ly thong tin nhap vao
+  // Quản lý thông tin nhập vào
   const [listInfoBlog, setListInfoBlog] = useState({
     titleBlog: "",
     imgMainBlog: "",
@@ -16,15 +17,15 @@ const BlogUpdate = () => {
     description: "",
   });
   const [file, setFile] = useState<File | null>(null);
-
   const [initValue, setInitValue] = useState("");
+
   // Lấy thông tin của blog ra để in ra
   const { id } = useParams();
   const { isLoading, data } = useQuery({
     queryKey: ["singleBlog"],
-    // queryFn: () => customFetch(`/user/${id}`),
-    queryFn: () => apiCustom.get(`/blog/${id}`).then((res) => res.data), // Dùng axios
+    queryFn: () => apiCustom.get(`/blog/${id}`).then((res) => res.data),
   });
+
   // Sau khi lấy data từ API
   useEffect(() => {
     if (data) {
@@ -34,14 +35,32 @@ const BlogUpdate = () => {
         description: data?.blog?.description || "",
         imgMainBlog: data?.blog?.imgMainBlog || "",
       });
-      setInitValue(data?.blog?.description || ""); // ✅ Chỉ set 1 lần
+      setInitValue(data?.blog?.description || "");
     }
   }, [data]);
 
   // Hàm lấy thông tin từ Editor
   const editorRef = useRef<any>(null);
   const handleEditorChange = (content: string) => {
-    const trimmedContent = content.trim(); // ✅ Loại bỏ khoảng trắng thừa
+    // 1. Chuyển tất cả <a> chứa URL ảnh thành <img>
+    let updatedContent = content.replace(
+      /<a[^>]*href=["'](.*?\.(jpg|jpeg|png|gif))["'][^>]*>.*?<\/a>/gi,
+      '<img src="$1" alt="Image" height="370" width="490" />'
+    );
+
+    // 2. Chuyển các URL ảnh thuần text thành <img> với kích thước cố định
+    updatedContent = updatedContent.replace(
+      /https?:\/\/.*?\.(jpg|jpeg|png|gif)(?![^<>]*>)/gi,
+      '<img src="$1" alt="Image" height="370" width="490" />'
+    );
+
+    // 3. Đảm bảo tất cả <img> tags có kích thước cố định
+    updatedContent = updatedContent.replace(
+      /<img(?![^>]*height="[^"]*")[^>]*>/gi,
+      (match) => match.replace(/>/, ' height="370" width="490" />')
+    );
+
+    const trimmedContent = updatedContent.trim();
     setListInfoBlog((prev) => {
       if (prev.description.trim() === trimmedContent) return prev;
       return { ...prev, description: trimmedContent };
@@ -57,37 +76,34 @@ const BlogUpdate = () => {
       [valueChange]: e.target.value || "",
     }));
   };
-  // API CREATE
-  const navigate = useNavigate();
 
+  // API UPDATE
+  const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: (info: {}) => {
       return apiCustom.put(`/blog/${id}`, info);
     },
     onSuccess: (response) => {
-      toast.success("🎉 Blog đã được tạo thành công!");
+      toast.success("🎉 Blog đã được cập nhật thành công!");
       navigate("/blogs");
     },
     onError: (error) => {
-      // ❌ Thất bại -> Thông báo lỗi
-      toast.error("🚨 Lỗi khi tạo blog. Vui lòng thử lại!");
+      toast.error("🚨 Lỗi khi cập nhật blog. Vui lòng thử lại!");
     },
   });
 
-  // XÁC NHẬN UPDATE BLOG
+  // Xác nhận update blog
   const handleConfirm = async () => {
     const { titleBlog, descripShort, description } = listInfoBlog;
-
-    // Kiểm tra nếu thiếu thông tin
     if (!titleBlog.trim() || !descripShort.trim() || !description.trim()) {
       toast.error("⚠️ Vui lòng điền đầy đủ thông tin tất cả các trường!");
       return;
     }
-    const url = await upload(file, "blog");
 
-    // Nếu đủ thông tin thì gọi mutation
+    const url = file ? await upload(file, "blog") : listInfoBlog.imgMainBlog;
     mutation.mutate({ ...listInfoBlog, imgMainBlog: url });
   };
+
   return (
     <div className="addblog">
       <div className="contentP">
@@ -124,30 +140,30 @@ const BlogUpdate = () => {
             <label>Title Blog</label>
             <input
               type="text"
-              placeholder="Enter Title Blog  "
+              placeholder="Enter Title Blog"
               value={listInfoBlog.titleBlog}
               onChange={(e) => handleChangeInfoBlog(e, "titleBlog")}
             />
-          </div>{" "}
+          </div>
           <div className="item">
-            <label>Description Shot</label>
+            <label>Description Short</label>
             <textarea
-              placeholder="Enter Description Shot"
+              placeholder="Enter Description Short"
               value={listInfoBlog.descripShort}
               onChange={(e) => handleChangeInfoBlog(e, "descripShort")}
             />
-          </div>{" "}
+          </div>
           <div className="item">
             <label>Description</label>
             <Editor
               apiKey="slkxn3po6ill32zhn1nahxuyjlhmvh226r9uawyyc4iam4tu"
               onInit={(_evt, editor) => (editorRef.current = editor)}
-              initialValue={initValue} // ✅ Chỉ set 1 lần
+              initialValue={initValue}
               init={{
                 height: 500,
                 menubar: false,
                 paste_as_text: true,
-                directionality: "ltr", // ✅ Cố định text từ trái sang phải
+                directionality: "ltr",
                 plugins: [
                   "advlist",
                   "autolink",
@@ -173,26 +189,34 @@ const BlogUpdate = () => {
                   "alignleft aligncenter alignright alignjustify | " +
                   "bullist numlist outdent indent | removeformat | help",
                 content_style: `
-      body { 
-        font-family:Helvetica,Arial,sans-serif; 
-        font-size:14px; 
-        direction: ltr !important;
-        text-align: left !important;
-      }
-    `,
+                  body { 
+                    font-family:Helvetica,Arial,sans-serif; 
+                    font-size:14px; 
+                    direction: ltr !important;
+                    text-align: left !important;
+                  }
+                  img {
+                    height: 370px !important;
+                    width: 490px !important;
+                  }
+                `,
+                paste_preprocess: (plugin, args) => {
+                  args.content = args.content.replace(
+                    /https?:\/\/.*?\.(jpg|jpeg|png|gif)/gi,
+                    (match) =>
+                      `<img src="${match}" alt="Image" height="370" width="490" />`
+                  );
+                },
+                link_assume_external_targets: true,
+                link_context_toolbar: false,
               }}
               onEditorChange={handleEditorChange}
             />
-          </div>{" "}
+          </div>
         </div>
 
         <div className="btnP">
-          <button
-            className="pConfirm"
-            onClick={() => {
-              handleConfirm();
-            }}
-          >
+          <button className="pConfirm" onClick={handleConfirm}>
             Confirm
           </button>
         </div>
