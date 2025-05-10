@@ -107,7 +107,7 @@ const BlogUpdate = () => {
   return (
     <div className="addblog">
       <div className="contentP">
-        <h2>Update Blog</h2>
+        <h2>Edit Blog</h2>
         <hr />
         <div className="managerInputP">
           <div className="fileUpdate">
@@ -190,14 +190,19 @@ const BlogUpdate = () => {
                   "bullist numlist outdent indent | removeformat | help",
                 content_style: `
                   body { 
-                    font-family:Helvetica,Arial,sans-serif; 
-                    font-size:14px; 
+                    font-family: Helvetica, Arial, sans-serif; 
+                    font-size: 14px; 
                     direction: ltr !important;
                     text-align: left !important;
                   }
                   img {
-                    height: 370px !important;
-                    width: 490px !important;
+                    height: 70px !important;
+                    width: 90px !important;
+                  }
+                  h1 {
+                    font-size: 2em !important; /* Kích thước lớn hơn cho <h1> */
+                    font-weight: bold !important;
+                    margin: 0.67em 0 !important;
                   }
                 `,
                 paste_preprocess: (plugin, args) => {
@@ -216,6 +221,14 @@ const BlogUpdate = () => {
         </div>
 
         <div className="btnP">
+          <button
+            className="pCancel"
+            onClick={() => {
+              navigate("/blogs");
+            }}
+          >
+            Cancel
+          </button>
           <button className="pConfirm" onClick={handleConfirm}>
             Confirm
           </button>

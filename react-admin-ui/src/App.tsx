@@ -16,6 +16,7 @@ import AddBlog from "./pages/addBlog/AddBlog";
 import BlogUpdate from "./pages/blogUpdate/BlogUpdate";
 import Messages from "./pages/Messages/Messages";
 import PrivateRoute from "./utils/PrivateRoute";
+import AddProduct from "./pages/addProduct/AddProduct";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,10 @@ function App() {
             {
               path: "/addBlog",
               element: <AddBlog />,
+            },
+            {
+              path: "/addProduct",
+              element: <AddProduct />,
             },
             {
               path: "/user/:id",

@@ -30,6 +30,7 @@ const DataTable = (props: Props) => {
     setSelectedInfo(info);
     setGetIdDelete(id);
     setShowModal(true);
+
     // setPublic_id_imageBlog(public_id_image);
   };
 
@@ -58,6 +59,7 @@ const DataTable = (props: Props) => {
     renderCell: (params: any) => {
       // thong tin search
       const search = props.infoSearch;
+
       return (
         <div className="action">
           <Link to={`/${props.slug}/${params.row.id}`}>
@@ -109,7 +111,7 @@ const DataTable = (props: Props) => {
       {showModal && (
         <div className="modalOverlay">
           <div className="contentP">
-            <h2>Delete User</h2>
+            <h2>Delete {props.slug} </h2>
             <hr />
             <p>
               Bạn chắc chắn muốn xóa {props.slug} với {props.infoSearch} là:{" "}

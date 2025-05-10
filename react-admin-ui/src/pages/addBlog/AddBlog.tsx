@@ -40,6 +40,15 @@ const AddBlog = () => {
       (match) => match.replace(/>/, ' height="370" width="490" />')
     );
 
+    // 4. Đảm bảo các <img> tags đã có height/width thì giữ nguyên giá trị 370x490
+    updatedContent = updatedContent.replace(
+      /<img[^>]*height="[^"]*"[^>]*width="[^"]*"[^>]*>/gi,
+      (match) =>
+        match
+          .replace(/height="[^"]*"/, 'height="370"')
+          .replace(/width="[^"]*"/, 'width="490"')
+    );
+
     setListInfoBlog((prev) => ({ ...prev, description: updatedContent }));
   };
 
@@ -165,7 +174,7 @@ const AddBlog = () => {
                   "alignright alignjustify | bullist numlist outdent indent | " +
                   "removeformat | help | image",
                 content_style:
-                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }" +
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px } " +
                   "img { height: 370px !important; width: 490px !important; }",
 
                 // Tự động chuyển URL ảnh thành <img> với kích thước cố định khi paste
@@ -179,6 +188,8 @@ const AddBlog = () => {
                 // Vô hiệu hóa tự động tạo <a> cho URL
                 link_assume_external_targets: true,
                 link_context_toolbar: false,
+                // Đảm bảo giữ nguyên các thuộc tính height và width
+                extended_valid_elements: "img[src|alt|height|width]",
               }}
               onEditorChange={handleEditorChange}
             />
