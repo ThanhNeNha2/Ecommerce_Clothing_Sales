@@ -75,7 +75,7 @@ const Header = () => {
               <li className="text-lg font-medium hover:text-gray-400">Shop</li>
             </Link>
             <Link to={"/blog"}>
-              <li className="text-lg font-medium hover:text-gray-400">About</li>
+              <li className="text-lg font-medium hover:text-gray-400">Blog</li>
             </Link>
             <Link to={"/Contact"}>
               <li className="text-lg font-medium hover:text-gray-400">

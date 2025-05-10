@@ -292,45 +292,43 @@ export const listProducts = [
 ];
 
 export const SingleItem = {
-  listImg: [
-    "https://images.pexels.com/photos/1125135/pexels-photo-1125135.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    "https://images.pexels.com/photos/2440471/pexels-photo-2440471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  ],
-  salePercentage: "-50%",
-  productName:
-    "Haven men's and women's cargo shorts, khaki, black, white, red, gray, big size",
+  _id: "681b5e64077691fc8a41de09",
+  name: "Áo thun nam",
+  description: "Áo thun chất lượng cao, thoáng mát, phù hợp cho mùa hè",
+  originalPrice: 1600,
+  salePrice: 800,
+  salePercentage: 10,
 
-  originalPrice: "2000",
-  salePrice: "1000",
-  gender: "male",
-  brand: "Coolmate",
-  category: [
-    "T-Shirt",
-    "Shirt",
-    "Polo",
-    "Hoodie",
-    // "Sweater",
-    // "Jacket",
-    // "Blazer",
-    // "Jeans",
-    // "Trousers",
-    // "Shorts",
-    // "Skirt",
-    // "Dress",
-    // "Tracksuit",
-    // "Underwear",
-    // "Shoes",
-    // "Accessories",
+  gender: "Men",
+  mainCategory: "Topwear",
+  subCategory: ["T-Shirt", "Sweater", "Jacket"],
+  image_url: [
+    "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+    "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+    "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+    "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+    "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
   ],
-  listSize: ["L", "XL", "XS"],
-  descriptionsProducts:
-    "A stylish and modern design that blends elegance with comfort. Made from soft, high-quality materials, it offers maximum comfort for all-day wear. Perfect for casual outings, work, or a stroll around the city",
-  stock: 120,
-  Material: "Cotton",
-  isAvailable: true, // Còn hàng không?
+  sizes: [
+    {
+      _id: "681b5e64077691fc8a41de0a",
+      size_id: "681b33349dfe7219f4170319",
+      stock: 10,
+    },
+    {
+      _id: "681b5e64077691fc8a41de0b",
+      size_id: "681b33349dfe7219f417031a",
+      stock: 5,
+    },
+    {
+      _id: "681b5e64077691fc8a41de0c",
+      size_id: "681b33349dfe7219f417031b",
+      stock: 12,
+    },
+  ],
+  createdAt: "2025-05-07T13:21:40.305Z",
+  updatedAt: "2025-05-07T13:21:40.305Z",
+  __v: 0,
 };
 
 export const infoUser = {
@@ -453,7 +451,7 @@ export const signBlog = {
   postDate: "12/2/2023",
   titleBlog:
     "Sofa gấp thành giường – Giải pháp tiện lợi cho không gian sống hiện đại! ",
-  descripShotBlog:
+  descripShort:
     "Với thiết kế thông minh 2 trong 1, sofa gấp giúp tiết kiệm diện tích tối đa, phù hợp với căn hộ nhỏ, văn phòng hoặc phòng khách đa năng. Chất liệu êm ái, khung chắc chắn mang lại sự thoải mái khi ngồi lẫn khi nằm. Dễ dàng gập/mở trong vài giây, biến đổi linh hoạt giữa sofa sang giường ngủ. Kiểu dáng sang trọng, đa dạng màu sắc giúp nâng tầm không gian sống của bạn!",
   descriptonBlog: "male",
   sanphamlienquan: "sofa",

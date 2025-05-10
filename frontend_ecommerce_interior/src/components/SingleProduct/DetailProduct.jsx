@@ -1,62 +1,77 @@
 import React, { useState } from "react";
-import { BsTwitter } from "react-icons/bs";
-import { FaFacebook } from "react-icons/fa";
+
 import { IoStar, IoStarHalf } from "react-icons/io5";
-import { RiInstagramFill } from "react-icons/ri";
+
 import { SingleItem } from "../../services/fakeApi";
 import SlideImgSingleProduct from "../SingleProduct_IMG/SlideImgSingleProduct";
+import DescriptionAndReviews from "../DescriptionAndReviews/DescriptionAndReviews";
+
 const DetailProduct = () => {
-  const [selectedSize, setSelectedSize] = useState(SingleItem.listSize[0]);
-  const [isOpen, setIsOpen] = useState(false); // State mở lightbox
+  // Map size objects to size names and include stock
+  const sizeData = SingleItem.sizes.map((size, index) => {
+    const sizeMap = { 0: "S", 1: "M", 2: "L" }; // Placeholder mapping
+    return {
+      name: sizeMap[index] || size.size_id,
+      stock: size.stock,
+    };
+  });
+
+  const [selectedSize, setSelectedSize] = useState(sizeData[0]?.name || "");
+  const [isOpen, setIsOpen] = useState(false); // State for lightbox
   const [valueAddCart, setValueAddCart] = useState(1);
+
+  // Get stock for the selected size
+  const selectedStock =
+    sizeData.find((size) => size.name === selectedSize)?.stock || 0;
+
   return (
     <div className="">
-      {/* hinh anh va thong tin  */}
+      {/* Images and Product Info */}
       <div className="flex mt-[30px] px-[130px]">
-        {/*  */}
-        <div className="flex gap-3 h-[500px]  w-[48%] ">
-          {/* img phụ */}
+        {/* Images */}
+        <div className="flex gap-3 h-[500px] w-[48%]">
+          {/* Thumbnail Images */}
           <div className="flex flex-col gap-3 w-[20%] h-full">
-            {SingleItem.listImg
+            {SingleItem.image_url
               .filter((_, index) => index !== 0)
               .map((item, index) => (
-                <div key={index} className=" w-full h-[100px]  rounded">
+                <div key={index} className="w-full h-[100px] rounded">
                   <img
                     src={item}
                     alt=""
                     className="w-full h-full object-cover rounded"
-                    onClick={() => setIsOpen(true)} // Mở lightbox khi click
+                    onClick={() => setIsOpen(true)} // Open lightbox
                   />
                 </div>
               ))}
           </div>
           <div hidden>
             <SlideImgSingleProduct
-              images={SingleItem.listImg}
+              images={SingleItem.image_url}
               setIsOpen={setIsOpen}
               isOpen={isOpen}
             />
           </div>
-          {/* img chính  */}
-          <div className="  flex-1 rounded">
+          {/* Main Image */}
+          <div className="flex-1 rounded">
             <img
-              src={SingleItem.listImg[0]}
+              src={SingleItem.image_url[0]}
               alt=""
               className="w-[90%] h-full object-cover rounded"
-              onClick={() => setIsOpen(true)} // Mở lightbox khi click
+              onClick={() => setIsOpen(true)} // Open lightbox
             />
           </div>
         </div>
-        {/*  */}
-        <div className=" flex-1 flex flex-col gap-3">
+        {/* Product Details */}
+        <div className="flex-1 flex flex-col gap-3">
           <span className="font-poppins text-[28px] font-medium">
-            {SingleItem.productName}
+            {SingleItem.name}
           </span>
           <p className="font-poppins text-[18px]">
             <span className="text-red-500 font-semibold mr-2">
-              {SingleItem.salePrice}$
+              ${SingleItem.salePrice}
             </span>
-            <del className="text-gray-400">{SingleItem.originalPrice}$</del>
+            <del className="text-gray-400">${SingleItem.originalPrice}</del>
           </p>
 
           <div className="flex items-center gap-4">
@@ -70,50 +85,58 @@ const DetailProduct = () => {
             <div className="border border-gray-300 h-[20px]"></div>
             <span className="text-[14px] text-gray-400">5 Customer Review</span>
           </div>
-          <span>{SingleItem.descriptionsProducts}</span>
+          <span>{SingleItem.description}</span>
           <ul className="flex flex-col justify-center gap-3">
-            <li className="flex   ">
-              <span className="w-[15%]">Brand</span> <p>: {SingleItem.brand}</p>
+            <li className="flex">
+              <span className="w-[15%]">Gender</span>
+              <p>: {SingleItem.gender}</p>
             </li>
             <li className="flex">
               <span className="w-[15%]">Category</span>
+              <p className="ml-2">: {SingleItem.mainCategory}</p>
+            </li>
+            <li className="flex">
+              <span className="w-[15%]">Tags</span>
+              <p className="ml-2">: {SingleItem.subCategory.join(", ")}</p>
+            </li>
+            <li className="flex">
+              <span className="w-[15%]">Stock</span>
               <p className="ml-2">
-                :{" "}
-                {SingleItem.category && SingleItem.category.length > 0
-                  ? SingleItem.category.join(", ")
-                  : "No category"}
+                : {selectedStock} (Size {selectedSize})
               </p>
             </li>
           </ul>
-          {/* size */}
+          {/* Size Selection */}
           <div className="flex flex-col gap-2">
             <span className="text-[15px] text-gray-400">Size</span>
             <div className="flex gap-3">
-              {SingleItem.listSize.map((size) => (
+              {sizeData.map((size) => (
                 <button
-                  key={size}
+                  key={size.name}
                   className={`w-[30px] h-[30px] text-[14px] rounded transition-all 
-            ${
-              selectedSize === size ? "bg-colorMain text-white" : "text-black"
-            }`}
-                  style={{ background: selectedSize === size ? "" : "#F9F1E7" }}
-                  onClick={() => setSelectedSize(size)}
+                    ${
+                      selectedSize === size.name
+                        ? "bg-colorMain text-white"
+                        : "text-black"
+                    }`}
+                  style={{
+                    background: selectedSize === size.name ? "" : "#F9F1E7",
+                  }}
+                  onClick={() => setSelectedSize(size.name)}
                 >
-                  {size}
+                  {size.name}
                 </button>
               ))}
             </div>
           </div>
-          {/* Color */}
-
-          {/* button */}
+          {/* Quantity and Buttons */}
           <div className="flex items-center gap-3">
-            <div className=" flex items-center ">
+            <div className="flex items-center">
               <button
                 className={`border border-gray-400 px-3 py-[2px] rounded-l ${
                   valueAddCart === 1 ? "opacity-50 cursor-not-allowed" : ""
                 }`}
-                disabled={valueAddCart === 1} // Vô hiệu hóa nút khi giá trị bằng 1
+                disabled={valueAddCart === 1}
                 onClick={() => setValueAddCart(valueAddCart - 1)}
               >
                 -
@@ -129,74 +152,23 @@ const DetailProduct = () => {
               </button>
             </div>
             <button
-              className="  px-3 py-[5px] text-black rounded   text-[14px] hover:opacity-80"
-              style={{
-                background: "#FFCC99",
-              }}
+              className="px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80"
+              style={{ background: "#FFCC99" }}
             >
               Add To Cart
             </button>
             <button
-              className="  px-3 py-[5px] text-black rounded   text-[14px] hover:opacity-80"
-              style={{
-                background: "#FFCC99",
-              }}
+              className="px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80"
+              style={{ background: "#FFCC99" }}
             >
               + Compare
             </button>
           </div>
-
-          {/* đường kẻ  */}
-          <hr className="mt-7 mb-7" />
-          {/* info */}
-          <div></div>
         </div>
       </div>
       <hr className="my-7" />
-      {/* Nhan xet và mô tả sp  */}
-      <div className="mt-[30px] px-[130px] flex flex-col gap-5">
-        <div className="flex gap-5 justify-center">
-          <span className="font-poppins font-medium text-[20px]">
-            Description
-          </span>
-          <span className="font-poppins font-medium text-[20px] text-gray-400">
-            Additional Information
-          </span>
-          <span className="font-poppins font-medium text-[20px] text-gray-400">
-            Reviews {"[5]"}
-          </span>
-        </div>
-        <span className="leading-7 px-28  text-gray-500 ">
-          Embodying the raw, wayward spirit of rock {"‘n’"} roll, the Kilburn
-          portable active stereo speaker takes the unmistakable look and sound
-          of Marshall, unplugs the chords, and takes the show on the road.
-          Weighing in under 7 pounds, the Kilburn is a lightweight piece of
-          vintage styled engineering. Setting the bar as one of the loudest
-          speakers in its class, the Kilburn is a compact, stout-hearted hero
-          with a well-balanced audio which boasts a clear midrange and extended
-          highs for a sound that is both articulate and pronounced. The analogue
-          knobs allow you to fine tune the controls to your personal preferences
-          while the guitar-influenced leather strap enables easy and stylish
-          travel.
-        </span>
-        <div className="flex justify-between items-center">
-          <div className="w-[49%] rounded">
-            <img
-              src="https://images.pexels.com/photos/1090092/pexels-photo-1090092.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-              alt=""
-              className="w-full h-[300px] object-cover rounded"
-            />
-          </div>
-          <div className="w-[49%] rounded">
-            {" "}
-            <img
-              src="https://images.pexels.com/photos/1090092/pexels-photo-1090092.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-              alt=""
-              className="w-full h-[300px] object-cover rounded"
-            />
-          </div>
-        </div>
-      </div>
+      {/* Description and Reviews */}
+      <DescriptionAndReviews />
     </div>
   );
 };

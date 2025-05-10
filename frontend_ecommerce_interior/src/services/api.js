@@ -81,3 +81,23 @@ export const updateUser = async (id, infoUpdate) => {
     console.log("Error"), error;
   }
 };
+
+// BLOG
+
+export const getAllBlog = async () => {
+  try {
+    const res = await instance.get(`blog`);
+    return res;
+  } catch (error) {
+    console.log("Error"), error;
+  }
+};
+
+export const getBlogById = async (id) => {
+  try {
+    const res = await instance.get(`blog/${id}`);
+    return res;
+  } catch (error) {
+    console.log("Error"), error;
+  }
+};
