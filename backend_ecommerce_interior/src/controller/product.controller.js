@@ -55,8 +55,9 @@ const validateCategory = (mainCategory, subCategory) => {
 export const createProduct = async (req, res) => {
   try {
     const {
-      name,
+      nameProduct,
       description,
+      descriptionShort,
       originalPrice,
       salePercentage,
       stock_quantity,
@@ -108,8 +109,9 @@ export const createProduct = async (req, res) => {
     const salePrice = originalPrice * (1 - salePercentage / 100);
 
     const product = await Product.create({
-      name,
+      nameProduct,
       description,
+      descriptionShort,
       originalPrice,
       salePrice,
       salePercentage,
@@ -189,7 +191,7 @@ export const getProductById = async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id }).populate(
       "sizes.size_id",
-      "name"
+      "nameProduct"
     );
 
     if (!product) {
@@ -279,7 +281,7 @@ export const updateProduct = async (req, res) => {
         new: true,
         runValidators: true,
       }
-    ).populate("sizes.size_id", "name");
+    ).populate("sizes.size_id", "nameProduct");
 
     return res.status(200).json({
       message: "OK",
