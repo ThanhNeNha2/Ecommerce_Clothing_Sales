@@ -293,7 +293,7 @@ export const listProducts = [
 
 export const SingleItem = {
   _id: "681b5e64077691fc8a41de09",
-  name: "Áo thun nam",
+  nameProduct: "Áo thun nam",
   description: "Áo thun chất lượng cao, thoáng mát, phù hợp cho mùa hè",
   originalPrice: 1600,
   salePrice: 800,

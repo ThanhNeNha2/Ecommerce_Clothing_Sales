@@ -65,7 +65,7 @@ const DetailProduct = () => {
         {/* Product Details */}
         <div className="flex-1 flex flex-col gap-3">
           <span className="font-poppins text-[28px] font-medium">
-            {SingleItem.name}
+            {SingleItem.nameProduct}
           </span>
           <p className="font-poppins text-[18px]">
             <span className="text-red-500 font-semibold mr-2">
