@@ -6,7 +6,6 @@ const sizeSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true,
     },
     description: {
       type: String,
@@ -16,7 +15,6 @@ const sizeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Index cho tìm kiếm
-sizeSchema.index({ name: 1 });
+sizeSchema.index({ name: "text" });
 
 export default mongoose.model("Size", sizeSchema);

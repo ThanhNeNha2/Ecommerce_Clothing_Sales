@@ -1,8 +1,55 @@
 import mongoose from "mongoose";
 
-const Product = mongoose.model("Product");
-const Category = mongoose.model("Category");
-const Size = mongoose.model("Size");
+import Size from "../models/Size.model";
+import Product from "../models/Product.model";
+// Kiểm tra subCategory hợp lệ với mainCategory
+const validateCategory = (mainCategory, subCategory) => {
+  const categoryMap = {
+    Topwear: [
+      "T-Shirt",
+      "Shirt",
+      "Polo",
+      "Hoodie",
+      "Sweater",
+      "Jacket",
+      "Blazer",
+      "Tank Top",
+      "Crop Top",
+      "Coat",
+      "Trench Coat",
+      "Windbreaker",
+      "Bomber Jacket",
+      "Denim Jacket",
+    ],
+    Bottomwear: ["Jeans", "Trousers", "Shorts", "Skirt", "Leggings", "Joggers"],
+    OnePiece: ["Dress", "Jumpsuit", "Overalls"],
+    Footwear: ["Sneakers", "Loafers", "Boots", "Sandals", "Heels"],
+    Accessories: [
+      "Hat",
+      "Cap",
+      "Belt",
+      "Scarf",
+      "Gloves",
+      "Bag",
+      "Sunglasses",
+      "Watch",
+      "Jewelry",
+    ],
+    Underwear: ["Underwear"],
+    Sportswear: ["Tracksuit", "Sportswear"],
+    Sleepwear: ["Sleepwear"],
+    Swimwear: ["Swimwear"],
+  };
+
+  // Đảm bảo subCategory là 1 string hoặc mảng string
+  if (Array.isArray(subCategory)) {
+    return subCategory.every((item) =>
+      categoryMap[mainCategory]?.includes(item)
+    );
+  } else {
+    return categoryMap[mainCategory]?.includes(subCategory);
+  }
+};
 
 // CREATE PRODUCT
 export const createProduct = async (req, res) => {
@@ -13,17 +60,17 @@ export const createProduct = async (req, res) => {
       originalPrice,
       salePercentage,
       stock_quantity,
-      category_id,
       image_url,
       sizes,
-      tags,
+      gender,
+      mainCategory,
+      subCategory,
     } = req.body;
 
-    // Kiểm tra category_id
-    const category = await Category.findById(category_id);
-    if (!category) {
+    // Kiểm tra mainCategory và subCategory
+    if (!validateCategory(mainCategory, subCategory)) {
       return res.status(400).json({
-        message: "Danh mục không tồn tại",
+        message: `subCategory "${subCategory}" không hợp lệ với mainCategory "${mainCategory}"`,
         idCode: 1,
       });
     }
@@ -57,17 +104,6 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    // Kiểm tra salePercentage
-    const validPercentages = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
-    if (!validPercentages.includes(salePercentage)) {
-      return res.status(400).json({
-        message:
-          "Phần trăm giảm giá phải là một trong: " +
-          validPercentages.join(", "),
-        idCode: 1,
-      });
-    }
-
     // Tính salePrice
     const salePrice = originalPrice * (1 - salePercentage / 100);
 
@@ -78,10 +114,11 @@ export const createProduct = async (req, res) => {
       salePrice,
       salePercentage,
       stock_quantity,
-      category_id,
       image_url,
       sizes,
-      tags,
+      gender,
+      mainCategory,
+      subCategory,
     });
 
     return res.status(200).json({
@@ -101,14 +138,22 @@ export const createProduct = async (req, res) => {
 // GET ALL PRODUCTS
 export const getAllProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search, category } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      gender,
+      mainCategory,
+      subCategory,
+    } = req.query;
 
     const query = {};
-    if (search) query.name = { $regex: search, $options: "i" };
-    if (category) query.category_id = category;
+    if (search) query.$text = { $search: search };
+    if (gender) query.gender = gender;
+    if (mainCategory) query.mainCategory = mainCategory;
+    if (subCategory) query.subCategory = subCategory;
 
     const products = await Product.find(query)
-      .populate("category_id", "name")
       .populate("sizes.size_id", "name")
       .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit))
@@ -142,9 +187,10 @@ export const getAllProducts = async (req, res) => {
 // GET PRODUCT BY ID
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findOne({ _id: req.params.id })
-      .populate("category_id", "name")
-      .populate("sizes.size_id", "name");
+    const product = await Product.findOne({ _id: req.params.id }).populate(
+      "sizes.size_id",
+      "name"
+    );
 
     if (!product) {
       return res.status(404).json({
@@ -179,23 +225,24 @@ export const updateProduct = async (req, res) => {
     }
 
     const {
-      category_id,
       sizes,
       originalPrice,
-      salePrice,
       salePercentage,
       image_url,
+      mainCategory,
+      subCategory,
     } = req.body;
 
-    // Kiểm tra category_id nếu được cung cấp
-    if (category_id) {
-      const category = await Category.findById(category_id);
-      if (!category) {
-        return res.status(400).json({
-          message: "Danh mục không tồn tại",
-          idCode: 1,
-        });
-      }
+    // Kiểm tra mainCategory và subCategory nếu được cung cấp
+    if (
+      mainCategory &&
+      subCategory &&
+      !validateCategory(mainCategory, subCategory)
+    ) {
+      return res.status(400).json({
+        message: `subCategory "${subCategory}" không hợp lệ với mainCategory "${mainCategory}"`,
+        idCode: 1,
+      });
     }
 
     // Kiểm tra sizes nếu được cung cấp
@@ -219,43 +266,20 @@ export const updateProduct = async (req, res) => {
       });
     }
 
-    // Kiểm tra salePrice <= originalPrice nếu được cung cấp
-    if (originalPrice !== undefined && salePrice !== undefined) {
-      if (salePrice > originalPrice) {
-        return res.status(400).json({
-          message: "Giá giảm không được lớn hơn giá gốc",
-          idCode: 1,
-        });
-      }
-    }
-
-    // Kiểm tra salePercentage nếu được cung cấp
-    if (
-      salePercentage !== undefined &&
-      originalPrice !== undefined &&
-      salePrice !== undefined
-    ) {
-      const calculatedPercentage = Math.round(
-        ((originalPrice - salePrice) / originalPrice) * 100
-      );
-      if (calculatedPercentage !== salePercentage) {
-        return res.status(400).json({
-          message: "Phần trăm giảm giá không khớp với giá gốc và giá giảm",
-          idCode: 1,
-        });
-      }
+    // Tính salePrice nếu originalPrice và salePercentage được cung cấp
+    let salePrice = product.salePrice;
+    if (originalPrice !== undefined && salePercentage !== undefined) {
+      salePrice = originalPrice * (1 - salePercentage / 100);
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { ...req.body, salePrice },
       {
         new: true,
         runValidators: true,
       }
-    )
-      .populate("category_id", "name")
-      .populate("sizes.size_id", "name");
+    ).populate("sizes.size_id", "name");
 
     return res.status(200).json({
       message: "OK",

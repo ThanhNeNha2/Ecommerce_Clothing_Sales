@@ -5,6 +5,8 @@ import auth from "./routes/auth.router";
 import blog from "./routes/blogs.router";
 import chat from "./routes/chat.router";
 import mess from "./routes/messages.router";
+import product from "./routes/product.router";
+import size from "./routes/size.router";
 
 var cors = require("cors");
 import bodyParser from "body-parser";
@@ -31,6 +33,9 @@ app.use(cookieParser());
 app.use("/api", users);
 app.use("/api", blog);
 app.use("/api", auth);
+app.use("/api", product);
+app.use("/api", size);
+
 app.use("/api", mess);
 app.use("/api", chat);
 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const Size = mongoose.model("Size");
+import Size from "../models/Size.model";
 
 // CREATE SIZE
 export const createSize = async (req, res) => {
