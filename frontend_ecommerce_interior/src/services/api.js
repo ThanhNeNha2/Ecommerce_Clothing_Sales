@@ -101,3 +101,14 @@ export const getBlogById = async (id) => {
     console.log("Error"), error;
   }
 };
+
+// PRODUCT
+
+export const getProductById = async (id) => {
+  try {
+    const res = await instance.get(`product/${id}`);
+    return res;
+  } catch (error) {
+    console.log("Error"), error;
+  }
+};

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header/Header";
 import CoverImg from "../../components/Cover/CoverImg";
 import Products from "../../components/Products/Products";
@@ -9,6 +9,7 @@ import { TbGridDots } from "react-icons/tb";
 import { CgScreenWide } from "react-icons/cg";
 
 const ListProduct = () => {
+  const [addProduct, setaddProduct] = useState(32);
   return (
     <div>
       <Header />
@@ -112,7 +113,15 @@ const ListProduct = () => {
           </div>
         </div>
       </div>
-      <Products value={16} />
+      <Products value={addProduct} />
+      <div className="flex justify-center items-center mt-7 ">
+        <button
+          className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
+          onClick={() => setaddProduct(addProduct + 32)}
+        >
+          Show More
+        </button>
+      </div>
       <Quality />
       <Footer />
     </div>
