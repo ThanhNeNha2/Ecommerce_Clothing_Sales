@@ -4,8 +4,9 @@ import { RiArrowLeftRightLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { instance } from "../../Custom/Axios/AxiosCustom";
 
-const Products = ({ value }) => {
+const Products = ({ value, products }) => {
   console.log("check thong tin value", value);
+  console.log("check thong tin products", products);
 
   const [listProducts, setListProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ const Products = ({ value }) => {
     try {
       setLoading(true);
       const res = await instance.get(`/product?limit=${value}`);
-      console.log("check thong tin res ", res.data.products);
+      // console.log("check thong tin res ", res.data.products);
       setListProducts(res.data.products || []);
     } catch (err) {
       console.error("Lỗi khi lấy sản phẩm:", err);
