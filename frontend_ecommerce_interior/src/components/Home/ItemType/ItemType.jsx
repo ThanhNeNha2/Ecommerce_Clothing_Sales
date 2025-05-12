@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const ItemType = ({ img1, img2, img3 }) => {
+const ItemType = ({ img1, img2, img3, img4 }) => {
   return (
     <div className="flex flex-col justify-center items-center w-full py-16 px-4 sm:px-6 lg:px-8 gap-12 2xl:gap-8 bg-gray-50">
       {/* Header Section */}
@@ -16,47 +17,65 @@ const ItemType = ({ img1, img2, img3 }) => {
       {/* Image Grid Section */}
       <div className="flex flex-col justify-center sm:flex-row gap-6 lg:gap-8 w-full max-w-7xl">
         {/* Men's Clothes */}
-        <div className="flex flex-col items-center gap-6 2xl:gap-5 group">
-          <div className="overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 h-[500px] w-[300px]">
-            <img
-              src={img2} // Replace with a single image or adjust collage logic
-              alt="Men's clothing"
-              className="h-full w-full object-cover"
-            />
+        <Link to="/ListProduct?gender=Men">
+          <div className="flex flex-col items-center gap-6 2xl:gap-5 group">
+            <div className="overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 h-[500px] w-[300px]">
+              <img
+                src={img2}
+                alt="Men's clothing"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+              {`Men's Clothes`}
+            </span>
           </div>
-          <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-            {` Men's Clothes`}
-          </span>
-        </div>
-
+        </Link>
         {/* Women's Clothes */}
-        <div className="flex flex-col items-center gap-6 2xl:gap-5 group">
-          <div className="overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 h-[500px] w-[300px]">
-            <img
-              src={img1}
-              alt="Women's clothing"
-              className="h-full w-full object-cover"
-            />
+        <Link to="/ListProduct?gender=Women">
+          <div className="flex flex-col items-center gap-6 2xl:gap-5 group">
+            <div className="overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 h-[500px] w-[300px]">
+              <img
+                src={img1}
+                alt="Women's clothing"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+              {`Women's Clothes`}
+            </span>
           </div>
-
-          <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-            {`  Women's Clothes`}
-          </span>
-        </div>
-
+        </Link>
         {/* Children's Clothes */}
-        <div className="flex flex-col items-center gap-6 2xl:gap-5 group">
-          <div className="overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 h-[500px] w-[300px] ">
-            <img
-              src={img3}
-              alt="Children's clothing"
-              className="h-full w-full object-cover "
-            />
+        <Link to="/ListProduct?gender=Kids">
+          <div className="flex flex-col items-center gap-6 2xl:gap-5 group">
+            <div className="overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 h-[500px] w-[300px]">
+              <img
+                src={img3}
+                alt="Children's clothing"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+              {`Children's Clothes`}
+            </span>
           </div>
-          <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-            {`Children's Clothes`}
-          </span>
-        </div>
+        </Link>
+        {/* Unisex's Clothes */}
+        <Link to="/ListProduct?gender=Unisex">
+          <div className="flex flex-col items-center gap-6 2xl:gap-5 group">
+            <div className="overflow-hidden rounded-lg shadow-md transition-transform duration-300 group-hover:scale-105 h-[500px] w-[300px]">
+              <img
+                src={img4}
+                alt="Unisex's clothing"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+              {`Unisex's Clothes`}
+            </span>
+          </div>
+        </Link>
       </div>
     </div>
   );

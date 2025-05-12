@@ -8,29 +8,31 @@ import { IoList } from "react-icons/io5";
 import { TbGridDots } from "react-icons/tb";
 import { CgScreenWide } from "react-icons/cg";
 import { instance } from "../../Custom/Axios/AxiosCustom";
+import { useSearchParams } from "react-router-dom";
 
 const ListProduct = () => {
-  const [addProduct, setAddProduct] = useState(32); // Số lượng sản phẩm tối đa từ API
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
 
-  // State cho các bộ lọc
+  const gender = searchParams.get("gender");
+
+  // State for filters
   const [filters, setFilters] = useState({
     search: "",
     category: "",
-    gender: "",
+    gender: gender || "",
     minPrice: "",
     maxPrice: "",
     isOnSale: false,
   });
 
-  // State cho sắp xếp và số lượng hiển thị
+  // State for sorting and pagination
   const [sort, setSort] = useState("Default");
-  const [perPage, setPerPage] = useState(16);
+  const [perPage, setPerPage] = useState(32);
 
-  // Lấy tất cả sản phẩm từ API
+  // Fetch products from API
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -38,42 +40,43 @@ const ListProduct = () => {
       const queryParams = new URLSearchParams();
 
       if (filters.search) queryParams.append("search", filters.search);
-      if (filters.category) queryParams.append("category", filters.category);
+      if (filters.category)
+        queryParams.append("mainCategory", filters.category);
       if (filters.gender) queryParams.append("gender", filters.gender);
       if (filters.minPrice) queryParams.append("minPrice", filters.minPrice);
       if (filters.maxPrice) queryParams.append("maxPrice", filters.maxPrice);
       if (filters.isOnSale) queryParams.append("isOnSale", true);
-      queryParams.append("limit", addProduct);
+      queryParams.append("limit", perPage);
 
-      // Thêm tham số sắp xếp nếu API hỗ trợ
       if (sort !== "Default") {
         if (sort === "Price: Low to High")
-          queryParams.append("sort", "price_asc");
+          queryParams.append("sortByPrice", "asc");
         if (sort === "Price: High to Low")
-          queryParams.append("sort", "price_desc");
-        if (sort === "Newest") queryParams.append("sort", "created_at_desc");
+          queryParams.append("sortByPrice", "desc");
+        if (sort === "Newest") queryParams.append("isNew", "true");
       }
 
+      console.log("API URL:", `/product?${queryParams.toString()}`);
       const res = await instance.get(`/product?${queryParams.toString()}`);
 
-      console.log("Dữ liệu sản phẩm từ API:", res.data.products);
-      setProducts(res.data.products || []);
-      setFilteredProducts(res.data.products || []);
+      console.log("API Response:", res.data.products);
+      setProducts((prev) => res.data.products || []);
     } catch (err) {
-      console.error("Lỗi khi lấy sản phẩm:", err);
-      setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");
+      console.error("Error fetching products:", err);
+      setError("Failed to load products. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Xử lý tìm kiếm
+  // Handle search form submission
   const handleSearch = (e) => {
     e.preventDefault();
+
     fetchProducts();
   };
 
-  // Xử lý thay đổi bộ lọc
+  // Handle filter changes
   const handleFilterChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFilters((prev) => ({
@@ -82,14 +85,34 @@ const ListProduct = () => {
     }));
   };
 
-  // Xử lý thay đổi số lượng hiển thị trên mỗi trang
+  // Handle per-page change
   const handlePerPageChange = (e) => {
     setPerPage(Number(e.target.value));
   };
 
+  // Handle "Show More" button
+  const handleShowMore = () => {
+    setPerPage((prev) => prev + 16);
+  };
+
+  // Update filters.gender when searchParams gender changes
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      gender: gender || "",
+    }));
+  }, [gender]);
+
+  // Fetch products when filters, sort, or page changes
   useEffect(() => {
     fetchProducts();
+  }, [filters.gender, sort, perPage]);
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, []);
+
   return (
     <div>
       <Header />
@@ -113,8 +136,8 @@ const ListProduct = () => {
             </div>
             <hr className="h-8 border-l border-gray-300 mx-4" />
             <span className="font-poppins text-sm text-gray-600">
-              Showing 1-{Math.min(perPage, filteredProducts.length)} of{" "}
-              {filteredProducts.length} results
+              Showing 1-{Math.min(perPage * perPage, products.length)} of{" "}
+              {products.length} results
             </span>
           </div>
           <div className="flex items-center gap-4">
@@ -156,8 +179,9 @@ const ListProduct = () => {
               <input
                 type="text"
                 name="search"
+                value={filters.search}
                 onChange={handleFilterChange}
-                placeholder="Tìm kiếm sản phẩm..."
+                placeholder="Search products..."
                 className="border border-gray-300 py-1.5 px-3 rounded-md text-sm text-gray-700 hover:bg-gray-50"
               />
             </div>
@@ -224,12 +248,7 @@ const ListProduct = () => {
                   type="checkbox"
                   name="isOnSale"
                   checked={filters.isOnSale}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      isOnSale: e.target.checked,
-                    }))
-                  }
+                  onChange={handleFilterChange}
                 />
                 <span className="text-sm text-gray-600">On Sale</span>
               </label>
@@ -246,18 +265,19 @@ const ListProduct = () => {
         </div>
       </div>
 
-      {/* Hiển thị trạng thái tải và lỗi */}
-      {loading && <div className="text-center py-4">Đang tải...</div>}
+      {/* Loading, Error, and Empty States */}
+      {loading && <div className="text-center py-4">Loading...</div>}
       {error && <div className="text-center py-4 text-red-500">{error}</div>}
-      {!loading && !error && filteredProducts.length === 0 && (
-        <div className="text-center py-4">Không tìm thấy sản phẩm nào.</div>
+      {!loading && !error && products.length === 0 && (
+        <div className="text-center py-4">No products found.</div>
       )}
 
+      {/* Product List */}
       <Products listProducts={products} />
       <div className="flex justify-center items-center mt-7">
         <button
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
-          onClick={() => setAddProduct(addProduct + 32)}
+          onClick={handleShowMore}
         >
           Show More
         </button>

@@ -4,6 +4,8 @@ import imgslide from "../../../public/home/main.webp";
 import img2 from "../../../public/home/nam.jpg";
 import img1 from "../../../public/home/Nu.jpg";
 import img3 from "../../../public/home/treem.jpg";
+import img4 from "../../../public/home/anh4.jpg";
+
 import Products from "../../components/Products/Products";
 import SliceProduct from "../../components/Home/SliceProduct/SliceProduct";
 import SetupProduct from "../../components/Home/SetupProduct/SetupProduct";
@@ -45,7 +47,7 @@ const Home = () => {
       <Header />
       <HeroSection imgslide={imgslide} />
 
-      <ItemType img2={img2} img1={img1} img3={img3} />
+      <ItemType img2={img2} img1={img1} img3={img3} img4={img4} />
 
       <div>
         <span className="font-poppins text-[28px] font-bold flex justify-center mt-16 mb-8">

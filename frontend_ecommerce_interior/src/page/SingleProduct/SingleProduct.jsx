@@ -18,7 +18,11 @@ const SingleProduct = () => {
   const getAllProduct = async () => {
     try {
       setLoading(true);
-      const res = await instance.get(`/product?limit=${addProduct}`);
+      // const res = await instance.get(`/product?limit=${8}`);
+      const res = await instance.get(
+        `/product?limit=${8}&mainCategory=${"Swimwear"}`
+      );
+
       // console.log("check thong tin res ", res.data.products);
       setListProducts(res.data.products || []);
     } catch (err) {
@@ -70,14 +74,14 @@ const SingleProduct = () => {
       </div>
       <Products listProducts={listProducts} />
 
-      <div className="flex justify-center items-center mt-7 mb-16">
+      {/* <div className="flex justify-center items-center mt-7 mb-16">
         <button
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
           onClick={() => setaddProduct(addProduct + 4)}
         >
           Show More
         </button>
-      </div>
+      </div> */}
       <Footer />
     </div>
   );
