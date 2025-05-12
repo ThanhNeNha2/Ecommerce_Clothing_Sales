@@ -4,12 +4,15 @@ import DetailProduct from "../../components/SingleProduct/DetailProduct";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import Products from "../../components/Products/Products";
 import Footer from "../../components/Footer/Footer";
+import { useParams } from "react-router-dom";
 
 const SingleProduct = () => {
   const [addProduct, setaddProduct] = useState(4);
+  const { id } = useParams();
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [id]);
   return (
     <div className="flex flex-col">
       <Header />

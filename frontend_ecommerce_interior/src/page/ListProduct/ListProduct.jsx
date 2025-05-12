@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import CoverImg from "../../components/Cover/CoverImg";
 import Products from "../../components/Products/Products";
@@ -10,6 +10,9 @@ import { CgScreenWide } from "react-icons/cg";
 
 const ListProduct = () => {
   const [addProduct, setaddProduct] = useState(32);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div>
       <Header />
