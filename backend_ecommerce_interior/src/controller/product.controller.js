@@ -106,7 +106,7 @@ export const createProduct = async (req, res) => {
     }
 
     // Tính salePrice
-    const salePrice = originalPrice * (1 - salePercentage / 100);
+    const salePrice = Math.round(originalPrice * (1 - salePercentage / 100));
 
     const product = await Product.create({
       nameProduct,
@@ -138,35 +138,144 @@ export const createProduct = async (req, res) => {
 };
 
 // GET ALL PRODUCTS
+// export const getAllProducts = async (req, res) => {
+//   try {
+//     const {
+//       page = 1,
+//       limit = 10,
+//       search,
+//       gender,
+//       mainCategory,
+//       subCategory,
+//     } = req.query;
+
+//     const query = {};
+//     if (search) query.$text = { $search: search };
+//     if (gender) query.gender = gender;
+//     if (mainCategory) query.mainCategory = mainCategory;
+//     if (subCategory) query.subCategory = subCategory;
+
+//     const products = await Product.find(query)
+//       .populate("sizes.size_id", "name")
+//       .skip((Number(page) - 1) * Number(limit))
+//       .limit(Number(limit))
+//       .lean();
+
+//     const formattedProducts = products.map((product) => ({
+//       ...product,
+//       id: product._id,
+//       _id: undefined,
+//     }));
+
+//     const total = await Product.countDocuments(query);
+
+//     return res.status(200).json({
+//       message: "OK",
+//       idCode: 0,
+//       products: formattedProducts,
+//       total,
+//       page: Number(page),
+//       pages: Math.ceil(total / Number(limit)),
+//     });
+//   } catch (error) {
+//     console.log("Error", error);
+//     return res.status(500).json({
+//       message: "Truy cập danh sách sản phẩm không thành công",
+//       idCode: 1,
+//     });
+//   }
+// };
 export const getAllProducts = async (req, res) => {
   try {
     const {
-      page = 1,
-      limit = 10,
+      limit = 32,
       search,
       gender,
       mainCategory,
       subCategory,
+      minPrice,
+      maxPrice,
+      minSalePercentage,
+      maxSalePercentage,
+      isNew,
+      isOnSale,
+      sortByPrice,
     } = req.query;
 
+    // Xây dựng query
     const query = {};
-    if (search) query.$text = { $search: search };
-    if (gender) query.gender = gender;
-    if (mainCategory) query.mainCategory = mainCategory;
-    if (subCategory) query.subCategory = subCategory;
 
+    // Tìm kiếm theo tên sản phẩm (dùng $regex để hỗ trợ tiếng Việt)
+    if (search) {
+      query.nameProduct = { $regex: search, $options: "i" }; // Không phân biệt hoa thường
+    }
+
+    // Lọc theo gender
+    if (gender) {
+      query.gender = gender;
+    }
+
+    // Lọc theo mainCategory
+    if (mainCategory) {
+      query.mainCategory = mainCategory;
+    }
+
+    // Lọc theo subCategory (subCategory là mảng, dùng $in)
+    if (subCategory) {
+      query.subCategory = { $in: [subCategory] };
+    }
+
+    // Lọc theo salePrice
+    if (minPrice || maxPrice) {
+      query.salePrice = {};
+      if (minPrice) query.salePrice.$gte = Number(minPrice);
+      if (maxPrice) query.salePrice.$lte = Number(maxPrice);
+    }
+
+    // Lọc theo salePercentage
+    if (minSalePercentage || maxSalePercentage) {
+      query.salePercentage = {};
+      if (minSalePercentage)
+        query.salePercentage.$gte = Number(minSalePercentage);
+      if (maxSalePercentage)
+        query.salePercentage.$lte = Number(maxSalePercentage);
+    }
+
+    // Lọc sản phẩm mới nhất (salePercentage = 0)
+    if (isNew === "true") {
+      query.salePercentage = 0;
+    }
+
+    // Lọc sản phẩm đang giảm giá (salePercentage > 0)
+    if (isOnSale === "true") {
+      query.salePercentage = { $gt: 0 };
+    }
+
+    // Xây dựng sort  sort options
+    const sortOptions = {};
+    if (sortByPrice) {
+      if (sortByPrice === "asc") {
+        sortOptions.salePrice = 1; // Từ bé đến lớn
+      } else if (sortByPrice === "desc") {
+        sortOptions.salePrice = -1; // Từ lớn đến bé
+      }
+    }
+
+    // Truy vấn sản phẩm
     const products = await Product.find(query)
       .populate("sizes.size_id", "name")
-      .skip((Number(page) - 1) * Number(limit))
+      .sort(sortOptions)
       .limit(Number(limit))
       .lean();
 
+    // Định dạng lại kết quả
     const formattedProducts = products.map((product) => ({
       ...product,
       id: product._id,
       _id: undefined,
     }));
 
+    // Tổng số sản phẩm
     const total = await Product.countDocuments(query);
 
     return res.status(200).json({
@@ -174,18 +283,15 @@ export const getAllProducts = async (req, res) => {
       idCode: 0,
       products: formattedProducts,
       total,
-      page: Number(page),
-      pages: Math.ceil(total / Number(limit)),
     });
   } catch (error) {
-    console.log("Error", error);
+    console.error("Error:", error);
     return res.status(500).json({
       message: "Truy cập danh sách sản phẩm không thành công",
       idCode: 1,
     });
   }
 };
-
 // GET PRODUCT BY ID
 export const getProductById = async (req, res) => {
   try {

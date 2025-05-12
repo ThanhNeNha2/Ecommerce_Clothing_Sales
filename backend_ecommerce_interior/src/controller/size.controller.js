@@ -46,7 +46,7 @@ export const createSize = async (req, res) => {
 // GET ALL SIZES
 export const getAllSizes = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search } = req.query;
+    const { page = 1, limit = 100, search } = req.query;
 
     const query = {};
     if (search) query.name = { $regex: search, $options: "i" };

@@ -31,7 +31,6 @@ const productSchema = new mongoose.Schema(
       enum: ["Men", "Women", "Unisex", "Kids"],
       required: true,
     },
-
     mainCategory: {
       type: String,
       enum: [
@@ -47,11 +46,9 @@ const productSchema = new mongoose.Schema(
       ],
       required: true,
     },
-
     subCategory: {
       type: [String],
       enum: [
-        // Topwear
         "T-Shirt",
         "Shirt",
         "Polo",
@@ -66,28 +63,20 @@ const productSchema = new mongoose.Schema(
         "Windbreaker",
         "Bomber Jacket",
         "Denim Jacket",
-
-        // Bottomwear
         "Jeans",
         "Trousers",
         "Shorts",
         "Skirt",
         "Leggings",
         "Joggers",
-
-        // OnePiece
         "Dress",
         "Jumpsuit",
         "Overalls",
-
-        // Footwear
         "Sneakers",
         "Loafers",
         "Boots",
         "Sandals",
         "Heels",
-
-        // Accessories
         "Hat",
         "Cap",
         "Belt",
@@ -97,18 +86,10 @@ const productSchema = new mongoose.Schema(
         "Sunglasses",
         "Watch",
         "Jewelry",
-
-        // Underwear
         "Underwear",
-
-        // Sportswear
         "Tracksuit",
         "Sportswear",
-
-        // Sleepwear
         "Sleepwear",
-
-        // Swimwear
         "Swimwear",
       ],
       required: true,
@@ -147,7 +128,55 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Pre-save hook để kiểm tra và cập nhật salePrice, salePercentage
+productSchema.pre("save", function (next) {
+  // Nếu salePrice không được cung cấp, đặt bằng originalPrice
+  if (this.salePrice === undefined || this.salePrice === null) {
+    this.salePrice = this.originalPrice;
+  }
+
+  // Kiểm tra salePrice <= originalPrice
+  if (this.salePrice > this.originalPrice) {
+    return next(
+      new Error("Sale price must be less than or equal to original price")
+    );
+  }
+
+  // Tính salePercentage
+  this.salePercentage =
+    Math.round(
+      ((this.originalPrice - this.salePrice) / this.originalPrice) * 100
+    ) || 0;
+
+  // Đảm bảo salePercentage nằm trong enum
+  if (
+    ![0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50].includes(this.salePercentage)
+  ) {
+    this.salePercentage =
+      Math.min(
+        ...[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50].filter(
+          (val) => val >= this.salePercentage
+        )
+      ) || 0;
+  }
+
+  // Kiểm tra stock_quantity khớp với tổng stock trong sizes
+  const totalStock = this.sizes.reduce((sum, size) => sum + size.stock, 0);
+  if (totalStock !== this.stock_quantity) {
+    return next(new Error("Total stock in sizes must match stock_quantity"));
+  }
+
+  next();
+});
+
 // Index cho tìm kiếm và lọc
-productSchema.index({ name: "text", mainCategory: 1, subCategory: 1 });
+productSchema.index({
+  nameProduct: "text",
+  mainCategory: 1,
+  subCategory: 1,
+  gender: 1,
+  salePercentage: 1,
+  salePrice: 1,
+});
 
 export default mongoose.model("Product", productSchema);
