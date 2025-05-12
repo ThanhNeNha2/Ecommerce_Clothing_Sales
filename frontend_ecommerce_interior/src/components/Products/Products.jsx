@@ -4,36 +4,7 @@ import { RiArrowLeftRightLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { instance } from "../../Custom/Axios/AxiosCustom";
 
-const Products = ({ value, products }) => {
-  console.log("check thong tin value", value);
-  console.log("check thong tin products", products);
-
-  const [listProducts, setListProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const getAllProduct = async () => {
-    try {
-      setLoading(true);
-      const res = await instance.get(`/product?limit=${value}`);
-      // console.log("check thong tin res ", res.data.products);
-      setListProducts(res.data.products || []);
-    } catch (err) {
-      console.error("Lỗi khi lấy sản phẩm:", err);
-      setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getAllProduct();
-  }, [value]);
-
-  if (loading) return <div className="text-center py-8">Đang tải...</div>;
-  if (error)
-    return <div className="text-center py-8 text-red-500">{error}</div>;
-
+const Products = ({ listProducts }) => {
   return (
     <div className="flex flex-wrap justify-center px-6 sm:px-10 md:px-20 gap-6 py-8 bg-gray-50">
       {listProducts.map((product, i) => (

@@ -5,14 +5,42 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import Products from "../../components/Products/Products";
 import Footer from "../../components/Footer/Footer";
 import { useParams } from "react-router-dom";
+import { instance } from "../../Custom/Axios/AxiosCustom";
 
 const SingleProduct = () => {
-  const [addProduct, setaddProduct] = useState(4);
   const { id } = useParams();
+  const [addProduct, setaddProduct] = useState(8);
+
+  const [listProducts, setListProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const getAllProduct = async () => {
+    try {
+      setLoading(true);
+      const res = await instance.get(`/product?limit=${addProduct}`);
+      // console.log("check thong tin res ", res.data.products);
+      setListProducts(res.data.products || []);
+    } catch (err) {
+      console.error("Lỗi khi lấy sản phẩm:", err);
+      setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllProduct();
+  }, [addProduct]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  if (loading) return <div className="text-center py-8">Đang tải...</div>;
+  if (error)
+    return <div className="text-center py-8 text-red-500">{error}</div>;
+
   return (
     <div className="flex flex-col">
       <Header />
@@ -40,7 +68,8 @@ const SingleProduct = () => {
           Related Products
         </span>
       </div>
-      <Products value={addProduct} />
+      <Products listProducts={listProducts} />
+
       <div className="flex justify-center items-center mt-7 mb-16">
         <button
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
