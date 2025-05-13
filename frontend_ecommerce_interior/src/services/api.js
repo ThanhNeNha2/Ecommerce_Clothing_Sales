@@ -112,3 +112,39 @@ export const getProductById = async (id) => {
     console.log("Error"), error;
   }
 };
+
+// wishlist
+
+export const getAllWishlist = async (id) => {
+  try {
+    const res = await instance.get(`wishlist?user_id=${id}`);
+    return res;
+  } catch (error) {
+    console.error("Error in getAllWishlist:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const addProductToWishlist = async (productId, userId) => {
+  try {
+    const res = await instance.post(`wishlist`, { productId, userId });
+    return res;
+  } catch (error) {
+    console.log("Error"), error;
+  }
+};
+
+export const deleteProductToWishlist = async (userId, productId) => {
+  try {
+    const res = await instance.delete(`wishlist`, {
+      data: {
+        user_id: userId,
+        product_id: productId,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.error("Error deleting product from wishlist:", error);
+    throw error;
+  }
+};

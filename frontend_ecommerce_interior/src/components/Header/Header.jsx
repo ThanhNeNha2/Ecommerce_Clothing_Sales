@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import logo from "../../../public/Logo/logoweb.png";
-import { FaHeart, FaRegHeart, FaUserAlt, FaUserEdit } from "react-icons/fa";
+import { FaRegHeart, FaUserAlt, FaUserEdit } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
-import { productsFavourite } from "../../services/fakeApi";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { TbLogin, TbLogout } from "react-icons/tb";
 import { MdAssignmentInd } from "react-icons/md";
+import ProductFavourite from "../ProductFavourite/ProductFavourite";
 
 const Header = () => {
   const [checkShow, setCheckShow] = useState({
@@ -28,14 +28,6 @@ const Header = () => {
       }));
     }
   };
-
-  // CHIA TRANG
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Số lượng sản phẩm trên mỗi trang
-  const totalPages = Math.ceil(productsFavourite.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedProducts = productsFavourite.slice(startIndex, endIndex);
 
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const isAuthenticated = () => {
@@ -142,74 +134,7 @@ const Header = () => {
               >
                 <FaRegHeart />
               </div>
-              {checkShow.openFavourite && (
-                <div className="absolute bg-gray-100 top-[39px] left-[-150px] w-[320px] h-[543px] pt-5 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-3 px-5 h-auto">
-                      <span className="font-poppins font-medium text-lg">
-                        Products Favourite
-                      </span>
-                      <span>
-                        <FaRegHeart />
-                      </span>
-                    </div>
-                    <hr />
-                    <div className="mt-2 flex flex-col justify-between">
-                      <div>
-                        {displayedProducts.map((product, i) => (
-                          <div
-                            key={i}
-                            className="flex justify-between items-center px-5 hover:bg-gray-300 py-2"
-                          >
-                            <div className="w-[70px] h-[70px]">
-                              <img
-                                src={product.imgProduct}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="flex flex-col">
-                              <span>{product.productName}</span>
-                              <span className="text-sm font-normal">
-                                Giá: {product.salePrice} VNĐ
-                              </span>
-                            </div>
-                            <div>
-                              <span
-                                className="text-red-500 cursor-pointer hover:text-red-400"
-                                title="Xóa khỏi danh sách"
-                              >
-                                <FaHeart />
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Phần chia trang */}
-                  <div className="py-3 flex justify-center">
-                    {Array.from({ length: totalPages }).map((_, index) => (
-                      <div
-                        key={index}
-                        className={`p-1 ${
-                          currentPage === index + 1
-                            ? "border border-colorMain rounded-full"
-                            : ""
-                        }`}
-                        onClick={() => setCurrentPage(index + 1)}
-                      >
-                        <div
-                          className={`w-[10px] h-[10px] rounded-full ${
-                            currentPage === index + 1
-                              ? "bg-colorMain"
-                              : "bg-gray-400"
-                          }`}
-                        ></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {checkShow.openFavourite && <ProductFavourite />}
             </li>
             <Link to={"/cart"}>
               <li className="text-[25px] 2xl:text-[18px] hover:text-gray-400">
