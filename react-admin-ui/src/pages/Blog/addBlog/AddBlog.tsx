@@ -1,28 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./AddBlog.scss";
-import { useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiCustom } from "../../custom/customApi";
+import { apiCustom } from "../../../custom/customApi";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import upload from "../../utils/upload";
-// import upload from "../../utils/upload.js";
+import upload from "../../../utils/upload";
+
 const AddBlog = () => {
   const [file, setFile] = useState<File | null>(null);
   const editorRef = useRef<any>(null);
 
-  // quan ly thong tin nhap vao
+  // Quản lý thông tin nhập vào
   const [listInfoBlog, setListInfoBlog] = useState({
     titleBlog: "",
     imgMainBlog: "",
     descripShort: "",
     description: "",
+    public_id_image: "",
   });
+
   // Hàm lấy thông tin từ Editor
   const handleEditorChange = (content: string) => {
-    setListInfoBlog((prev) => ({ ...prev, description: content }));
+    // 1. Chuyển tất cả <a> chứa URL ảnh thành <img> với kích thước cố định
+    let updatedContent = content.replace(
+      /<a[^>]*href=["'](.*?\.(jpg|jpeg|png|gif))["'][^>]*>.*?<\/a>/gi,
+      '<img src="$1" alt="Image" height="370" width="490" />'
+    );
+
+    // 2. Chuyển các URL ảnh thuần text thành <img> với kích thước cố định
+    updatedContent = updatedContent.replace(
+      /https?:\/\/.*?\.(jpg|jpeg|png|gif)(?![^<>]*>)/gi,
+      '<img src="$1" alt="Image" height="370" width="490" />'
+    );
+
+    // 3. Đảm bảo tất cả <img> tags có kích thước cố định
+    updatedContent = updatedContent.replace(
+      /<img(?![^>]*height="[^"]*")[^>]*>/gi,
+      (match) => match.replace(/>/, ' height="370" width="490" />')
+    );
+
+    // 4. Đảm bảo các <img> tags đã có height/width thì giữ nguyên giá trị 370x490
+    updatedContent = updatedContent.replace(
+      /<img[^>]*height="[^"]*"[^>]*width="[^"]*"[^>]*>/gi,
+      (match) =>
+        match
+          .replace(/height="[^"]*"/, 'height="370"')
+          .replace(/width="[^"]*"/, 'width="490"')
+    );
+
+    setListInfoBlog((prev) => ({ ...prev, description: updatedContent }));
   };
+
   const handleChangeInfoBlog = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     valueChange: string
@@ -31,7 +60,6 @@ const AddBlog = () => {
   };
 
   // API CREATE
-
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -39,17 +67,15 @@ const AddBlog = () => {
       return apiCustom.post(`blog`, info);
     },
     onSuccess: (response) => {
-      // queryClient.invalidateQueries([`all${props.slug}`]);
       toast.success("🎉 Blog đã được tạo thành công!");
       navigate("/blogs");
     },
     onError: (error) => {
-      // ❌ Thất bại -> Thông báo lỗi
       toast.error("🚨 Lỗi khi tạo blog. Vui lòng thử lại!");
     },
   });
 
-  // xác nhận tạo blog mới
+  // Xác nhận tạo blog mới
   const handleConfirm = async () => {
     const { titleBlog, descripShort, description } = listInfoBlog;
     // Kiểm tra nếu thiếu thông tin
@@ -57,11 +83,19 @@ const AddBlog = () => {
       toast.error("⚠️ Vui lòng điền đầy đủ thông tin tất cả các trường!");
       return;
     }
-    const url = await upload(file, "blog");
+
+    let url = "";
+    if (file) {
+      url = await upload(file, "blog");
+    }
 
     // Nếu đủ thông tin thì gọi mutation
-    mutation.mutate({ ...listInfoBlog, imgMainBlog: url });
+    mutation.mutate({
+      ...listInfoBlog,
+      imgMainBlog: url,
+    });
   };
+
   return (
     <div className="addblog">
       <div className="contentP">
@@ -83,7 +117,7 @@ const AddBlog = () => {
                 }
               }}
             />
-          </div>{" "}
+          </div>
           <div
             className="item"
             style={{
@@ -93,19 +127,19 @@ const AddBlog = () => {
             <label>Title Blog</label>
             <input
               type="text"
-              placeholder="Enter Title Blog  "
+              placeholder="Enter Title Blog"
               value={listInfoBlog.titleBlog}
               onChange={(e) => handleChangeInfoBlog(e, "titleBlog")}
             />
-          </div>{" "}
+          </div>
           <div className="item">
-            <label>Description Shot</label>
+            <label>Description Short</label>
             <textarea
-              placeholder="Enter Description Shot"
+              placeholder="Enter Description Short"
               value={listInfoBlog.descripShort}
               onChange={(e) => handleChangeInfoBlog(e, "descripShort")}
             />
-          </div>{" "}
+          </div>
           <div className="item">
             <label>Description</label>
             <Editor
@@ -117,7 +151,6 @@ const AddBlog = () => {
                 menubar: false,
                 plugins: [
                   "advlist",
-                  "autolink",
                   "lists",
                   "link",
                   "image",
@@ -131,30 +164,40 @@ const AddBlog = () => {
                   "insertdatetime",
                   "media",
                   "table",
-                  "code",
                   "help",
                   "wordcount",
+                  "paste",
                 ],
                 toolbar:
                   "undo redo | blocks | " +
                   "bold italic forecolor | alignleft aligncenter " +
                   "alignright alignjustify | bullist numlist outdent indent | " +
-                  "removeformat | help",
+                  "removeformat | help | image",
                 content_style:
-                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px } " +
+                  "img { height: 370px !important; width: 490px !important; }",
+
+                // Tự động chuyển URL ảnh thành <img> với kích thước cố định khi paste
+                paste_preprocess: (plugin, args) => {
+                  args.content = args.content.replace(
+                    /https?:\/\/.*?\.(jpg|jpeg|png|gif)/gi,
+                    (match) =>
+                      `<img src="${match}" alt="Image" height="370" width="490" />`
+                  );
+                },
+                // Vô hiệu hóa tự động tạo <a> cho URL
+                link_assume_external_targets: true,
+                link_context_toolbar: false,
+                // Đảm bảo giữ nguyên các thuộc tính height và width
+                extended_valid_elements: "img[src|alt|height|width]",
               }}
-              onEditorChange={handleEditorChange} // Lắng nghe thay đổi
+              onEditorChange={handleEditorChange}
             />
-          </div>{" "}
+          </div>
         </div>
 
         <div className="btnP">
-          <button
-            className="pConfirm"
-            onClick={() => {
-              handleConfirm();
-            }}
-          >
+          <button className="pConfirm" onClick={handleConfirm}>
             Confirm
           </button>
         </div>

@@ -10,10 +10,16 @@ import "./styles/global.scss";
 import User from "./pages/user/User";
 import Product from "./pages/product/Product";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Posts from "./pages/blogs/Blogs";
+import Posts from "./pages/Blog/blogs/Blogs";
 import toast, { Toaster } from "react-hot-toast";
-import AddBlog from "./pages/addBlog/AddBlog";
-import BlogUpdate from "./pages/blogUpdate/BlogUpdate";
+import AddBlog from "./pages/Blog/addBlog/AddBlog";
+
+import Messages from "./pages/Messages/Messages";
+import PrivateRoute from "./utils/PrivateRoute";
+import AddProduct from "./pages/addProduct/AddProduct";
+import BlogUpdate from "./pages/Blog/blogUpdate/BlogUpdate";
+import Promotions from "./pages/Promotion/promotions/promotions";
+import AddPromotion from "./pages/Promotion/addPromotions/AddPromotion";
 
 const queryClient = new QueryClient();
 
@@ -40,49 +46,74 @@ function App() {
 
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: <Layout />,
-      children: [
-        {
-          path: "/",
-          element: <Home />,
-        },
-        {
-          path: "/users",
-          element: <Users />,
-        },
-        {
-          path: "/products",
-          element: <Products />,
-        },
-        {
-          path: "/blogs",
-          element: <Posts />,
-        },
-        {
-          path: "/blog/:id",
-          element: <BlogUpdate />,
-        },
-        {
-          path: "/addBlog",
-          element: <AddBlog />,
-        },
-        {
-          path: "/user/:id",
-          element: <User />,
-        },
-        {
-          path: "/products/:id",
-          element: <Product />,
-        },
-      ],
-    },
-    {
       path: "/login",
       element: <Login />,
     },
+    {
+      path: "/register",
+      element: <Login />,
+    },
+    {
+      path: "/",
+      element: <PrivateRoute />, // Kiểm tra đăng nhập
+      children: [
+        {
+          path: "/",
+          element: <Layout />, // Layout chứa các thành phần chính
+          children: [
+            {
+              path: "/",
+              element: <Home />,
+            },
+            {
+              path: "/users",
+              element: <Users />,
+            },
+            {
+              path: "/products",
+              element: <Products />,
+            },
+            {
+              path: "/blogs",
+              element: <Posts />,
+            },
+            {
+              path: "/promotions",
+              element: <Promotions />,
+            },
+            {
+              path: "/messages",
+              element: <Messages />,
+            },
+            {
+              path: "/blog/:id",
+              element: <BlogUpdate />,
+            },
+            {
+              path: "/addBlog",
+              element: <AddBlog />,
+            },
+            {
+              path: "/addPromotion",
+              element: <AddPromotion />,
+            },
+            {
+              path: "/addProduct",
+              element: <AddProduct />,
+            },
+            {
+              path: "/user/:id",
+              element: <User />,
+            },
+            {
+              path: "/products/:id",
+              element: <Product />,
+            },
+          ],
+        },
+      ],
+    },
   ]);
-
   return <RouterProvider router={router} />;
 }
 

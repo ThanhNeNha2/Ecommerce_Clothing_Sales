@@ -45,6 +45,18 @@ export const menu = [
         url: "/blogs",
         icon: "post.svg",
       },
+      {
+        id: 5,
+        title: "Message",
+        url: "/messages",
+        icon: "message-square-dots-svgrepo-com.svg",
+      },
+      {
+        id: 6,
+        title: "Promotions",
+        url: "/promotions",
+        icon: "icons8-promotion-30 (1).png",
+      },
     ],
   },
   {
@@ -107,9 +119,9 @@ export const menu = [
       },
       {
         id: 2,
-        title: "Logs",
+        title: "Logout",
         url: "/",
-        icon: "log.svg",
+        icon: "backup.svg",
       },
     ],
   },
