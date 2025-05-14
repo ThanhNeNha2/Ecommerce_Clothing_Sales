@@ -56,10 +56,8 @@ const ListProduct = () => {
         if (sort === "Newest") queryParams.append("isNew", "true");
       }
 
-      console.log("API URL:", `/product?${queryParams.toString()}`);
       const res = await instance.get(`/product?${queryParams.toString()}`);
 
-      console.log("API Response:", res.data.products);
       setProducts((prev) => res.data.products || []);
     } catch (err) {
       console.error("Error fetching products:", err);

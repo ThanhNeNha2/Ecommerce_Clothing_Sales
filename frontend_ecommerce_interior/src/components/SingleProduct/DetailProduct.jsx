@@ -3,16 +3,20 @@ import { IoStar, IoStarHalf } from "react-icons/io5";
 import SlideImgSingleProduct from "../SingleProduct_IMG/SlideImgSingleProduct";
 import DescriptionAndReviews from "../DescriptionAndReviews/DescriptionAndReviews";
 import { useParams } from "react-router-dom";
-import { getProductById } from "../../services/api";
+import { addProductToWishlist, getProductById } from "../../services/api";
+import { notification } from "antd";
 
 const DetailProduct = () => {
   const { id } = useParams();
-  const [singleItem, setSingleItem] = useState(null); // Changed to null
+  console.log("id", id);
+
+  const [singleItem, setSingleItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [valueAddCart, setValueAddCart] = useState(1);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const fetchSingleProduct = async () => {
     try {
@@ -22,10 +26,17 @@ const DetailProduct = () => {
       setSingleItem(res.data.product || null);
       if (res.data.product?.sizes?.length > 0) {
         const sizeMap = { 0: "S", 1: "M", 2: "L" };
-        const sizeData = res.data.product.sizes.map((size, index) => ({
-          name: sizeMap[index] || size.size_id,
-          stock: size.stock,
-        }));
+        const sizeData = res.data.product.sizes.map((size, index) => {
+          const sizeName =
+            sizeMap[index] ||
+            (typeof size.size_id === "object"
+              ? size.size_id.name
+              : size.size_id);
+          return {
+            name: sizeName || "N/A",
+            stock: size.stock,
+          };
+        });
         setSelectedSize(sizeData[0]?.name || "");
       }
     } catch (err) {
@@ -48,8 +59,11 @@ const DetailProduct = () => {
   const sizeData =
     singleItem.sizes?.map((size, index) => {
       const sizeMap = { 0: "S", 1: "M", 2: "L" };
+      const sizeName =
+        sizeMap[index] ||
+        (typeof size.size_id === "object" ? size.size_id.name : size.size_id);
       return {
-        name: sizeMap[index] || size.size_id,
+        name: sizeName || "N/A",
         stock: size.stock,
       };
     }) || [];
@@ -66,6 +80,21 @@ const DetailProduct = () => {
       `Added ${valueAddCart} of ${singleItem.nameProduct} (Size: ${selectedSize}) to cart`
     );
     // Add cart logic here (e.g., update context, localStorage, or API)
+  };
+
+  const handleAddWishlist = async (user_id, product_id) => {
+    const res = await addProductToWishlist(user_id, product_id);
+
+    if (res.status === 201) {
+      notification.success({
+        message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+      });
+    }
+    if (res.status === 409) {
+      notification.success({
+        message: "Sản phẩm đã có trong danh sách yêu thích",
+      });
+    }
   };
 
   return (
@@ -173,7 +202,7 @@ const DetailProduct = () => {
                     onClick={() => setSelectedSize(size.name)}
                     aria-label={`Select size ${size.name}`}
                   >
-                    {size.name}
+                    {typeof size.name === "string" ? size.name : "N/A"}
                   </button>
                 ))
               ) : (
@@ -220,10 +249,10 @@ const DetailProduct = () => {
             <button
               className="px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80"
               style={{ background: "#FFCC99" }}
-              onClick={() => console.log("Compare clicked")} // Placeholder
+              onClick={() => handleAddWishlist(user._id, singleItem._id)}
               aria-label="Compare product"
             >
-              + Compare
+              Add Favourite
             </button>
           </div>
         </div>

@@ -2,9 +2,26 @@ import React, { useEffect, useState } from "react";
 import { IoHeartOutline, IoShareSocial } from "react-icons/io5";
 import { RiArrowLeftRightLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { instance } from "../../Custom/Axios/AxiosCustom";
+import { addProductToWishlist } from "../../services/api";
+import { notification } from "antd";
 
 const Products = ({ listProducts }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const handleAddWishlist = async (user_id, product_id) => {
+    const res = await addProductToWishlist(user_id, product_id);
+
+    if (res.status === 201) {
+      notification.success({
+        message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+      });
+    }
+    if (res.status === 409) {
+      notification.success({
+        message: "Sản phẩm đã có trong danh sách yêu thích",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-wrap justify-center px-6 sm:px-10 md:px-20 gap-6 py-8 bg-gray-50">
       {listProducts.map((product, i) => (
@@ -111,7 +128,9 @@ const Products = ({ listProducts }) => {
               <div
                 className="flex items-center gap-1 hover:text-gray-200 cursor-pointer"
                 aria-label="Yêu thích sản phẩm"
-                onClick={() => console.log(`Yêu thích ${product.nameProduct}`)}
+                onClick={() => {
+                  handleAddWishlist(user._id, product.id);
+                }}
               >
                 <IoHeartOutline />
                 <span className="font-poppins font-medium text-sm">Love</span>

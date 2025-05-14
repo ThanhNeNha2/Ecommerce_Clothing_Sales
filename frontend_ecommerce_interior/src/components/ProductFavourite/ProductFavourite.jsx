@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { deleteProductToWishlist, getAllWishlist } from "../../services/api";
+import { Link } from "react-router-dom";
 
 const ProductFavourite = () => {
+  // CHIA TRANG
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 5; // Số lượng sản phẩm trên mỗi trang
+  const [totalPages, setTotalPages] = useState(1); // Khởi tạo totalPages
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const [wishlist, setWishlist] = useState([]);
@@ -14,45 +16,36 @@ const ProductFavourite = () => {
   const fetchWishlist = async () => {
     try {
       const response = await getAllWishlist(user._id);
-      const wishlistData = response.data.wishlist || [];
-      setWishlist(wishlistData);
-      const newTotalPages = Math.ceil(wishlistData.length / itemsPerPage);
+      setWishlist(response.data.wishlist || []); // Đảm bảo wishlist không phải undefined
+      // Tính lại totalPages dựa trên độ dài của wishlist
+      const newTotalPages = Math.ceil(
+        (response.data.wishlist || []).length / itemsPerPage
+      );
       setTotalPages(newTotalPages);
-      console.log("Wishlist fetched:", wishlistData);
+      console.log("response", response.data);
     } catch (error) {
       console.error("Error fetching wishlist:", error);
     }
   };
-
   useEffect(() => {
     if (user && user._id) {
       fetchWishlist();
     }
-  }, [user]); // Add user as dependency to handle changes
+  }, []);
 
-  const handleDeleteWishlist = async (user_id, productId) => {
+  // Lấy danh sách sản phẩm hiển thị dựa trên trang hiện tại
+  const displayedProducts = wishlist.slice(startIndex, endIndex);
+  const HanleDeleteWishlist = async (user_id, productId) => {
     try {
       const response = await deleteProductToWishlist(user_id, productId);
       if (response.idCode === 0) {
-        // Optimistically update the wishlist state
-        setWishlist((prevWishlist) =>
-          prevWishlist.filter((item) => item.product.id !== productId)
-        );
-        // Recalculate total pages
-        const newTotalPages = Math.ceil((wishlist.length - 1) / itemsPerPage);
-        setTotalPages(newTotalPages);
-
-        // Fetch the latest wishlist to ensure sync with backend
+        // Cập nhật lại danh sách wishlist sau khi xóa
         await fetchWishlist();
       }
     } catch (error) {
       console.error("Error deleting product from wishlist:", error);
-      // Optionally revert optimistic update or show error to user
     }
   };
-
-  const displayedProducts = wishlist.slice(startIndex, endIndex);
-
   return (
     <div className="absolute bg-gray-100 top-[40px] left-[-150px] w-[320px] h-[543px] flex flex-col justify-between">
       <div>
@@ -69,31 +62,36 @@ const ProductFavourite = () => {
           <div>
             {displayedProducts.map((product, i) => (
               <div
-                key={product.product.id} // Use unique product ID
+                key={i}
                 className="flex justify-between items-center px-4 hover:bg-gray-300 py-2 cursor-pointer"
               >
-                <div className="w-[70px] h-[70px]">
-                  <img
-                    src={product.product.image_url[0]}
-                    className="w-full h-full object-cover"
-                    alt={product.product.nameProduct}
-                  />
+                <div className="w-[80px] h-[70px]">
+                  <Link to={`/SingleProduct/${product.product.id}`}>
+                    <img
+                      src={product.product.image_url[0]}
+                      className="w-full h-full object-cover"
+                      alt={product.product.nameProduct}
+                    />
+                  </Link>
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-medium mb-2">
-                    {product.product.nameProduct.slice(0, 18) + "..."}
-                  </span>
+                  <Link to={`/SingleProduct/${product.product.id}`}>
+                    <span className="font-medium mb-2">
+                      {product.product.nameProduct.slice(0, 18) + "..."}
+                    </span>
+                  </Link>
                   <span className="text-sm font-normal">
                     Price: {product.product.salePrice} $
                   </span>
                 </div>
+
                 <div>
                   <span
                     className="text-red-500 cursor-pointer hover:text-red-400"
                     title="Xóa khỏi danh sách"
-                    onClick={() =>
-                      handleDeleteWishlist(user._id, product.product.id)
-                    }
+                    onClick={() => {
+                      HanleDeleteWishlist(product.user_id, product.product.id);
+                    }}
                   >
                     <FaHeart />
                   </span>
@@ -104,6 +102,7 @@ const ProductFavourite = () => {
         </div>
       </div>
 
+      {/* Phần chia trang */}
       <div className="py-3 flex justify-center">
         {Array.from({ length: totalPages }).map((_, index) => (
           <div

@@ -124,13 +124,24 @@ export const getAllWishlist = async (id) => {
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
-
-export const addProductToWishlist = async (productId, userId) => {
+export const addProductToWishlist = async (userId, productId) => {
   try {
-    const res = await instance.post(`wishlist`, { productId, userId });
-    return res;
+    const res = await instance.post(`wishlist`, {
+      user_id: userId,
+      product_id: productId,
+    });
+
+    // Trả về cả status và dữ liệu JSON từ server
+    return {
+      status: res.status,
+      ...res.data,
+    };
   } catch (error) {
-    console.log("Error"), error;
+    console.error("Error:", error); // Sửa log lỗi đúng cú pháp
+    return {
+      status: error?.response?.status || 500,
+      message: error?.response?.data?.message || "Có lỗi xảy ra",
+    };
   }
 };
 
