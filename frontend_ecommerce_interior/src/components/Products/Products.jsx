@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IoHeartOutline, IoShareSocial } from "react-icons/io5";
 import { RiArrowLeftRightLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { addProductToWishlist } from "../../services/api";
+import { addProductToCart, addProductToWishlist } from "../../services/api";
 import { notification } from "antd";
 
 const Products = ({ listProducts }) => {
@@ -19,6 +19,19 @@ const Products = ({ listProducts }) => {
       notification.success({
         message: "Sản phẩm đã có trong danh sách yêu thích",
       });
+    }
+  };
+
+  const handleAddCart = async (user_id, product_id) => {
+    try {
+      const res = await addProductToCart(user_id, product_id);
+      if (res.status === 201) {
+        notification.success({
+          message: "Thêm sản phẩm vào giỏ hàng thành công",
+        });
+      }
+    } catch (error) {
+      console.log("Error adding product to cart:", error);
     }
   };
 
@@ -91,9 +104,7 @@ const Products = ({ listProducts }) => {
               <button
                 className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
                 aria-label="Thêm vào giỏ hàng"
-                onClick={() =>
-                  console.log(`Thêm ${product.nameProduct} vào giỏ hàng`)
-                }
+                onClick={() => handleAddCart(user._id, product.id)}
               >
                 Add to Cart
               </button>

@@ -3,7 +3,11 @@ import { IoStar, IoStarHalf } from "react-icons/io5";
 import SlideImgSingleProduct from "../SingleProduct_IMG/SlideImgSingleProduct";
 import DescriptionAndReviews from "../DescriptionAndReviews/DescriptionAndReviews";
 import { useParams } from "react-router-dom";
-import { addProductToWishlist, getProductById } from "../../services/api";
+import {
+  addProductToCart,
+  addProductToWishlist,
+  getProductById,
+} from "../../services/api";
 import { notification } from "antd";
 
 const DetailProduct = () => {
@@ -71,15 +75,17 @@ const DetailProduct = () => {
   const selectedStock =
     sizeData.find((size) => size.name === selectedSize)?.stock || 0;
 
-  const handleAddToCart = () => {
-    if (valueAddCart > selectedStock) {
-      alert(`Chỉ còn ${selectedStock} sản phẩm cho kích thước ${selectedSize}`);
-      return;
+  const handleAddCart = async (user_id, product_id) => {
+    try {
+      const res = await addProductToCart(user_id, product_id);
+      if (res.status === 201) {
+        notification.success({
+          message: "Thêm sản phẩm vào giỏ hàng thành công",
+        });
+      }
+    } catch (error) {
+      console.log("Error adding product to cart:", error);
     }
-    console.log(
-      `Added ${valueAddCart} of ${singleItem.nameProduct} (Size: ${selectedSize}) to cart`
-    );
-    // Add cart logic here (e.g., update context, localStorage, or API)
   };
 
   const handleAddWishlist = async (user_id, product_id) => {
@@ -241,7 +247,9 @@ const DetailProduct = () => {
             <button
               className="px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80"
               style={{ background: "#FFCC99" }}
-              onClick={handleAddToCart}
+              onClick={() => {
+                handleAddCart(user._id, singleItem._id);
+              }}
               aria-label="Add to cart"
             >
               Add To Cart

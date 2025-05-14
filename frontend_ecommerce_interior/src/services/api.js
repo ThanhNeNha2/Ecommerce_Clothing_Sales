@@ -113,7 +113,7 @@ export const getProductById = async (id) => {
   }
 };
 
-// wishlist
+// WISHLIST
 
 export const getAllWishlist = async (id) => {
   try {
@@ -188,6 +188,19 @@ export const updateQuantityCart = async (id, quantity) => {
     return res;
   } catch (error) {
     console.error("Error in getCartByUserId:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const addProductToCart = async (userId, productId) => {
+  try {
+    const res = await instance.post(`cart`, {
+      user_id: userId,
+      product_id: productId,
+    });
+    return res;
+  } catch (error) {
+    console.error("Error in addProductToCart:", error);
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };

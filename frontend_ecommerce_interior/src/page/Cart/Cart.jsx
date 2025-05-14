@@ -10,6 +10,7 @@ import {
   getCartByUserId,
   updateQuantityCart,
 } from "../../services/api";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const queryClient = useQueryClient();
@@ -126,11 +127,16 @@ const Cart = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <span className="w-[200px] font-poppins font-medium text-gray-700">
-                  {item.product.nameProduct.length > 30
-                    ? item.product.nameProduct.substring(0, 30) + "..."
-                    : item.product.nameProduct}
-                </span>
+                <Link to={`/SingleProduct/${item.product.id}`}>
+                  <span
+                    className="block w-[200px] font-poppins font-medium text-gray-700 hover:text-blue-400 cursor-pointer   "
+                    title={item.product.nameProduct}
+                  >
+                    {item.product.nameProduct.length > 30
+                      ? item.product.nameProduct.substring(0, 30) + "..."
+                      : item.product.nameProduct}
+                  </span>
+                </Link>
                 <span className="text-gray-600">
                   ${item.product.salePrice.toFixed(2)}
                 </span>
