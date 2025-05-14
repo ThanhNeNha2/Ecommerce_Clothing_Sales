@@ -18,6 +18,12 @@ const upload = async (file: any, value: string) => {
       "WebSite-ecommerce-interior/WebSite-ecommerce-interior-user"
     );
   }
+  if (value === "product") {
+    data.append(
+      "folder",
+      "WebSite-ecommerce-interior/WebSite-ecommerce-interior-product"
+    );
+  }
   try {
     const res = await axios.post(
       "https://api.cloudinary.com/v1_1/dqgn2mwuw/image/upload",

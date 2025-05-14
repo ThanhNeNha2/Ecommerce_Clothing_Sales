@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./AddProduct.scss";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiCustom } from "../../custom/customApi";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Editor } from "@tinymce/tinymce-react";
 import upload from "../../utils/upload";
 
 interface ProductInfo {
@@ -11,10 +12,9 @@ interface ProductInfo {
   descriptionShort: string;
   description: string;
   originalPrice: number;
-  salePrice: number;
   salePercentage: number;
   stock_quantity: number;
-  gender: "Men" | "Women" | "Unisex";
+  gender: "Men" | "Women" | "Unisex" | "Kids";
   mainCategory:
     | "Topwear"
     | "Bottomwear"
@@ -30,12 +30,12 @@ interface ProductInfo {
 }
 
 interface Size {
-  size_id: string;
+  size_id: string; // size_id sẽ lưu _id từ sizeOptions
   stock: number;
 }
 
 interface SizeOption {
-  _id: string;
+  id: string;
   name: string;
 }
 
@@ -45,7 +45,6 @@ const AddProduct: React.FC = () => {
     descriptionShort: "",
     description: "",
     originalPrice: 0,
-    salePrice: 0,
     salePercentage: 0,
     stock_quantity: 0,
     gender: "Men",
@@ -55,23 +54,47 @@ const AddProduct: React.FC = () => {
   });
 
   const [files, setFiles] = useState<File[]>([]);
-  const [sizes, setSizes] = useState<Size[]>([
-    { size_id: "XS", stock: 0 },
-    { size_id: "S", stock: 0 },
-    { size_id: "M", stock: 0 },
-  ]);
+  const [sizes, setSizes] = useState<Size[]>([{ size_id: "", stock: 0 }]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const editorRef = useRef<any>(null);
+
+  const handleEditorChange = (content: string) => {
+    let updatedContent = content.replace(
+      /<a[^>]*href=["'](.*?\.(jpg|jpeg|png|gif))["'][^>]*>.*?<\/a>/gi,
+      '<img src="$1" alt="Image" height="370" width="490" />'
+    );
+
+    updatedContent = updatedContent.replace(
+      /https?:\/\/.*?\.(jpg|jpeg|png|gif)(?![^<>]*>)/gi,
+      '<img src="$1" alt="Image" height="370" width="490" />'
+    );
+
+    updatedContent = updatedContent.replace(
+      /<img(?![^>]*height="[^"]*")[^>]*>/gi,
+      (match) => match.replace(/>/, ' height="370" width="490" />')
+    );
+
+    updatedContent = updatedContent.replace(
+      /<img[^>]*height="[^"]*"[^>]*width="[^"]*"[^>]*>/gi,
+      (match) =>
+        match
+          .replace(/height="[^"]*"/, 'height="370"')
+          .replace(/width="[^"]*"/, 'width="490"')
+    );
+
+    setProductInfo((prev) => ({ ...prev, description: updatedContent }));
+  };
 
   const { data: sizeOptions } = useQuery<SizeOption[]>({
     queryKey: ["sizes"],
     queryFn: () => apiCustom.get("/size").then((res) => res.data.sizes),
     initialData: [
-      { _id: "681b33349dfe7219f4170319", name: "XS" },
-      { _id: "681b33349dfe7219f417031a", name: "S" },
-      { _id: "681b33349dfe7219f417031b", name: "M" },
+      { id: "681b33349dfe7219f4170319", name: "XS" },
+      { id: "681b33349dfe7219f417031a", name: "S" },
+      { id: "681b33349dfe7219f417031b", name: "M" },
+      { id: "681b33349dfe7219f417031c", name: "XXL" }, // Thêm XXL vào dữ liệu mẫu
     ],
   });
-  console.log("check data  sizeOptions ", sizeOptions);
 
   const subCategoryMap: { [key in ProductInfo["mainCategory"]]: string[] } = {
     Topwear: [
@@ -155,11 +178,21 @@ const AddProduct: React.FC = () => {
   ) => {
     const newSizes = [...sizes];
     if (field === "size_id") {
-      newSizes[index].size_id = value;
+      newSizes[index].size_id = value; // Lưu _id từ dropdown
     } else if (field === "stock") {
       newSizes[index].stock = parseInt(value) || 0;
     }
     setSizes(newSizes);
+  };
+
+  const handleAddSize = () => {
+    setSizes([...sizes, { size_id: "", stock: 0 }]);
+  };
+
+  const handleRemoveSize = (index: number) => {
+    if (sizes.length > 1) {
+      setSizes(sizes.filter((_, i) => i !== index));
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +211,7 @@ const AddProduct: React.FC = () => {
 
   const navigate = useNavigate();
   const mutation = useMutation({
-    mutationFn: (info: ProductInfo) => {
+    mutationFn: (info: ProductInfo & { sizes: Size[] }) => {
       return apiCustom.post("/product", info);
     },
     onSuccess: () => {
@@ -191,35 +224,32 @@ const AddProduct: React.FC = () => {
   });
 
   const handleConfirm = async () => {
-    const {
-      nameProduct,
-      descriptionShort,
-      description,
-      originalPrice,
-      salePrice,
-    } = productInfo;
+    const { nameProduct, descriptionShort, description, originalPrice } =
+      productInfo;
 
     if (
       !nameProduct.trim() ||
       !descriptionShort.trim() ||
       !description.trim() ||
-      !originalPrice ||
-      !salePrice
+      !originalPrice
     ) {
       toast.error("⚠️ Vui lòng điền đầy đủ thông tin tất cả các trường!");
       return;
     }
 
-    const imageUrls = [];
+    const imageUrls: string[] = [];
     for (const file of files) {
       const url = await upload(file, "product");
       imageUrls.push(url);
     }
 
-    const formattedSizes = sizes.map((size) => ({
-      size_id: sizeOptions?.find((opt) => opt.name === size.size_id)?._id || "",
-      stock: size.stock,
-    }));
+    // Đảm bảo size_id là _id từ sizeOptions
+    const formattedSizes = sizes
+      .filter((size) => size.size_id) // Loại bỏ size không có size_id
+      .map((size) => ({
+        size_id: size.size_id, // size_id đã là _id từ dropdown
+        stock: size.stock,
+      }));
 
     mutation.mutate({
       ...productInfo,
@@ -257,11 +287,52 @@ const AddProduct: React.FC = () => {
             </div>
             <div className="form-group">
               <label>Mô Tả Chi Tiết</label>
-              <textarea
-                className="large-textarea"
-                placeholder="Nhập mô tả chi tiết"
-                value={productInfo.description}
-                onChange={(e) => handleChange(e, "description")}
+              <Editor
+                apiKey="slkxn3po6ill32zhn1nahxuyjlhmvh226r9uawyyc4iam4tu"
+                onInit={(_evt, editor) => (editorRef.current = editor)}
+                initialValue="<p>Please enter the product information.</p>"
+                init={{
+                  height: 500,
+                  menubar: false,
+                  plugins: [
+                    "advlist",
+                    "lists",
+                    "link",
+                    "image",
+                    "charmap",
+                    "preview",
+                    "anchor",
+                    "searchreplace",
+                    "visualblocks",
+                    "code",
+                    "fullscreen",
+                    "insertdatetime",
+                    "media",
+                    "table",
+                    "help",
+                    "wordcount",
+                    "paste",
+                  ],
+                  toolbar:
+                    "undo redo | blocks | " +
+                    "bold italic forecolor | alignleft aligncenter " +
+                    "alignright alignjustify | bullist numlist outdent indent | " +
+                    "removeformat | help | image",
+                  content_style:
+                    "body { font-family:Helvetica,Arial,sans-serif; font-size:14px } " +
+                    "img { height: 370px !important; width: 490px !important; }",
+                  paste_preprocess: (plugin, args) => {
+                    args.content = args.content.replace(
+                      /https?:\/\/.*?\.(jpg|jpeg|png|gif)/gi,
+                      (match) =>
+                        `<img src="${match}" alt="Image" height="370" width="490" />`
+                    );
+                  },
+                  link_assume_external_targets: true,
+                  link_context_toolbar: false,
+                  extended_valid_elements: "img[src|alt|height|width]",
+                }}
+                onEditorChange={handleEditorChange}
               />
             </div>
           </div>
@@ -369,18 +440,19 @@ const AddProduct: React.FC = () => {
 
           <div className="form-section">
             <h3>Kích thước</h3>
-            {sizeOptions.map((size, index) => (
+            {sizes.map((size, index) => (
               <div key={index} className="size-row">
                 <div className="form-group">
                   <label>Kích Thước</label>
                   <select
-                    value={size.id}
+                    value={size.size_id}
                     onChange={(e) =>
                       handleSizeChange(index, "size_id", e.target.value)
                     }
                   >
+                    <option value="">Chọn kích thước</option>
                     {sizeOptions?.map((option) => (
-                      <option key={option.id} value={option.name}>
+                      <option key={option.id} value={option.id}>
                         {option.name}
                       </option>
                     ))}
@@ -397,8 +469,19 @@ const AddProduct: React.FC = () => {
                     }
                   />
                 </div>
+                {sizes.length > 1 && (
+                  <button
+                    className="btn btn-remove"
+                    onClick={() => handleRemoveSize(index)}
+                  >
+                    Xóa
+                  </button>
+                )}
               </div>
             ))}
+            <button className="btn btn-add-size" onClick={handleAddSize}>
+              Thêm Size
+            </button>
           </div>
 
           <div className="form-actions">

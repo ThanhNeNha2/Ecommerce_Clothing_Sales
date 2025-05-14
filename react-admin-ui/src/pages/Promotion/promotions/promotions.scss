@@ -1,0 +1,116 @@
+@import "../../../styles/variables.scss";
+
+.posts {
+  .info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    .BlogButton {
+      padding: 10px 15px;
+      cursor: pointer;
+      background: green;
+      font-weight: 500;
+      color: white;
+      border-radius: 3px;
+      border: none;
+    }
+    .BlogButton:hover {
+      opacity: 0.8;
+    }
+  }
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .contentP {
+    width: 800px;
+    background-color: $main-bg;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    justify-content: space-between;
+    border-radius: 4px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+    h2 {
+      display: flex;
+      justify-content: center;
+      padding-top: 20px;
+    }
+    p {
+      padding: 0 20px;
+    }
+    .btnP {
+      display: flex;
+      justify-content: end;
+      gap: 12px;
+      padding: 15px 20px;
+      button {
+        padding: 9px 17px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.8;
+      }
+      .pCancel {
+        background-color: rgb(83, 158, 83);
+        color: white;
+        font-weight: 600;
+      }
+
+      .pConfirm {
+        background-color: rgb(173, 16, 16);
+        color: white;
+        font-weight: 600;
+      }
+    }
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .managerInputP {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    .item {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 48%;
+      padding: 0 20px;
+      margin-bottom: 20px;
+      input {
+        padding: 10px;
+        background-color: transparent;
+        color: white;
+        outline: none;
+        border: 1px solid $soft-color;
+        border-radius: 3px;
+      }
+    }
+  }
+}
+
+.imgPost {
+  border-radius: 5px !important;
+}

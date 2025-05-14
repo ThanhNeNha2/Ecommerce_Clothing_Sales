@@ -2,10 +2,10 @@ import React, { useState, useRef } from "react";
 import "./AddBlog.scss";
 import { Editor } from "@tinymce/tinymce-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiCustom } from "../../custom/customApi";
+import { apiCustom } from "../../../custom/customApi";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import upload from "../../utils/upload";
+import upload from "../../../utils/upload";
 
 const AddBlog = () => {
   const [file, setFile] = useState<File | null>(null);

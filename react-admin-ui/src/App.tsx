@@ -10,13 +10,16 @@ import "./styles/global.scss";
 import User from "./pages/user/User";
 import Product from "./pages/product/Product";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Posts from "./pages/blogs/Blogs";
+import Posts from "./pages/Blog/blogs/Blogs";
 import toast, { Toaster } from "react-hot-toast";
-import AddBlog from "./pages/addBlog/AddBlog";
-import BlogUpdate from "./pages/blogUpdate/BlogUpdate";
+import AddBlog from "./pages/Blog/addBlog/AddBlog";
+
 import Messages from "./pages/Messages/Messages";
 import PrivateRoute from "./utils/PrivateRoute";
 import AddProduct from "./pages/addProduct/AddProduct";
+import BlogUpdate from "./pages/Blog/blogUpdate/BlogUpdate";
+import Promotions from "./pages/Promotion/promotions/promotions";
+import AddPromotion from "./pages/Promotion/addPromotions/AddPromotion";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +78,10 @@ function App() {
               element: <Posts />,
             },
             {
+              path: "/promotions",
+              element: <Promotions />,
+            },
+            {
               path: "/messages",
               element: <Messages />,
             },
@@ -85,6 +92,10 @@ function App() {
             {
               path: "/addBlog",
               element: <AddBlog />,
+            },
+            {
+              path: "/addPromotion",
+              element: <AddPromotion />,
             },
             {
               path: "/addProduct",

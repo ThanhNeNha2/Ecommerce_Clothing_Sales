@@ -51,6 +51,12 @@ export const menu = [
         url: "/messages",
         icon: "message-square-dots-svgrepo-com.svg",
       },
+      {
+        id: 6,
+        title: "Promotions",
+        url: "/promotions",
+        icon: "icons8-promotion-30 (1).png",
+      },
     ],
   },
   {

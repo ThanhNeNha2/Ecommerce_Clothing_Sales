@@ -3,10 +3,11 @@ import "../addBlog/AddBlog.scss";
 import { useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiCustom } from "../../custom/customApi";
+
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import upload from "../../utils/upload";
+import { apiCustom } from "../../../custom/customApi";
+import upload from "../../../utils/upload";
 
 const BlogUpdate = () => {
   // Quản lý thông tin nhập vào

@@ -1,8 +1,8 @@
 import { GridColDef } from "@mui/x-data-grid";
-import DataTable from "../../components/dataTable/DataTable";
+import DataTable from "../../../components/dataTable/DataTable";
 import "./Blogs.scss";
 import { useQuery } from "@tanstack/react-query";
-import { apiCustom } from "../../custom/customApi";
+import { apiCustom } from "../../../custom/customApi";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { CircularProgress, Alert } from "@mui/material";
