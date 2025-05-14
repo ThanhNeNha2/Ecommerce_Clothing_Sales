@@ -181,3 +181,13 @@ export const deleteCartByUserId = async (id) => {
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
+
+export const updateQuantityCart = async (id, quantity) => {
+  try {
+    const res = await instance.put(`cart/${id}`, { quantity });
+    return res;
+  } catch (error) {
+    console.error("Error in getCartByUserId:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
