@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const promotionSchema = new mongoose.Schema(
   {
-    name: {
+    code: {
       type: String,
       required: true,
       trim: true,
@@ -25,16 +25,16 @@ const promotionSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    product_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      default: null,
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
     },
   },
   { timestamps: true }
 );
 
 // Index cho tìm kiếm và lọc
-promotionSchema.index({ name: 1, start_date: 1, end_date: 1 });
+promotionSchema.index({ code: 1, start_date: 1, end_date: 1 });
 
 export default mongoose.model("Promotion", promotionSchema);

@@ -8,6 +8,8 @@ import mess from "./routes/messages.router";
 import product from "./routes/product.router";
 import size from "./routes/size.router";
 import wishlist from "./routes/wishlist.router";
+import cart from "./routes/cart.router";
+import promotion from "./routes/promotion.router";
 
 var cors = require("cors");
 import bodyParser from "body-parser";
@@ -39,7 +41,8 @@ app.use("/api", size);
 app.use("/api", mess);
 app.use("/api", chat);
 app.use("/api", wishlist);
-
+app.use("/api", cart);
+app.use("/api", promotion);
 // chuyen thong tin user qua bên nguoi dung chuyen doi nguoi qua bên phuong thuc thu 2 của trinh duyet
 app.listen(port, () =>
   console.log("> Server is up and running on port : " + port)

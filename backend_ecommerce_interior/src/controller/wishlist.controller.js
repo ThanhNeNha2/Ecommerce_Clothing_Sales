@@ -69,7 +69,7 @@ export const getWishlist = async (req, res) => {
     const wishlist = await Wishlist.find({ user_id })
       .populate({
         path: "product_id",
-        select: "nameProduct salePrice image_url mainCategory subCategory",
+        select: "nameProduct salePrice image_url    ",
       })
       .lean();
 
