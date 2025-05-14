@@ -148,7 +148,7 @@ export const activateAccount = async (req, res) => {
         });
       } else {
         return res.status(400).json({
-          message: "Mã code cua nguoi dung không hợp lệ hoặc đã hết hạn   ",
+          message: "Mã code cua nguoi dung không hợp lệ hoặc đã hết hạn ",
           idCode: 1,
         });
       }
