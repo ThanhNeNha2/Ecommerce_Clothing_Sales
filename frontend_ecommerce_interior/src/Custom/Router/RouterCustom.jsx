@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Register from "../../components/Auth/Register/Register";
 import Login from "../../components/Auth/Login/Login";
 import Verify from "../../components/Modals/verify";
@@ -13,22 +13,54 @@ import ListProduct from "../../page/ListProduct/ListProduct";
 import ProfileUser from "../../page/ProfileUser/ProfileUser";
 import DetailBlog from "../../page/DetailBlog/DetailBlog";
 
+// Component PrivateRoute để bảo vệ các tuyến đường
+const PrivateRoute = ({ element }) => {
+  const isAuthenticated = () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const user = localStorage.getItem("user");
+    return accessToken && user;
+  };
+
+  return isAuthenticated() ? element : <Navigate to="/login" />;
+};
+
 const RouterCustom = () => {
   return (
     <Routes>
+      {/* Các tuyến đường công khai */}
       <Route path="/" element={<Home />} />
-      <Route path="/blog" element={<Blog />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/verify/:id" element={<Verify />} />
-      <Route path="SingleProduct" element={<SingleProduct />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/Checkout" element={<Checkout />} />
-      <Route path="/Contact" element={<Contact />} />
-      <Route path="/ProductComparison" element={<ProductComparison />} />
-      <Route path="/ListProduct" element={<ListProduct />} />
-      <Route path="/ProfileUser" element={<ProfileUser />} />
-      <Route path="/DetailBlog/:id" element={<DetailBlog />} />
+
+      {/* Các tuyến đường bảo vệ */}
+      <Route path="/blog" element={<PrivateRoute element={<Blog />} />} />
+      <Route
+        path="/SingleProduct/:id"
+        element={<PrivateRoute element={<SingleProduct />} />}
+      />
+      <Route path="/cart" element={<PrivateRoute element={<Cart />} />} />
+      <Route
+        path="/Checkout"
+        element={<PrivateRoute element={<Checkout />} />}
+      />
+      <Route path="/Contact" element={<PrivateRoute element={<Contact />} />} />
+      <Route
+        path="/ProductComparison"
+        element={<PrivateRoute element={<ProductComparison />} />}
+      />
+      <Route
+        path="/ListProduct"
+        element={<PrivateRoute element={<ListProduct />} />}
+      />
+      <Route
+        path="/ProfileUser"
+        element={<PrivateRoute element={<ProfileUser />} />}
+      />
+      <Route
+        path="/DetailBlog/:id"
+        element={<PrivateRoute element={<DetailBlog />} />}
+      />
     </Routes>
   );
 };

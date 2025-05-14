@@ -9,25 +9,73 @@ import {
   Row,
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { activateAccount, reSendKey } from "../../services/api";
+import { useState } from "react";
 
 const Verify = () => {
   const { id } = useParams();
-  //   HÀM KÍCH HOẠT TÀI KHOẢN
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // Thêm trạng thái loading
+
+  // Hàm kích hoạt tài khoản
   const onFinish = async (values) => {
     const { code } = values;
-    const res = await activateAccount(id, code);
-  };
-  const handleSubmit = (values) => {
-    const { code } = values;
-    console.log("Check id và code: ", id, code);
-    onFinish(values);
+    setLoading(true); // Bắt đầu trạng thái loading
+    try {
+      const res = await activateAccount(id, code);
+
+      if (res && res.data.idCode === 0) {
+        // Giả định API trả về thuộc tính success khi thành công
+
+        notification.success({
+          message: "Kích hoạt thành công",
+          description:
+            "Tài khoản của bạn đã được kích hoạt! Đang chuyển hướng đến trang đăng nhập...",
+        });
+        // Chuyển hướng đến trang login sau 2 giây để người dùng đọc thông báo
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        throw new Error("Kích hoạt thất bại");
+      }
+    } catch (error) {
+      console.log("Error", error);
+      notification.error({
+        message: "Kích hoạt thất bại",
+        description:
+          "Mã xác nhận không đúng hoặc đã hết hạn. Vui lòng thử lại hoặc gửi lại mã.",
+      });
+    } finally {
+      setLoading(false); // Kết thúc trạng thái loading
+    }
   };
 
-  // HÀM RESEND KEY
+  // Hàm gửi lại mã xác nhận
   const handleResend = async () => {
-    const res = await reSendKey(id);
+    setLoading(true);
+    try {
+      const res = await reSendKey(id);
+
+      if (res && res.data.idCode === 0) {
+        // Giả định API trả về thuộc tính success
+        notification.success({
+          message: "Gửi lại mã thành công",
+          description: "Mã xác nhận mới đã được gửi đến email của bạn!",
+        });
+      } else {
+        throw new Error("Gửi lại mã thất bại");
+      }
+    } catch (error) {
+      console.log("Error", error);
+      notification.error({
+        message: "Gửi lại mã thất bại",
+        description: "Có lỗi xảy ra khi gửi lại mã. Vui lòng thử lại sau.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,10 +90,10 @@ const Verify = () => {
               borderRadius: "5px",
             }}
           >
-            <legend>Kích hoạt tài khoản </legend>
+            <legend>Kích hoạt tài khoản</legend>
             <Form
               name="basic"
-              onFinish={handleSubmit}
+              onFinish={onFinish}
               autoComplete="off"
               layout="vertical"
             >
@@ -55,8 +103,8 @@ const Verify = () => {
               <Divider />
 
               <span>
-                Chúng tôi đã gửi 1 mã code xác nhận về email của bạn vui lòng
-                nhập để xác nhận tài khoản :{" "}
+                Chúng tôi đã gửi 1 mã code xác nhận về email của bạn, vui lòng
+                nhập để xác nhận tài khoản:
               </span>
               <Divider />
               <Form.Item
@@ -77,20 +125,26 @@ const Verify = () => {
                   type="primary"
                   htmlType="submit"
                   style={{ marginRight: "10px" }}
+                  loading={loading}
                 >
-                  Submit
+                  {loading ? "Đang xử lý..." : "Submit"}
                 </Button>
-                <Button type="default" onClick={handleResend}>
+                <Button
+                  type="default"
+                  onClick={handleResend}
+                  loading={loading}
+                  disabled={loading}
+                >
                   Resend
                 </Button>
               </Form.Item>
             </Form>
-            <Link href={"/"}>
+            <Link to={"/"}>
               <ArrowLeftOutlined /> Quay lại trang chủ
             </Link>
             <Divider />
             <div style={{ textAlign: "center" }}>
-              Đã có tài khoản? <Link href={"/auth/login"}>Đăng nhập</Link>
+              Đã có tài khoản? <Link to={"/login"}>Đăng nhập</Link>
             </div>
           </fieldset>
         </Col>
