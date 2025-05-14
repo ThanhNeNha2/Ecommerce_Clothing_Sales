@@ -5,8 +5,12 @@ import { FaTrash } from "react-icons/fa";
 import Quality from "../../components/Quality/Quality";
 import Footer from "../../components/Footer/Footer";
 import { cart } from "../../services/fakeApi";
+import { deleteCartByUserId, getCartByUserId } from "../../services/api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const Cart = () => {
+  const queryClient = useQueryClient();
+
   // Quản lý giỏ hàng với số lượng
   const [cartItems, setCartItems] = useState(
     cart.map((item) => ({
@@ -35,12 +39,6 @@ const Cart = () => {
     }
   };
 
-  // Xóa sản phẩm khỏi giỏ hàng
-  const removeItem = (index) => {
-    const updatedCart = cartItems.filter((_, i) => i !== index);
-    setCartItems(updatedCart);
-  };
-
   // Tính tổng giá
   const calculateTotal = () => {
     return cartItems.reduce(
@@ -48,6 +46,44 @@ const Cart = () => {
       0
     );
   };
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const {
+    data: carts,
+    isLoading,
+    isError,
+    error,
+  } = useQuery(
+    ["cart", user._id], // key nên chứa user_id để cache phân biệt giữa người dùng
+    () => getCartByUserId(user._id).then((res) => res.data.cart), // callback function để fetch
+    {
+      enabled: !!user?._id, // chỉ chạy khi có user_id
+    }
+    // callback function để fetch
+  );
+  // Mutation để xóa
+  const deleteMutation = useMutation({
+    mutationFn: (id) => deleteCartByUserId(id),
+    onSuccess: () => {
+      // Sau khi xóa thành công, refetch lại giỏ hàng
+      queryClient.invalidateQueries(["cart", user._id]);
+    },
+    onError: (error) => {
+      console.error("Lỗi khi xóa:", error.message);
+    },
+  });
+
+  // Hàm xử lý xóa
+  const handleDelete = async (id) => {
+    deleteMutation.mutate(id);
+  };
+
+  if (isLoading) return <div>Đang tải giỏ hàng...</div>;
+  if (isError) return <div>Lỗi: {error.message}</div>;
+
+  if (isLoading) return <div>Đang tải giỏ hàng...</div>;
+  if (isError) return <div>Lỗi: {error.message}</div>;
 
   return (
     <div className="">
@@ -62,24 +98,28 @@ const Cart = () => {
           >
             <span className="text-lg font-semibold">Shopping Cart</span>
             <p>
-              {cartItems.length} item{cartItems.length !== 1 ? "s" : ""}
+              {carts.length} item{carts.length !== 1 ? "s" : ""}
             </p>
           </div>
           {/* Danh sách sản phẩm */}
-          {cartItems.map((item, index) => (
+          {carts.map((item, index) => (
             <div
               key={index}
               className="flex items-center justify-between px-5 py-3 border-b"
             >
               <div className="w-[100px] h-[100px] rounded">
                 <img
-                  src={item.listImg[0]} // Lấy ảnh đầu tiên
-                  alt={item.productName}
+                  src={item.product.image_url[0]} // Lấy ảnh đầu tiên
+                  alt={item.product.nameProduct}
                   className="w-full h-full object-cover rounded"
                 />
               </div>
-              <span className="w-[200px]">{item.productName}</span>
-              <span>${item.salePrice}</span>
+              <span className="w-[200px] font-medium">
+                {item.product.nameProduct.length > 30
+                  ? item.product.nameProduct.substring(0, 30) + "..."
+                  : item.product.nameProduct}
+              </span>
+              <span>${item.product.salePrice}</span>
               <div className="flex items-center">
                 <button
                   className="border border-gray-400 px-3 py-[2px] rounded-l"
@@ -97,15 +137,19 @@ const Cart = () => {
                   +
                 </button>
               </div>
-              <span>${item.salePrice * item.quantity}</span>
-              <button onClick={() => removeItem(index)}>
+              <span>${item.product.salePrice * item.quantity}</span>
+              <button
+                onClick={() => {
+                  handleDelete(item.id);
+                }}
+              >
                 <FaTrash className="text-red-500" />
               </button>
             </div>
           ))}
         </div>
         <div
-          className="flex-1 flex flex-col gap-3 items-center justify-center w-full"
+          className="flex-1 flex flex-col gap-3 items-center justify-center w-full h-[300px]"
           style={{ background: "#F9F1E7" }}
         >
           <span className="font-poppins font-semibold text-[22px]">

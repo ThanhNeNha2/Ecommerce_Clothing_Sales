@@ -159,3 +159,25 @@ export const deleteProductToWishlist = async (userId, productId) => {
     throw error;
   }
 };
+
+// CART
+
+export const getCartByUserId = async (userId) => {
+  try {
+    const res = await instance.get(`cart?user_id=${userId}`);
+    return res;
+  } catch (error) {
+    console.error("Error in getCartByUserId:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const deleteCartByUserId = async (id) => {
+  try {
+    const res = await instance.delete(`cart/${id}`);
+    return res;
+  } catch (error) {
+    console.error("Error in getCartByUserId:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
