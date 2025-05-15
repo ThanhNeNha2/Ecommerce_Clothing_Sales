@@ -9,7 +9,7 @@ export const createPromotion = async (req, res) => {
       discount_value,
       start_date,
       end_date,
-      quantity,
+      quantity = 20,
     } = req.body;
 
     // Kiểm tra dữ liệu đầu vào
@@ -27,7 +27,8 @@ export const createPromotion = async (req, res) => {
         idCode: 1,
       });
     }
-
+    const parsedDiscountValue = Number(discount_value);
+    const parsedQuantity = Number(quantity);
     // Kiểm tra mã khuyến mãi duy nhất
     const existingPromotion = await Promotion.findOne({ code });
     if (existingPromotion) {
@@ -37,14 +38,13 @@ export const createPromotion = async (req, res) => {
       });
     }
 
-    // Kiểm tra discount_value
-    if (discount_value < 0) {
+    if (parsedDiscountValue < 0) {
       return res.status(400).json({
         message: "Giá trị giảm giá không được âm",
         idCode: 1,
       });
     }
-    if (discount_type === "percentage" && discount_value > 100) {
+    if (discount_type === "percentage" && parsedDiscountValue > 100) {
       return res.status(400).json({
         message: "Giá trị giảm giá phần trăm không được vượt quá 100",
         idCode: 1,
@@ -74,14 +74,12 @@ export const createPromotion = async (req, res) => {
       });
     }
 
-    // Kiểm tra quantity
-    if (!Number.isInteger(quantity) || quantity < 0) {
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 0) {
       return res.status(400).json({
         message: "Số lượng phải là số nguyên không âm",
         idCode: 1,
       });
     }
-
     // Tạo khuyến mãi
     const promotion = await Promotion.create({
       code,
@@ -231,7 +229,8 @@ export const updatePromotion = async (req, res) => {
       end_date,
       quantity,
     } = req.body;
-
+    const parsedDiscountValue = Number(discount_value);
+    const parsedQuantity = Number(quantity);
     // Kiểm tra ID hợp lệ
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -261,19 +260,18 @@ export const updatePromotion = async (req, res) => {
     }
 
     // Kiểm tra discount_value nếu được cung cấp
-    if (discount_value !== undefined) {
-      if (discount_value < 0) {
-        return res.status(400).json({
-          message: "Giá trị giảm giá không được âm",
-          idCode: 1,
-        });
-      }
-      if (discount_type === "percentage" && discount_value > 100) {
-        return res.status(400).json({
-          message: "Giá trị giảm giá phần trăm không được vượt quá 100",
-          idCode: 1,
-        });
-      }
+
+    if (parsedDiscountValue < 0) {
+      return res.status(400).json({
+        message: "Giá trị giảm giá không được âm",
+        idCode: 1,
+      });
+    }
+    if (discount_type === "percentage" && parsedDiscountValue > 100) {
+      return res.status(400).json({
+        message: "Giá trị giảm giá phần trăm không được vượt quá 100",
+        idCode: 1,
+      });
     }
 
     // Kiểm tra ngày nếu được cung cấp
@@ -301,14 +299,11 @@ export const updatePromotion = async (req, res) => {
       }
     }
 
-    // Kiểm tra quantity nếu được cung cấp
-    if (quantity !== undefined) {
-      if (!Number.isInteger(quantity) || quantity < 0) {
-        return res.status(400).json({
-          message: "Số lượng phải là số nguyên không âm",
-          idCode: 1,
-        });
-      }
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 0) {
+      return res.status(400).json({
+        message: "Số lượng phải là số nguyên không âm",
+        idCode: 1,
+      });
     }
 
     // Cập nhật khuyến mãi
