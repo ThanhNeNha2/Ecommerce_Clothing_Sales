@@ -180,6 +180,56 @@ export const getAllPromotions = async (req, res) => {
   }
 };
 
+// Lấy chi tiết khuyến mãi theo code
+export const getPromotionByCode = async (req, res) => {
+  try {
+    const { code } = req.query;
+
+    // Kiểm tra nếu không có code
+    if (!code || typeof code !== "string" || code.trim() === "") {
+      return res.status(400).json({
+        message: "Vui lòng cung cấp mã code hợp lệ",
+        idCode: 1,
+      });
+    }
+
+    const processedCode = code.trim();
+
+    // Tìm kiếm chính xác hoặc gần đúng (tùy chọn)
+    const promotion = await Promotion.findOne({
+      code: { $regex: `^${processedCode}$`, $options: "i" }, // tìm chính xác, không phân biệt hoa thường
+    }).lean();
+
+    if (!promotion) {
+      return res.status(404).json({
+        message: "Mã giảm giá không tồn tại",
+        idCode: 2,
+      });
+    }
+
+    // Trả về thông tin mã giảm giá nếu tìm thấy
+    return res.status(200).json({
+      message: "Tìm thấy mã giảm giá",
+      idCode: 0,
+      promotion: {
+        id: promotion._id,
+        code: promotion.code,
+        discount_type: promotion.discount_type,
+        discount_value: promotion.discount_value,
+        start_date: promotion.start_date,
+        end_date: promotion.end_date,
+        quantity: promotion.quantity,
+      },
+    });
+  } catch (error) {
+    console.error("Error in getPromotionByCode:", error);
+    return res.status(500).json({
+      message: "Lỗi máy chủ khi tìm mã giảm giá",
+      idCode: 3,
+    });
+  }
+};
+
 // Lấy chi tiết khuyến mãi theo ID
 export const getPromotionById = async (req, res) => {
   try {
