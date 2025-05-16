@@ -12,8 +12,6 @@ import { notification } from "antd";
 
 const DetailProduct = () => {
   const { id } = useParams();
-  console.log("id", id);
-
   const [singleItem, setSingleItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

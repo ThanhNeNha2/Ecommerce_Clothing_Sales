@@ -124,6 +124,7 @@ export const getAllWishlist = async (id) => {
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
+
 export const addProductToWishlist = async (userId, productId) => {
   try {
     const res = await instance.post(`wishlist`, {
@@ -201,6 +202,61 @@ export const addProductToCart = async (userId, productId) => {
     return res;
   } catch (error) {
     console.error("Error in addProductToCart:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+// PROMOTION
+export const getPromotionByCode = async (code) => {
+  try {
+    const res = await instance.get(
+      `promotionsSearch?code=${encodeURIComponent(code)}`
+    );
+    return {
+      status: res.status,
+      ...res.data,
+    };
+  } catch (error) {
+    if (error.response) {
+      // Lỗi từ server trả về: vẫn trả về dữ liệu để xử lý
+      return {
+        status: error.response.status,
+        ...error.response.data,
+      };
+    }
+    // Lỗi không có response (network, server die,...)
+    console.error("Lỗi không có response:", error);
+    return {
+      status: 500,
+      message: "Lỗi không xác định",
+      idCode: 99,
+    };
+  }
+};
+
+//  REVIEW
+
+export const getAllReview = async (productId) => {
+  try {
+    const res = await instance.get(`reviews/product/${productId}`);
+    return res;
+  } catch (error) {
+    console.error("Error in getAllReview:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const addReview = async (userId, productId, comment, rating) => {
+  try {
+    const res = await instance.post(`reviews`, {
+      user_id: userId,
+      product_id: productId,
+      rating,
+      comment,
+    });
+    return res;
+  } catch (error) {
+    console.error("Error in addReview:", error);
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };

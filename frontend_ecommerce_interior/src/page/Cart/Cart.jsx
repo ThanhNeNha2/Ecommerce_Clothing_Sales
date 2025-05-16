@@ -8,14 +8,20 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   deleteCartByUserId,
   getCartByUserId,
+  getPromotionByCode,
   updateQuantityCart,
 } from "../../services/api";
 import { Link } from "react-router-dom";
+import { notification } from "antd";
 
 const Cart = () => {
   const queryClient = useQueryClient();
   const user = JSON.parse(localStorage.getItem("user"));
-
+  const [voucher, setVoucher] = React.useState({
+    discount_type: "percentage",
+    discount_value: 0,
+  });
+  const [errorVoucher, setErrorVoucher] = React.useState("");
   // Lấy dữ liệu giỏ hàng từ API
   const {
     data: carts = [],
@@ -66,10 +72,22 @@ const Cart = () => {
 
   // Tính tổng giá
   const calculateTotal = () => {
-    return carts.reduce(
+    const subtotal = carts.reduce(
       (total, item) => total + item.product.salePrice * item.quantity,
       0
     );
+
+    let discount = 0;
+
+    if (voucher.discount_type === "percentage") {
+      discount = (subtotal * voucher.discount_value) / 100;
+    } else if (voucher.discount_type === "fixed") {
+      discount = voucher.discount_value;
+    }
+
+    const totalAfterDiscount = Math.max(subtotal - discount, 0); // tránh giá âm
+
+    return totalAfterDiscount;
   };
 
   // Cuộn lên đầu trang
@@ -88,7 +106,25 @@ const Cart = () => {
     return (
       <div className="text-center py-10 text-red-500">Lỗi: {error.message}</div>
     );
+  const handleVoucherBlur = async (e) => {
+    const code = e.target.value;
+    const res = await getPromotionByCode(code);
+    console.log("res", res);
 
+    if (res.idCode === 0) {
+      setVoucher({
+        discount_type: res.promotion.discount_type,
+        discount_value: res.promotion.discount_value,
+      });
+      setErrorVoucher("");
+      notification.success({
+        message: "Voucher applied successfully",
+      });
+    }
+    if (res.idCode === 2) {
+      setErrorVoucher("Invalid coupon code");
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -173,7 +209,7 @@ const Cart = () => {
         </div>
         {/* Cart Totals */}
         <div
-          className="flex-1 flex flex-col gap-3 items-center justify-center w-full h-[300px]"
+          className="flex-1 flex flex-col gap-3 items-center justify-center w-full h-[350px]"
           style={{
             background: "linear-gradient(135deg, #FFF7ED 0%, #F9F1E7 100%)",
           }}
@@ -182,24 +218,54 @@ const Cart = () => {
             Cart Totals
           </span>
           <div className="border border-gray-300 w-[400px]"></div>
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-5">
-              <span>Subtotal</span>
-              <p className="text-[15px] text-gray-400">
-                ${calculateTotal().toFixed(2)}
-              </p>
+          <div className="flex flex-col gap-3 w-[400px] px-4 ">
+            <div className="flex flex-col gap-3 w-[400px] ">
+              {/* Subtotal */}
+              <div className="flex gap-3">
+                <span className="min-w-[100px] text-left">Subtotal</span>
+                <p className="text-[15px] text-gray-400 text-left">
+                  ${calculateTotal().toFixed(2)}
+                </p>
+              </div>
+
+              {/* Voucher */}
+              <div className="flex gap-3 items-start">
+                <span className="min-w-[100px] text-left pt-2">Voucher</span>
+                <div className="flex flex-col w-[250px]">
+                  <input
+                    type="text"
+                    className="py-1 px-2 border border-gray-300 rounded-md text-left"
+                    placeholder="Enter the discount code."
+                    onBlur={handleVoucherBlur}
+                  />
+                  {errorVoucher && (
+                    <p className="text-red-500 text-sm mt-1">{errorVoucher}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Sale */}
+              <div className="flex gap-3">
+                <span className="min-w-[100px] text-left">Sale</span>
+                <p className="text-[15px] text-gray-400 text-left">
+                  {voucher.discount_value}
+                  {voucher.discount_type === "percentage"
+                    ? "%"
+                    : voucher.discount_type === "fixed"
+                    ? "$"
+                    : ""}
+                </p>
+              </div>
+
+              {/* Total */}
+              <div className="flex gap-3">
+                <span className="min-w-[100px] text-left">Total</span>
+                <p className="text-[15px] text-colorMain font-medium text-left">
+                  $ {calculateTotal().toFixed(2)}
+                </p>
+              </div>
             </div>
-            <div className="flex gap-5">
-              <span>Sale</span>
-              <p className="text-[15px] text-gray-400">0%</p>
-            </div>
-            <div className="flex gap-5">
-              <span>Total</span>
-              <p className="text-[15px] text-colorMain font-medium">
-                ${calculateTotal().toFixed(2)}
-              </p>
-            </div>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center pt-2">
               <button
                 disabled={carts.length === 0}
                 className="px-5 bg-colorMain text-white font-medium hover:opacity-85 rounded py-2"
