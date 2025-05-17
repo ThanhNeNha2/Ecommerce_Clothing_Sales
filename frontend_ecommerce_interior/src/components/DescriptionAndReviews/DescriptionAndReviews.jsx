@@ -158,8 +158,6 @@ const DescriptionAndReviews = ({ description, quantityReview }) => {
     }
   }, [activeTab, id]);
 
-  console.log("reviews", reviews);
-
   const renderContent = () => {
     switch (activeTab) {
       case "Description":

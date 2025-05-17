@@ -36,7 +36,6 @@ const DetailProduct = () => {
       addProductToWishlist(user_id, product_id),
     onSuccess: (res, variables) => {
       const { user_id } = variables;
-
       if (res.status === 201) {
         notification.success({
           message: "Thêm sản phẩm vào danh sách yêu thích thành công",
@@ -74,8 +73,12 @@ const DetailProduct = () => {
     try {
       setLoading(true);
       const res = await getProductById(id);
-
       setSingleItem(res.data.product || null);
+      localStorage.setItem(
+        "mainCategory",
+        JSON.stringify(res.data.product.mainCategory)
+      );
+
       if (res.data.product?.sizes?.length > 0) {
         const sizeMap = { 0: "S", 1: "M", 2: "L" };
         const sizeData = res.data.product.sizes.map((size, index) => {

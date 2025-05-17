@@ -14,13 +14,14 @@ const SingleProduct = () => {
   const [listProducts, setListProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const mainCategory = JSON.parse(localStorage.getItem("mainCategory"));
 
   const getAllProduct = async () => {
     try {
       setLoading(true);
       // const res = await instance.get(`/product?limit=${8}`);
       const res = await instance.get(
-        `/product?limit=${8}&mainCategory=${"Swimwear"}`
+        `/product?limit=${8}&mainCategory=${mainCategory}`
       );
 
       // console.log("check thong tin res ", res.data.products);
