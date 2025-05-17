@@ -301,3 +301,29 @@ export const deleteReview = async (idReview, user_id) => {
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
+
+// chat
+
+export const getAllProductChatbot = async (queryParams) => {
+  try {
+    const response = await instance.get(
+      `product/chatbot?${queryParams}&page=1&limit=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbot:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
+  try {
+    const response = await instance.get(
+      `product/chatbot?${queryParams}&page=${currentPage}&limit=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
