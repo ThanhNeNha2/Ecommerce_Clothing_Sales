@@ -24,6 +24,7 @@ export const verifyToken = (req, res, next) => {
   });
 };
 
+//  chỉ admin
 export const verifyAdminAccess = () => {
   return (req, res, next) => {
     verifyToken(req, res, () => {
@@ -41,10 +42,29 @@ export const verifyAdminAccess = () => {
   };
 };
 
+// admin và người dùng id
 export const verifyAdminAndIdAccess = () => {
   return (req, res, next) => {
     verifyToken(req, res, () => {
       const isOwner = req.user.id == req.params.id;
+      const isAdmin = req.user.role === "ADMIN";
+
+      if (isOwner || isAdmin) {
+        next();
+      } else {
+        return res.status(403).json("Bạn không có quyền hạn này");
+      }
+    });
+  };
+};
+
+export const verifyAdminAndIdBody = () => {
+  return (req, res, next) => {
+    verifyToken(req, res, () => {
+      // console.log("req.user", req.user.id);
+      // console.log("req.params.id", req.body.user_id);
+
+      const isOwner = req.user.id == req.body.user_id;
       const isAdmin = req.user.role === "ADMIN";
 
       if (isOwner || isAdmin) {
