@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { IoStar, IoStarHalf } from "react-icons/io5";
+import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
 import SlideImgSingleProduct from "../SingleProduct_IMG/SlideImgSingleProduct";
 import DescriptionAndReviews from "../DescriptionAndReviews/DescriptionAndReviews";
 import { useParams } from "react-router-dom";
 import {
   addProductToCart,
   addProductToWishlist,
+  getAllReview,
   getProductById,
 } from "../../services/api";
 import { notification } from "antd";
+import { useMutation, useQueryClient } from "react-query";
 
 const DetailProduct = () => {
   const { id } = useParams();
@@ -17,8 +19,56 @@ const DetailProduct = () => {
   const [error, setError] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const queryClient = useQueryClient();
+
   const [valueAddCart, setValueAddCart] = useState(1);
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const fetchReviews = async () => {
+    const response = await getAllReview(id);
+    if (response.status === 200) {
+      setReviews(response.data.reviews);
+    }
+  };
+  const addWishlistMutation = useMutation({
+    mutationFn: ({ user_id, product_id }) =>
+      addProductToWishlist(user_id, product_id),
+    onSuccess: (res, variables) => {
+      const { user_id } = variables;
+
+      if (res.status === 201) {
+        notification.success({
+          message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+        });
+        queryClient.invalidateQueries(["wishlist", user_id]);
+      } else if (res.status === 409) {
+        notification.success({
+          message: "Sản phẩm đã có trong danh sách yêu thích",
+        });
+      }
+    },
+    onError: (error) => {
+      notification.error({
+        message: "Thêm vào danh sách yêu thích thất bại",
+        description: error.response?.data?.message || "Đã xảy ra lỗi.",
+      });
+    },
+  });
+
+  // Kiểm tra và tính toán điểm đánh giá trung bình chỉ khi có đánh giá
+  let averageRating = 0;
+  let fullStars = 0;
+  let hasHalfStar = false;
+  let emptyStars = 5;
+
+  if (reviews && reviews.length > 0) {
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    averageRating = totalRating / reviews.length;
+    fullStars = Math.floor(averageRating);
+    hasHalfStar = averageRating - fullStars >= 0.5;
+    emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  }
 
   const fetchSingleProduct = async () => {
     try {
@@ -51,6 +101,7 @@ const DetailProduct = () => {
 
   useEffect(() => {
     fetchSingleProduct();
+    fetchReviews();
   }, [id]);
 
   if (loading) return <div className="px-[130px] py-5">Đang tải...</div>;
@@ -86,21 +137,9 @@ const DetailProduct = () => {
     }
   };
 
-  const handleAddWishlist = async (user_id, product_id) => {
-    const res = await addProductToWishlist(user_id, product_id);
-
-    if (res.status === 201) {
-      notification.success({
-        message: "Thêm sản phẩm vào danh sách yêu thích thành công",
-      });
-    }
-    if (res.status === 409) {
-      notification.success({
-        message: "Sản phẩm đã có trong danh sách yêu thích",
-      });
-    }
+  const handleAddWishlist = (user_id, product_id) => {
+    addWishlistMutation.mutate({ user_id, product_id });
   };
-
   return (
     <div className="">
       <div className="flex mt-[30px] px-[130px] flex-wrap gap-5">
@@ -155,15 +194,35 @@ const DetailProduct = () => {
             </del>
           </p>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 text-yellow-500">
-              <IoStar />
-              <IoStar />
-              <IoStar />
-              <IoStar />
-              <IoStarHalf />
-            </div>
+            {reviews.length > 0 ? (
+              <div className="flex items-center gap-2">
+                <div className="flex text-yellow-500">
+                  {[...Array(fullStars)].map((_, i) => (
+                    <IoStar key={`full-${i}`} />
+                  ))}
+                  {hasHalfStar && <IoStarHalf />}
+                  {[...Array(emptyStars)].map((_, i) => (
+                    <IoStarOutline key={`empty-${i}`} />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600">
+                  ({averageRating.toFixed(1)} / 5)
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <div className="flex text-yellow-500">
+                  {[...Array(5)].map((_, i) => (
+                    <IoStarOutline key={`empty-${i}`} />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600">(0 / 5)</span>
+              </div>
+            )}
             <div className="border border-gray-300 h-[20px]"></div>
-            <span className="text-[14px] text-gray-400">5 Customer Review</span>
+            <span className="text-[14px] text-gray-400">
+              {reviews.length} Customer Review
+            </span>
           </div>
           <span>{singleItem.descriptionShort || "Không có mô tả"}</span>
           <ul className="flex flex-col justify-center gap-3">
@@ -264,7 +323,10 @@ const DetailProduct = () => {
         </div>
       </div>
       <hr className="my-7" />
-      <DescriptionAndReviews description={singleItem.description} />
+      <DescriptionAndReviews
+        description={singleItem.description}
+        quantityReview={reviews.length}
+      />
     </div>
   );
 };

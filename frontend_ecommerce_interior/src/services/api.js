@@ -246,6 +246,16 @@ export const getAllReview = async (productId) => {
   }
 };
 
+export const getReviewById = async (productId, user_id) => {
+  try {
+    const res = await instance.post(`reviews/${productId}`, { user_id });
+    return res;
+  } catch (error) {
+    console.error("Error in getReviewById:", error);
+    throw error;
+  }
+};
+
 export const addReview = async (userId, productId, comment, rating) => {
   try {
     const res = await instance.post(`reviews`, {
@@ -254,9 +264,40 @@ export const addReview = async (userId, productId, comment, rating) => {
       rating,
       comment,
     });
+    return {
+      status: res.status,
+      ...res.data,
+    };
+  } catch (error) {
+    return {
+      status: error.response.status,
+      ...error.response.data,
+    };
+  }
+};
+
+export const updateReview = async (idReview, user_id, rating, comment) => {
+  try {
+    const res = await instance.put(`reviews/${idReview}`, {
+      user_id: user_id,
+      rating,
+      comment,
+    });
     return res;
   } catch (error) {
     console.error("Error in addReview:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const deleteReview = async (idReview, user_id) => {
+  try {
+    const res = await instance.delete(`reviews/${idReview}`, {
+      data: { user_id },
+    });
+    return res;
+  } catch (error) {
+    console.error("Error in deleteReview:", error);
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };

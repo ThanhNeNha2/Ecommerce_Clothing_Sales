@@ -4,22 +4,39 @@ import { RiArrowLeftRightLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { addProductToCart, addProductToWishlist } from "../../services/api";
 import { notification } from "antd";
+import { useMutation, useQueryClient } from "react-query";
 
 const Products = ({ listProducts }) => {
   const user = JSON.parse(localStorage.getItem("user"));
-  const handleAddWishlist = async (user_id, product_id) => {
-    const res = await addProductToWishlist(user_id, product_id);
+  const queryClient = useQueryClient();
 
-    if (res.status === 201) {
-      notification.success({
-        message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+  const addWishlistMutation = useMutation({
+    mutationFn: ({ user_id, product_id }) =>
+      addProductToWishlist(user_id, product_id),
+
+    onSuccess: (res, variables) => {
+      if (res.status === 201) {
+        notification.success({
+          message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+        });
+        queryClient.invalidateQueries(["wishlist", variables.user_id]);
+      } else if (res.status === 409) {
+        notification.success({
+          message: "Sản phẩm đã có trong danh sách yêu thích",
+        });
+      }
+    },
+
+    onError: (error) => {
+      notification.error({
+        message: "Lỗi khi thêm vào danh sách yêu thích",
+        description: error?.response?.data?.message || "Đã xảy ra lỗi.",
       });
-    }
-    if (res.status === 409) {
-      notification.success({
-        message: "Sản phẩm đã có trong danh sách yêu thích",
-      });
-    }
+    },
+  });
+
+  const handleAddWishlist = (user_id, product_id) => {
+    addWishlistMutation.mutate({ user_id, product_id });
   };
 
   const handleAddCart = async (user_id, product_id) => {

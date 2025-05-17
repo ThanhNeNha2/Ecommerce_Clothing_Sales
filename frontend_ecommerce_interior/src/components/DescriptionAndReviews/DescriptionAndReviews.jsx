@@ -3,14 +3,25 @@ import { RiInstagramFill } from "react-icons/ri";
 import { BsThreeDotsVertical, BsTwitter } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import { addReview, getAllReview } from "../../services/api";
+import {
+  addReview,
+  deleteReview,
+  getAllReview,
+  getReviewById,
+  updateReview,
+} from "../../services/api";
+import { notification } from "antd";
 
-const DescriptionAndReviews = ({ description }) => {
+const DescriptionAndReviews = ({ description, quantityReview }) => {
   const [activeTab, setActiveTab] = useState("Description");
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState([]);
-  const [rating, setRating] = useState(0); // New state for star rating
-  const [showMenu, setShowMenu] = useState(false);
+  const [rating, setRating] = useState(1); // New state for star rating
+  const [activeMenuId, setActiveMenuId] = useState(null); // Track which review has open menu
+  const [isCheckUpdate, setIsCheckUpdate] = useState(false); // Track if update is needed
+  const [isCheckDelete, setIsCheckDelete] = useState(false); // Track if delete is needed
+  const [user_idUpdate, setUser_idUpdate] = useState(null); // Track user ID for update
+  const [idReview, setIdReview] = useState(null); // Track review ID for update
   const { id } = useParams();
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -20,8 +31,6 @@ const DescriptionAndReviews = ({ description }) => {
     const response = await getAllReview(id);
     if (response.status === 200) {
       setReviews(response.data.reviews);
-    } else {
-      console.error("Failed to fetch reviews");
     }
   };
 
@@ -34,40 +43,122 @@ const DescriptionAndReviews = ({ description }) => {
     ));
   };
 
-  // Hàm tạo danh sách đánh giá
+  // Hàm tạo  đánh giá
   const createReview = async (e) => {
     e.preventDefault();
     if (user) {
       const res = await addReview(user._id, id, comment, rating);
+
       if (res.status === 201) {
         setComment("");
         setRating(0); // Reset rating after submission
         fetchReviews(); // Fetch reviews again to update the list
       }
+      if (res.status === 400) {
+        notification.error({
+          message: "Thông báo ",
+          description: "Bạn đã đánh giá sản phẩm này trước đó! ",
+        });
+      }
       return;
     }
   };
 
-  // Hàm xử lý sự kiện click bên ngoài để đóng menu
-  const toggleMenu = () => {
-    setShowMenu((prev) => !prev);
+  // Hàm xử lý menu cho từng bình luận
+  const toggleMenu = (reviewId) => {
+    setActiveMenuId(activeMenuId === reviewId ? null : reviewId);
   };
 
-  const handleDelete = () => {
-    console.log("Xóa đánh giá");
-    setShowMenu(false);
+  // UPDATE REVIEW
+  // Hàm get review by id
+  const fetchReviewsById = async (info) => {
+    try {
+      const response = await getReviewById(info._id, info.user_id._id);
+      if (response.status === 200) {
+        setComment(response.data.review.comment);
+        setRating(response.data.review.rating);
+        setUser_idUpdate(response.data.review.user_id._id);
+        setIdReview(response.data.review._id);
+        setIsCheckUpdate(true);
+      }
+    } catch (error) {
+      notification.error({
+        message: "Thông báo ",
+        description: "Không thể sửa đánh giá người khác! ",
+      });
+    }
+  };
+  const handleUpdate = (reviewId) => {
+    fetchReviewsById(reviewId);
+    setActiveMenuId(null);
   };
 
-  const handleUpdate = () => {
-    console.log("Cập nhật đánh giá");
-    setShowMenu(false);
+  const handleCancel = () => {
+    setComment("");
+    setRating(0);
+    setIsCheckUpdate(false);
   };
 
+  // hàm update đánh giá API
+  const handleUpdateReview = async (e) => {
+    e.preventDefault();
+    const res = await updateReview(idReview, user_idUpdate, rating, comment);
+
+    if (res.status === 200) {
+      setComment("");
+      setRating(0);
+      setIsCheckUpdate(false);
+      fetchReviews(); // Fetch reviews again to update the list
+    }
+  };
+  // Đóng menu khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (activeMenuId && !event.target.closest(".menu-container")) {
+        setActiveMenuId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activeMenuId]);
+
+  //  DELETE  REVIEW
+  const fetchReviewsByIdDelete = async (info) => {
+    try {
+      const response = await getReviewById(info._id, info.user_id._id);
+      if (response.status === 200) {
+        setUser_idUpdate(response.data.review.user_id._id);
+        setIdReview(response.data.review._id);
+        setIsCheckDelete(true);
+      }
+    } catch (error) {
+      notification.error({
+        message: "Thông báo ",
+        description: "Không thể xóa đánh giá người khác! ",
+      });
+    }
+  };
+  const handleDelete = (reviewId) => {
+    fetchReviewsByIdDelete(reviewId);
+    setActiveMenuId(null);
+  };
+  const handleDeleteReview = async () => {
+    const res = await deleteReview(idReview, user_idUpdate);
+    if (res.status === 200) {
+      setIsCheckDelete(false);
+      fetchReviews(); // Fetch reviews again to update the list
+    }
+  };
   useEffect(() => {
     if (activeTab === "Reviews") {
       fetchReviews();
     }
   }, [activeTab, id]);
+
+  console.log("reviews", reviews);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -101,13 +192,14 @@ const DescriptionAndReviews = ({ description }) => {
             <div className="flex flex-col gap-4">
               {reviews.map((review) => (
                 <div
-                  key={review.id}
+                  key={review._id}
                   className="flex justify-between items-center border-b pb-2"
                 >
                   <div className="">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">
-                        {review.user_id.username}
+                        {" "}
+                        {review.user_id?.username}
                       </span>
                       <span className="text-yellow-500">
                         {renderStars(review.rating)}
@@ -122,27 +214,26 @@ const DescriptionAndReviews = ({ description }) => {
                       })}
                     </p>
                   </div>
-                  <div className="relative inline-block text-left">
+                  <div className="relative menu-container">
                     <div
                       className="cursor-pointer w-5 h-5"
-                      onClick={toggleMenu}
+                      onClick={() => toggleMenu(review._id)}
                     >
                       <BsThreeDotsVertical />
                     </div>
-
-                    {showMenu && (
-                      <div className="absolute right-0 mt-2 w-28 bg-white border rounded shadow z-10">
+                    {activeMenuId === review._id && (
+                      <div className="absolute right-0 top-6 bg-white shadow-md rounded-md py-1 z-10 min-w-[120px]">
                         <button
-                          onClick={handleUpdate}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm"
+                          onClick={() => handleUpdate(review)}
                         >
-                          Update
+                          Cập nhật
                         </button>
                         <button
-                          onClick={handleDelete}
-                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500 text-sm"
+                          onClick={() => handleDelete(review)}
                         >
-                          Delete
+                          Xóa
                         </button>
                       </div>
                     )}
@@ -154,7 +245,10 @@ const DescriptionAndReviews = ({ description }) => {
               Xem thêm đánh giá
             </button>
             <div className="mt-8 border-t border-gray-200 pt-6 bg-gray-50 rounded-lg shadow-sm p-6">
-              <form className="flex flex-col gap-4" onSubmit={createReview}>
+              <form
+                className="flex flex-col gap-4"
+                onSubmit={isCheckUpdate ? handleUpdateReview : createReview}
+              >
                 {/* Số sao đánh giá */}
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-gray-700">
@@ -187,12 +281,30 @@ const DescriptionAndReviews = ({ description }) => {
                 />
 
                 {/* Nút gửi */}
-                <button
-                  type="submit"
-                  className="self-end bg-green-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-green-700 active:bg-green-800 transition-colors duration-200 shadow-md"
-                >
-                  Gửi đánh giá
-                </button>
+
+                {isCheckUpdate ? (
+                  <div className="self-end flex gap-3">
+                    <button
+                      onClick={() => handleCancel()}
+                      className="self-end bg-gray-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-gray-700 active:bg-gray-800 transition-colors duration-200 shadow-md"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="self-end bg-green-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-green-700 active:bg-green-800 transition-colors duration-200 shadow-md"
+                    >
+                      Cập nhật đánh giá
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="submit"
+                    className="self-end bg-green-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-green-700 active:bg-green-800 transition-colors duration-200 shadow-md"
+                  >
+                    Gửi đánh giá
+                  </button>
+                )}
               </form>
             </div>
           </div>
@@ -229,9 +341,36 @@ const DescriptionAndReviews = ({ description }) => {
           } hover:text-black transition-colors`}
           onClick={() => setActiveTab("Reviews")}
         >
-          Reviews [5]
+          Reviews [{quantityReview}]
         </button>
       </div>
+      {isCheckDelete && (
+        <div className="fixed inset-0  flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              Xác nhận xóa bình luận
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Bạn có chắc chắn muốn xóa bình luận này không? Hành động này không
+              thể hoàn tác.
+            </p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setIsCheckDelete(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleDeleteReview}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="leading-7 px-28 text-gray-500">{renderContent()}</div>
     </div>
   );
