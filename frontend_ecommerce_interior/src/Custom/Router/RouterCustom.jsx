@@ -12,6 +12,7 @@ import ProductComparison from "../../page/ProductComparison/ProductComparison";
 import ListProduct from "../../page/ListProduct/ListProduct";
 import ProfileUser from "../../page/ProfileUser/ProfileUser";
 import DetailBlog from "../../page/DetailBlog/DetailBlog";
+import Promotion from "../../page/Promotion/Promotion";
 
 // Component PrivateRoute để bảo vệ các tuyến đường
 const PrivateRoute = ({ element }) => {
@@ -56,6 +57,10 @@ const RouterCustom = () => {
       <Route
         path="/ProfileUser"
         element={<PrivateRoute element={<ProfileUser />} />}
+      />
+      <Route
+        path="/listPromotion"
+        element={<PrivateRoute element={<Promotion />} />}
       />
       <Route
         path="/DetailBlog/:id"

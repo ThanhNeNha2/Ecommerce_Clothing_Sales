@@ -4,7 +4,7 @@ import { FaRegHeart, FaUserAlt, FaUserEdit } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { TbLogin, TbLogout } from "react-icons/tb";
+import { TbLogin, TbLogout, TbRosetteDiscountFilled } from "react-icons/tb";
 import { MdAssignmentInd } from "react-icons/md";
 import ProductFavourite from "../ProductFavourite/ProductFavourite";
 
@@ -124,6 +124,11 @@ const Header = () => {
             <Link to={"/ListProduct"}>
               <li className="text-[25px] 2xl:text-[18px] hover:text-gray-400">
                 <IoSearch />
+              </li>
+            </Link>
+            <Link to={"/listPromotion"}>
+              <li className="text-[25px] 2xl:text-[20px] hover:text-gray-400">
+                <TbRosetteDiscountFilled />
               </li>
             </Link>
             {/* Yêu Thích */}

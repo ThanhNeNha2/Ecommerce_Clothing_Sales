@@ -327,3 +327,13 @@ export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
+
+export const getAllPromotion = async () => {
+  try {
+    const response = await instance.get(`promotions`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
