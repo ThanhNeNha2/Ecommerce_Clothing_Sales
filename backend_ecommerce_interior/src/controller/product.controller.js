@@ -298,7 +298,7 @@ export const getProductById = async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id }).populate(
       "sizes.size_id",
-      "nameProduct"
+      "name nameProduct"
     );
 
     if (!product) {

@@ -1,6 +1,5 @@
-import Order from "../models/Order.model.js";
-import OrderItem from "../models/OrderItem.model.js";
 import mongoose from "mongoose";
+import Order from "../models/Order.model.js";
 import Promotion from "../models/Promotion.model.js";
 import Product from "../models/Product.model.js";
 import Cart from "../models/Cart.model.js";
@@ -8,7 +7,7 @@ import Cart from "../models/Cart.model.js";
 // Tạo đơn hàng từ giỏ hàng
 export const createOrder = async (req, res) => {
   try {
-    const { user_id, shipping_address, payment_method, promotion_code } =
+    const { user_id, shipping_address, payment_method, promotion_code, notes } =
       req.body;
 
     // Kiểm tra dữ liệu đầu vào
@@ -60,18 +59,13 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      const unit_price = product.salePrice;
-      const total_price = unit_price * item.quantity;
-      total_amount += total_price;
-
-      const orderItem = await OrderItem.create({
-        order_id: null, // Sẽ cập nhật sau
+      const price = product.salePrice;
+      orderItems.push({
         product_id: item.product_id,
         quantity: item.quantity,
-        unit_price,
-        total_price,
+        price,
       });
-      orderItems.push(orderItem._id);
+      total_amount += price * item.quantity;
 
       // Giảm tồn kho
       await Product.findByIdAndUpdate(product._id, {
@@ -116,28 +110,18 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // Tính final_amount
-    const final_amount = total_amount - discount_amount;
-
     // Tạo đơn hàng
     const order = await Order.create({
       user_id,
       order_items: orderItems,
       total_amount,
-      discount_amount,
-      final_amount,
       promotion_id,
       status: "pending",
-      shipping_address,
       payment_method,
       payment_status: "pending",
+      shipping_address,
+      notes: notes || "",
     });
-
-    // Cập nhật order_id cho order items
-    await OrderItem.updateMany(
-      { _id: { $in: orderItems } },
-      { order_id: order._id }
-    );
 
     // Xóa giỏ hàng
     await Cart.deleteMany({ user_id });
@@ -173,9 +157,14 @@ export const getOrdersByUser = async (req, res) => {
     const query = { user_id };
     if (status) {
       if (
-        !["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(
-          status
-        )
+        ![
+          "pending",
+          "confirmed",
+          "shipped",
+          "delivered",
+          "cancelled",
+          "completed",
+        ].includes(status)
       ) {
         return res.status(400).json({
           message: "Trạng thái không hợp lệ",
@@ -188,11 +177,8 @@ export const getOrdersByUser = async (req, res) => {
     // Lấy danh sách đơn hàng
     const orders = await Order.find(query)
       .populate({
-        path: "order_items",
-        populate: {
-          path: "product_id",
-          select: "nameProduct salePrice image_url mainCategory subCategory",
-        },
+        path: "order_items.product_id",
+        select: "nameProduct salePrice image_url mainCategory subCategory",
       })
       .populate("promotion_id", "code discount_type discount_value")
       .skip((Number(page) - 1) * Number(limit))
@@ -235,11 +221,8 @@ export const getOrderById = async (req, res) => {
     // Tìm đơn hàng
     const order = await Order.findById(id)
       .populate({
-        path: "order_items",
-        populate: {
-          path: "product_id",
-          select: "nameProduct salePrice image_url mainCategory subCategory",
-        },
+        path: "order_items.product_id",
+        select: "nameProduct salePrice image_url mainCategory subCategory",
       })
       .populate("promotion_id", "code discount_type discount_value");
 
@@ -280,9 +263,14 @@ export const updateOrderStatus = async (req, res) => {
 
     // Kiểm tra trạng thái hợp lệ
     if (
-      !["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(
-        status
-      )
+      ![
+        "pending",
+        "confirmed",
+        "shipped",
+        "delivered",
+        "cancelled",
+        "completed",
+      ].includes(status)
     ) {
       return res.status(400).json({
         message: "Trạng thái đơn hàng không hợp lệ",
@@ -402,7 +390,7 @@ export const cancelOrder = async (req, res) => {
     }
 
     // Tìm đơn hàng
-    const order = await Order.findById(id).populate("order_items");
+    const order = await Order.findById(id);
     if (!order) {
       return res.status(404).json({
         message: "Đơn hàng không tồn tại",
