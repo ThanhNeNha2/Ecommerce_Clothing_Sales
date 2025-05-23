@@ -11,8 +11,12 @@ import {
   getPromotionByCode,
   updateQuantityCart,
 } from "../../services/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { notification } from "antd";
+import {
+  useFinalPriceStore,
+  usePromotionStore,
+} from "../../Custom/Zustand/Store";
 
 const Cart = () => {
   const queryClient = useQueryClient();
@@ -22,6 +26,10 @@ const Cart = () => {
     discount_value: 0,
   });
   const [errorVoucher, setErrorVoucher] = React.useState("");
+  const setFinalPrice = useFinalPriceStore((state) => state.setFinalPrice);
+  const setPromotion_id = usePromotionStore((state) => state.setPromotion_id);
+
+  const navigator = useNavigate();
   // Lấy dữ liệu giỏ hàng từ API
   const {
     data: carts = [],
@@ -70,6 +78,11 @@ const Cart = () => {
     }
   };
 
+  const subtotal = carts.reduce(
+    (total, item) => total + item.product.salePrice * item.quantity,
+    0
+  );
+
   // Tính tổng giá
   const calculateTotal = () => {
     const subtotal = carts.reduce(
@@ -109,7 +122,7 @@ const Cart = () => {
   const handleVoucherBlur = async (e) => {
     const code = e.target.value;
     const res = await getPromotionByCode(code);
-    console.log("res", res);
+    console.log("check res.promotion.id", res.promotion.id);
 
     if (res.idCode === 0) {
       setVoucher({
@@ -117,6 +130,8 @@ const Cart = () => {
         discount_value: res.promotion.discount_value,
       });
       setErrorVoucher("");
+      await setPromotion_id(res.promotion.id);
+
       notification.success({
         message: "Voucher applied successfully",
       });
@@ -124,6 +139,10 @@ const Cart = () => {
     if (res.idCode === 2) {
       setErrorVoucher("Invalid coupon code");
     }
+  };
+  const handleCheckout = async () => {
+    await setFinalPrice(calculateTotal().toFixed(2));
+    navigator("/payment");
   };
   return (
     <div className="min-h-screen flex flex-col">
@@ -267,7 +286,7 @@ const Cart = () => {
               <div className="flex gap-3">
                 <span className="min-w-[100px] text-left">Subtotal</span>
                 <p className="text-[15px] text-gray-400 text-left">
-                  ${calculateTotal().toFixed(2)}
+                  ${subtotal.toFixed(2)}
                 </p>
               </div>
 
@@ -312,6 +331,9 @@ const Cart = () => {
               <button
                 disabled={carts.length === 0}
                 className="px-5 bg-colorMain text-white font-medium hover:opacity-85 rounded py-2"
+                onClick={() => {
+                  handleCheckout();
+                }}
               >
                 Check Out
               </button>
