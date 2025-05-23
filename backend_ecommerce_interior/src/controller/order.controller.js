@@ -7,18 +7,26 @@ import Cart from "../models/Cart.model.js";
 // Tạo đơn hàng từ giỏ hàng
 export const createOrder = async (req, res) => {
   try {
-    const { user_id, shipping_address, payment_method, promotion_code, notes } =
-      req.body;
+    const {
+      user_id,
+      shipping_address,
+      payment_method,
+      promotion_id,
+      final_amount,
+      notes,
+    } = req.body;
 
     // Kiểm tra dữ liệu đầu vào
     if (
       !mongoose.Types.ObjectId.isValid(user_id) ||
       !shipping_address ||
-      !payment_method
+      !payment_method ||
+      !Number.isFinite(final_amount) ||
+      final_amount < 0
     ) {
       return res.status(400).json({
         message:
-          "ID người dùng, địa chỉ giao hàng và phương thức thanh toán là bắt buộc",
+          "ID người dùng, địa chỉ giao hàng, phương thức thanh toán và giá trị cuối cùng là bắt buộc",
         idCode: 1,
       });
     }
@@ -31,7 +39,9 @@ export const createOrder = async (req, res) => {
     }
 
     // Lấy giỏ hàng của người dùng
-    const cartItems = await Cart.find({ user_id }).populate("product_id");
+    const cartItems = await Cart.find({ user_id }).populate(
+      "product_id size_id"
+    );
     if (cartItems.length === 0) {
       return res.status(400).json({
         message: "Giỏ hàng trống",
@@ -41,7 +51,6 @@ export const createOrder = async (req, res) => {
 
     // Kiểm tra tồn kho và tạo order items
     const orderItems = [];
-    let total_amount = 0;
 
     for (const item of cartItems) {
       const product = item.product_id;
@@ -52,9 +61,33 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      if (product.stock_quantity < item.quantity) {
+      // Kiểm tra size_id hợp lệ
+      if (!mongoose.Types.ObjectId.isValid(item.size_id)) {
         return res.status(400).json({
-          message: `Sản phẩm ${product.nameProduct} không đủ tồn kho`,
+          message: `Kích thước với ID ${item.size_id} không hợp lệ`,
+          idCode: 1,
+        });
+      }
+      // console.log("check product", product);
+
+      // Tìm kích thước trong sizes của sản phẩm
+      const size = product.sizes.find(
+        (s) => s.size_id.toString() === item.size_id._id.toString()
+      );
+      // console.log("check size", product.sizes);
+      // console.log("check item", item);
+
+      if (!size) {
+        return res.status(400).json({
+          message: `Sản phẩm ${product.nameProduct} không có kích thước này`,
+          idCode: 1,
+        });
+      }
+
+      // Kiểm tra tồn kho của kích thước
+      if (size.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Sản phẩm ${product.nameProduct} (kích thước ${item.size_id}) không đủ tồn kho`,
           idCode: 1,
         });
       }
@@ -62,22 +95,34 @@ export const createOrder = async (req, res) => {
       const price = product.salePrice;
       orderItems.push({
         product_id: item.product_id,
+        size_id: item.size_id,
         quantity: item.quantity,
         price,
       });
-      total_amount += price * item.quantity;
 
       // Giảm tồn kho
-      await Product.findByIdAndUpdate(product._id, {
-        $inc: { stock_quantity: -item.quantity },
-      });
+      await Product.findOneAndUpdate(
+        { _id: product._id, "sizes.size_id": item.size_id },
+        {
+          $inc: {
+            "sizes.$.stock": -item.quantity,
+            stock_quantity: -item.quantity,
+          },
+        }
+      );
     }
 
-    // Áp dụng khuyến mãi
-    let discount_amount = 0;
-    let promotion_id = null;
-    if (promotion_code) {
-      const promotion = await Promotion.findOne({ code: promotion_code });
+    // Kiểm tra và cập nhật promotion
+    let validated_promotion_id = null;
+    if (promotion_id) {
+      if (!mongoose.Types.ObjectId.isValid(promotion_id)) {
+        return res.status(400).json({
+          message: "ID mã khuyến mãi không hợp lệ",
+          idCode: 1,
+        });
+      }
+
+      const promotion = await Promotion.findById(promotion_id);
       if (!promotion) {
         return res.status(404).json({
           message: "Mã khuyến mãi không tồn tại",
@@ -93,20 +138,9 @@ export const createOrder = async (req, res) => {
         });
       }
 
-      if (promotion.quantity <= 0) {
-        return res.status(400).json({
-          message: "Mã khuyến mãi đã hết lượt sử dụng",
-          idCode: 1,
-        });
-      }
-
-      discount_amount =
-        promotion.discount_type === "percentage"
-          ? (total_amount * promotion.discount_value) / 100
-          : promotion.discount_value;
-      promotion_id = promotion._id;
+      validated_promotion_id = promotion._id;
       await Promotion.findByIdAndUpdate(promotion_id, {
-        $inc: { quantity: -1 },
+        $inc: { usedCount: 1 },
       });
     }
 
@@ -114,8 +148,8 @@ export const createOrder = async (req, res) => {
     const order = await Order.create({
       user_id,
       order_items: orderItems,
-      total_amount,
-      promotion_id,
+      final_amount,
+      promotion_id: validated_promotion_id,
       status: "pending",
       payment_method,
       payment_status: "pending",
@@ -180,21 +214,22 @@ export const getOrdersByUser = async (req, res) => {
         path: "order_items.product_id",
         select: "nameProduct salePrice image_url mainCategory subCategory",
       })
+      .populate({
+        path: "order_items.size_id",
+        select: "name", // Giả sử Size có trường name
+      })
       .populate("promotion_id", "code discount_type discount_value")
       .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit))
       .lean();
 
-    // Tổng số bản ghi
-    const total = await Order.countDocuments(query);
-
     return res.status(200).json({
       message: "OK",
       idCode: 0,
       orders,
-      total,
+      total: await Order.countDocuments(query),
       page: Number(page),
-      pages: Math.ceil(total / Number(limit)),
+      pages: Math.ceil((await Order.countDocuments(query)) / Number(limit)),
     });
   } catch (error) {
     console.log("Error in getOrdersByUser:", error);
@@ -223,6 +258,10 @@ export const getOrderById = async (req, res) => {
       .populate({
         path: "order_items.product_id",
         select: "nameProduct salePrice image_url mainCategory subCategory",
+      })
+      .populate({
+        path: "order_items.size_id",
+        select: "name", // Giả sử Size có trường name
       })
       .populate("promotion_id", "code discount_type discount_value");
 
@@ -321,7 +360,7 @@ export const updateOrderStatus = async (req, res) => {
 export const payOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { payment_result } = req.body; // Giả sử từ cổng thanh toán
+    const { payment_result } = req.body;
 
     // Kiểm tra ID hợp lệ
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -351,7 +390,7 @@ export const payOrder = async (req, res) => {
     // Xử lý thanh toán
     if (payment_result === "success") {
       order.payment_status = "completed";
-      order.status = "confirmed"; // Chuyển sang trạng thái xác nhận
+      order.status = "confirmed";
       await order.save();
     } else {
       order.payment_status = "failed";
@@ -408,9 +447,15 @@ export const cancelOrder = async (req, res) => {
 
     // Hoàn tồn kho
     for (const item of order.order_items) {
-      await Product.findByIdAndUpdate(item.product_id, {
-        $inc: { stock_quantity: item.quantity },
-      });
+      await Product.findOneAndUpdate(
+        { _id: item.product_id, "sizes.size_id": item.size_id },
+        {
+          $inc: {
+            "sizes.$.stock": item.quantity,
+            stock_quantity: item.quantity,
+          },
+        }
+      );
     }
 
     // Cập nhật trạng thái

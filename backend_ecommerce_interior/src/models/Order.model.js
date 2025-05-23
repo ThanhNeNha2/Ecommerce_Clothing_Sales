@@ -31,7 +31,7 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
-    total_amount: {
+    final_amount: {
       type: Number,
       required: true,
       min: 0,
@@ -79,14 +79,6 @@ const orderSchema = new mongoose.Schema(
 orderSchema.path("order_items").validate(function (items) {
   return items.length > 0;
 }, "Order must have at least one item");
-
-// Tự động tính total_amount trước khi lưu
-orderSchema.pre("save", function (next) {
-  this.total_amount = this.order_items.reduce((total, item) => {
-    return total + item.quantity * item.price;
-  }, 0);
-  next();
-});
 
 // Index tối ưu truy vấn
 orderSchema.index({ user_id: 1 });
