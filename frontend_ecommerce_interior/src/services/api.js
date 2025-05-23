@@ -1,4 +1,5 @@
 import { instance } from "../Custom/Axios/AxiosCustom";
+const user = JSON.parse(localStorage.getItem("user"));
 
 export const getAllUser = async () => {
   try {
@@ -193,11 +194,12 @@ export const updateQuantityCart = async (id, quantity) => {
   }
 };
 
-export const addProductToCart = async (userId, productId) => {
+export const addProductToCart = async (userId, productId, size_id) => {
   try {
     const res = await instance.post(`cart`, {
       user_id: userId,
       product_id: productId,
+      size_id: size_id,
     });
     return res;
   } catch (error) {
@@ -331,6 +333,18 @@ export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
 export const getAllPromotion = async () => {
   try {
     const response = await instance.get(`promotions`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+// ORDER
+
+export const getAllOder = async () => {
+  try {
+    const response = await instance.get(`orders?user_id=${user._id}`);
     return response.data;
   } catch (error) {
     console.error("Error in getAllProductChatbotSeeMore:", error);

@@ -154,54 +154,97 @@ const Cart = () => {
             carts.map((item, index) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition"
+                className="flex items-center gap-4 px-6 py-5 border-b border-gray-100 hover:bg-gray-50 transition-all duration-200 group"
               >
-                <div className="w-[100px] h-[100px] rounded-lg overflow-hidden">
+                {/* Product Image */}
+                <div className="w-20 h-20 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                   <img
                     src={item.product.image_url[0]}
                     alt={item.product.nameProduct}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <Link to={`/SingleProduct/${item.product.id}`}>
-                  <span
-                    className="block w-[200px] font-poppins font-medium text-gray-700 hover:text-blue-400 cursor-pointer   "
-                    title={item.product.nameProduct}
-                  >
-                    {item.product.nameProduct.length > 30
-                      ? item.product.nameProduct.substring(0, 30) + "..."
-                      : item.product.nameProduct}
-                  </span>
-                </Link>
-                <span className="text-gray-600">
-                  ${item.product.salePrice.toFixed(2)}
-                </span>
-                <div className="flex items-center gap-1">
+
+                {/* Product Info */}
+                <div className="flex-1 min-w-0">
+                  <Link to={`/SingleProduct/${item.product.id}`}>
+                    <h3
+                      className="font-poppins font-semibold text-gray-800 hover:text-blue-500 cursor-pointer transition-colors text-sm md:text-base leading-tight mb-1"
+                      title={item.product.nameProduct}
+                    >
+                      {item.product.nameProduct.length > 35
+                        ? item.product.nameProduct.substring(0, 35) + "..."
+                        : item.product.nameProduct}
+                    </h3>
+                  </Link>
+                  <div className="flex items-center gap-3 text-sm text-gray-500">
+                    <span className="bg-gray-100 px-2 py-1 rounded-md text-xs font-medium">
+                      Size: {item.size.name}
+                    </span>
+                    <span className="font-medium text-gray-700">
+                      ${item.product.salePrice.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Quantity Controls */}
+                <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                   <button
-                    className="border border-gray-300 px-3 py-1 rounded-l hover:bg-gray-200 transition"
+                    className="px-3 py-2 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 hover:text-gray-800"
                     onClick={() => decreaseQuantity(item.id, item.quantity)}
                     disabled={item.quantity <= 1}
                   >
-                    -
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20 12H4"
+                      />
+                    </svg>
                   </button>
-                  <span className="border border-gray-300 px-4 py-1 text-gray-700">
+                  <span className="px-4 py-2 text-gray-700 font-medium min-w-[3rem] text-center border-x border-gray-200">
                     {item.quantity}
                   </span>
                   <button
-                    className="border border-gray-300 px-3 py-1 rounded-r hover:bg-gray-200 transition"
+                    className="px-3 py-2 hover:bg-gray-50 transition-colors text-gray-600 hover:text-gray-800"
                     onClick={() => increaseQuantity(item.id, item.quantity)}
                   >
-                    +
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
                   </button>
                 </div>
-                <span className="font-medium text-gray-800">
-                  ${(item.product.salePrice * item.quantity).toFixed(2)}
-                </span>
+
+                {/* Total Price */}
+                <div className="text-right min-w-[80px]">
+                  <span className="font-bold text-lg text-gray-900">
+                    ${(item.product.salePrice * item.quantity).toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Delete Button */}
                 <button
                   onClick={() => handleDelete(item.id)}
-                  className="text-red-500 hover:text-red-700 transition"
+                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 group/delete"
+                  title="Remove item"
                 >
-                  <FaTrash />
+                  <FaTrash className="w-4 h-4 group-hover/delete:scale-110 transition-transform" />
                 </button>
               </div>
             ))

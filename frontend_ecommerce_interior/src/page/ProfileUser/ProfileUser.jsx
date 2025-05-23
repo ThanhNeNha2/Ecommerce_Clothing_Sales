@@ -79,122 +79,278 @@ const ProfileUser = () => {
     }
   };
 
+  const fieldLabels = {
+    username: "Username",
+    email: "Email Address",
+    phone: "Phone Number",
+    address: "Address",
+  };
+
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <Header />
-      <div className="h-screen w-full flex justify-center items-center bg-blue-100">
-        <div className="h-[80%] w-[60%] bg-white flex">
-          <div className="w-[40%] flex items-center flex-col gap-10">
-            <div className="w-[190px] h-[190px] rounded-full border border-gray-500 flex justify-center items-center mt-16">
-              <div className="w-[180px] h-[180px] rounded-full overflow-hidden">
-                <img
-                  src={
-                    previewImage
-                      ? previewImage
-                      : infoUserChange.image
-                      ? infoUserChange.image
-                      : "https://i.pinimg.com/736x/3c/ae/07/3cae079ca0b9e55ec6bfc1b358c9b1e2.jpg"
-                  }
-                  alt="Avatar"
-                  className="w-full h-full object-cover object-center"
-                />
-              </div>
-            </div>
 
-            {checkUpdate && (
-              <div className="mt-4">
-                <label
-                  htmlFor="upload-avatar"
-                  className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                >
-                  Chọn ảnh
-                </label>
-                <input
-                  id="upload-avatar"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-                      setFile(e.target.files[0]);
-                    }
-                    handleImageChange(e);
-                  }}
-                  className="hidden"
-                />
-              </div>
-            )}
-
-            <div>
-              {checkUpdate === false ? (
-                <button
-                  className="bg-colorMain py-[6px] px-7 text-base font-medium rounded text-white"
-                  onClick={() => setCheckUpdate(true)}
-                >
-                  Update
-                </button>
-              ) : (
-                <div className="flex gap-2">
-                  <button
-                    className="bg-red-500 py-[6px] px-7 text-base font-medium rounded text-white"
-                    onClick={() => {
-                      setCheckUpdate(false);
-                      setPreviewImage("");
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-green-600 py-[6px] px-7 text-base font-medium rounded text-white"
-                    onClick={() => {
-                      handleUpdate();
-                      setCheckUpdate(false);
-                    }}
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
-            </div>
+      <div className="flex justify-center items-center py-12 px-4">
+        <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-12">
+            <h1 className="text-4xl font-bold text-white text-center">
+              My Profile
+            </h1>
+            <p className="text-blue-100 text-center mt-2">
+              Manage your personal information
+            </p>
           </div>
 
-          <div className="flex-1">
-            <div className="py-7">
-              <span className="font-semibold text-3xl ml-36">My Profile </span>
+          <div className="flex flex-col lg:flex-row">
+            {/* Left Panel - Avatar Section */}
+            <div className="lg:w-2/5 bg-gradient-to-b from-gray-50 to-white p-8 flex flex-col items-center">
+              <div className="relative group">
+                <div className="w-48 h-48 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 p-1 shadow-xl">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                    <img
+                      src={
+                        previewImage
+                          ? previewImage
+                          : infoUserChange.image
+                          ? infoUserChange.image
+                          : "https://i.pinimg.com/736x/3c/ae/07/3cae079ca0b9e55ec6bfc1b358c9b1e2.jpg"
+                      }
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                {checkUpdate && (
+                  <div className="absolute -bottom-2 -right-2">
+                    <label
+                      htmlFor="upload-avatar"
+                      className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </label>
+                    <input
+                      id="upload-avatar"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          setFile(e.target.files[0]);
+                        }
+                        handleImageChange(e);
+                      }}
+                      className="hidden"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-8 text-center">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  {infoUserChange.username || "User"}
+                </h2>
+                <p className="text-gray-600">{infoUserChange.email}</p>
+              </div>
+
+              <div className="mt-8">
+                {checkUpdate === false ? (
+                  <button
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+                    onClick={() => setCheckUpdate(true)}
+                  >
+                    <svg
+                      className="w-5 h-5 inline mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                    Edit Profile
+                  </button>
+                ) : (
+                  <div className="flex gap-3">
+                    <button
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-105"
+                      onClick={() => {
+                        setCheckUpdate(false);
+                        setPreviewImage("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-105"
+                      onClick={() => {
+                        handleUpdate();
+                        setCheckUpdate(false);
+                      }}
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="gap-3 w-full px-10 space-y-4">
-              {["username", "email", "phone", "address"].map((field) => (
-                <div key={field} className="flex flex-col gap-2 w-full">
-                  <span className="capitalize">{field}</span>
-                  <input
-                    type="text"
-                    value={infoUserChange[field]}
-                    disabled={field === "email" ? true : !checkUpdate}
-                    className={`border border-gray-200 py-[5px] rounded px-3 ${
-                      !checkUpdate || field === "email"
-                        ? "bg-gray-100 text-gray-400"
-                        : "bg-gray-50 text-black"
-                    }`}
-                    onChange={(e) => handleChangeUpdate(e, field)}
-                  />
+            {/* Right Panel - Form Section */}
+            <div className="lg:w-3/5 p-8">
+              <div className="space-y-6">
+                {["username", "email", "phone", "address"].map((field) => (
+                  <div key={field} className="group">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      {fieldLabels[field]}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={infoUserChange[field]}
+                        disabled={field === "email" ? true : !checkUpdate}
+                        className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none ${
+                          !checkUpdate || field === "email"
+                            ? "bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed"
+                            : "bg-white border-gray-300 text-gray-800 hover:border-blue-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                        }`}
+                        onChange={(e) => handleChangeUpdate(e, field)}
+                        placeholder={`Enter your ${fieldLabels[
+                          field
+                        ].toLowerCase()}`}
+                      />
+                      {field === "email" && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                          <svg
+                            className="w-5 h-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                            />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Gender
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={infoUserChange.sex}
+                      disabled={!checkUpdate}
+                      className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300 focus:outline-none appearance-none ${
+                        !checkUpdate
+                          ? "bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-white border-gray-300 text-gray-800 hover:border-blue-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                      }`}
+                      onChange={(e) => handleChangeUpdate(e, "sex")}
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-              ))}
-              <div className="flex flex-col gap-2 w-full">
-                <span className="capitalize">Sex</span>
-                <select
-                  value={infoUserChange.sex}
-                  disabled={!checkUpdate}
-                  className={`border border-gray-200 py-[5px] rounded px-3 ${
-                    !checkUpdate
-                      ? "bg-gray-100 text-gray-400"
-                      : "bg-gray-50 text-black"
-                  }`}
-                  onChange={(e) => handleChangeUpdate(e, "sex")}
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
+              </div>
+
+              {/* Additional Info Cards */}
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+                  <div className="flex items-center">
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <svg
+                        className="w-5 h-5 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900">
+                        Account Status
+                      </p>
+                      <p className="text-sm text-gray-600">Active</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                  <div className="flex items-center">
+                    <div className="bg-green-100 p-2 rounded-lg">
+                      <svg
+                        className="w-5 h-5 text-green-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900">
+                        Security
+                      </p>
+                      <p className="text-sm text-gray-600">Protected</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

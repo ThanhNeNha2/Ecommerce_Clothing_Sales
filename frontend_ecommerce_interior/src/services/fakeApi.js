@@ -556,3 +556,118 @@ export const cart = [
     salePrice: "1000",
   },
 ];
+
+export const fakeCart = [
+  {
+    _id: "68303ce818d78f30f037d6c0",
+    user_id: "68199ed7dfe2631008c16e94",
+    order_items: [
+      {
+        product_id: {
+          _id: "681f7a7ad3b861a9798069da",
+          nameProduct: "Áo thun nam",
+          salePrice: 180000,
+          mainCategory: "Topwear",
+          subCategory: ["T-Shirt", "Sweater", "Jacket"],
+          image_url: [
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f417031a",
+          name: "S",
+        },
+        quantity: 1,
+        price: 180000,
+        _id: "68303ce818d78f30f037d6c1",
+      },
+    ],
+    final_amount: 100000,
+    promotion_id: {
+      _id: "682efa6597c49030c8e59dc4",
+      code: "HAHA",
+      discount_type: "fixed",
+      discount_value: 100,
+    },
+    status: "pending",
+    payment_method: "card",
+    payment_status: "pending",
+    shipping_address: "123 Đường ABC, Quận 1, TP.HCM",
+    notes: "Giao hàng vào buổi sáng",
+    createdAt: "2025-05-23T09:16:24.971Z",
+    updatedAt: "2025-05-23T09:16:24.971Z",
+  },
+  {
+    _id: "68303ce818d78f30f037d6c1",
+    user_id: "68199ed7dfe2631008c16e95",
+    order_items: [
+      {
+        product_id: {
+          _id: "681f7a7ad3b861a9798069db",
+          nameProduct: "Quần jean nữ",
+          salePrice: 250000,
+          mainCategory: "Bottomwear",
+          subCategory: ["Jeans", "Pants"],
+          image_url: [
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f417031b",
+          name: "M",
+        },
+        quantity: 2,
+        price: 500000,
+        _id: "68303ce818d78f30f037d6c2",
+      },
+    ],
+    final_amount: 450000,
+    promotion_id: {
+      _id: "682efa6597c49030c8e59dc5",
+      code: "SALE10",
+      discount_type: "percentage",
+      discount_value: 10,
+    },
+    status: "confirmed",
+    payment_method: "bank_transfer",
+    payment_status: "paid",
+    shipping_address: "456 Đường XYZ, Quận 3, TP.HCM",
+    notes: "Gói hàng cẩn thận",
+    createdAt: "2025-05-22T14:30:15.123Z",
+    updatedAt: "2025-05-23T08:45:20.456Z",
+  },
+  {
+    _id: "68303ce818d78f30f037d6c2",
+    user_id: "68199ed7dfe2631008c16e96",
+    order_items: [
+      {
+        product_id: {
+          _id: "681f7a7ad3b861a9798069dc",
+          nameProduct: "Giày sneaker",
+          salePrice: 320000,
+          mainCategory: "Footwear",
+          subCategory: ["Sneakers", "Casual"],
+          image_url: [
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f417031c",
+          name: "42",
+        },
+        quantity: 1,
+        price: 320000,
+        _id: "68303ce818d78f30f037d6c3",
+      },
+    ],
+    final_amount: 320000,
+    promotion_id: null,
+    status: "shipped",
+    payment_method: "cash_on_delivery",
+    payment_status: "pending",
+    shipping_address: "789 Đường DEF, Quận 7, TP.HCM",
+    notes: "",
+    createdAt: "2025-05-21T11:20:30.789Z",
+    updatedAt: "2025-05-23T07:15:45.234Z",
+  },
+];

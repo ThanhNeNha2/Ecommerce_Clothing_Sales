@@ -13,6 +13,7 @@ import ListProduct from "../../page/ListProduct/ListProduct";
 import ProfileUser from "../../page/ProfileUser/ProfileUser";
 import DetailBlog from "../../page/DetailBlog/DetailBlog";
 import Promotion from "../../page/Promotion/Promotion";
+import Order from "../../page/Order/Order";
 
 // Component PrivateRoute để bảo vệ các tuyến đường
 const PrivateRoute = ({ element }) => {
@@ -66,6 +67,7 @@ const RouterCustom = () => {
         path="/DetailBlog/:id"
         element={<PrivateRoute element={<DetailBlog />} />}
       />
+      <Route path="/order" element={<PrivateRoute element={<Order />} />} />
     </Routes>
   );
 };

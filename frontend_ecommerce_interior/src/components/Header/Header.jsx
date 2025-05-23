@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { TbLogin, TbLogout, TbRosetteDiscountFilled } from "react-icons/tb";
 import { MdAssignmentInd } from "react-icons/md";
 import ProductFavourite from "../ProductFavourite/ProductFavourite";
+import { RiShoppingBagFill } from "react-icons/ri";
 
 const Header = () => {
   const [checkShow, setCheckShow] = useState({
@@ -104,6 +105,21 @@ const Header = () => {
                     </button>
                   </Link>
                   {/* Cụm 2 */}
+                  {isAuthenticated() ? (
+                    <Link to="/order">
+                      <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
+                        Order <RiShoppingBagFill />
+                      </button>
+                    </Link>
+                  ) : (
+                    <button
+                      className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins"
+                      onClick={handleLogout}
+                    >
+                      Logout <TbLogout />
+                    </button>
+                  )}
+                  {/* Cụm 3 */}
                   {isAuthenticated() ? (
                     <button
                       className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins"

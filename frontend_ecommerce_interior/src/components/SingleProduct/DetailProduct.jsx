@@ -21,6 +21,7 @@ const DetailProduct = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [reviews, setReviews] = useState([]);
   const queryClient = useQueryClient();
+  const [SizeId, setSizeId] = useState("");
 
   const [valueAddCart, setValueAddCart] = useState(1);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -80,15 +81,10 @@ const DetailProduct = () => {
       );
 
       if (res.data.product?.sizes?.length > 0) {
-        const sizeMap = { 0: "S", 1: "M", 2: "L" };
-        const sizeData = res.data.product.sizes.map((size, index) => {
-          const sizeName =
-            sizeMap[index] ||
-            (typeof size.size_id === "object"
-              ? size.size_id.name
-              : size.size_id);
+        setSizeId(res.data.product?.sizes?.[0]?.size_id._id);
+        const sizeData = res.data.product.sizes.map((size) => {
           return {
-            name: sizeName || "N/A",
+            name: size.size_id?.name || "N/A",
             stock: size.stock,
           };
         });
@@ -113,23 +109,19 @@ const DetailProduct = () => {
     return <div className="px-[130px] py-5">Không tìm thấy sản phẩm</div>;
 
   const sizeData =
-    singleItem.sizes?.map((size, index) => {
-      const sizeMap = { 0: "S", 1: "M", 2: "L" };
-      const sizeName =
-        sizeMap[index] ||
-        (typeof size.size_id === "object" ? size.size_id.name : size.size_id);
+    singleItem.sizes?.map((size) => {
       return {
-        name: sizeName || "N/A",
+        id: size.size_id?._id || "N/A",
+        name: size.size_id?.name || "N/A",
         stock: size.stock,
       };
     }) || [];
-
   const selectedStock =
     sizeData.find((size) => size.name === selectedSize)?.stock || 0;
 
   const handleAddCart = async (user_id, product_id) => {
     try {
-      const res = await addProductToCart(user_id, product_id);
+      const res = await addProductToCart(user_id, product_id, SizeId);
       if (res.status === 201) {
         notification.success({
           message: "Thêm sản phẩm vào giỏ hàng thành công",
@@ -139,6 +131,7 @@ const DetailProduct = () => {
       console.log("Error adding product to cart:", error);
     }
   };
+  console.log("check setSizeId", SizeId);
 
   const handleAddWishlist = (user_id, product_id) => {
     addWishlistMutation.mutate({ user_id, product_id });
@@ -265,7 +258,9 @@ const DetailProduct = () => {
                     style={{
                       background: selectedSize === size.name ? "" : "#F9F1E7",
                     }}
-                    onClick={() => setSelectedSize(size.name)}
+                    onClick={() => {
+                      setSelectedSize(size.name), setSizeId(size.id);
+                    }}
                     aria-label={`Select size ${size.name}`}
                   >
                     {typeof size.name === "string" ? size.name : "N/A"}

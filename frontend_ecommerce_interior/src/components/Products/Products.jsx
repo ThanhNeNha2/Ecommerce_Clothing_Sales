@@ -9,7 +9,6 @@ import { useMutation, useQueryClient } from "react-query";
 const Products = ({ listProducts }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const queryClient = useQueryClient();
-
   const addWishlistMutation = useMutation({
     mutationFn: ({ user_id, product_id }) =>
       addProductToWishlist(user_id, product_id),
@@ -39,9 +38,9 @@ const Products = ({ listProducts }) => {
     addWishlistMutation.mutate({ user_id, product_id });
   };
 
-  const handleAddCart = async (user_id, product_id) => {
+  const handleAddCart = async (user_id, product_id, size_id) => {
     try {
-      const res = await addProductToCart(user_id, product_id);
+      const res = await addProductToCart(user_id, product_id, size_id);
       if (res.status === 201) {
         notification.success({
           message: "Thêm sản phẩm vào giỏ hàng thành công",
@@ -121,7 +120,13 @@ const Products = ({ listProducts }) => {
               <button
                 className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
                 aria-label="Thêm vào giỏ hàng"
-                onClick={() => handleAddCart(user._id, product.id)}
+                onClick={() => {
+                  handleAddCart(
+                    user._id,
+                    product.id,
+                    product.sizes[0].size_id._id
+                  );
+                }}
               >
                 Add to Cart
               </button>
