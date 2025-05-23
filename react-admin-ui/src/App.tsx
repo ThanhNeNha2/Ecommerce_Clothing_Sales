@@ -20,6 +20,7 @@ import AddProduct from "./pages/addProduct/AddProduct";
 import BlogUpdate from "./pages/Blog/blogUpdate/BlogUpdate";
 import Promotions from "./pages/Promotion/promotions/promotions";
 import AddPromotion from "./pages/Promotion/addPromotions/AddPromotion";
+import UpdatePromotion from "./pages/Promotion/updatePromotion/UpdatePromotion";
 
 const queryClient = new QueryClient();
 
@@ -65,25 +66,37 @@ function App() {
               path: "/",
               element: <Home />,
             },
-            {
-              path: "/users",
-              element: <Users />,
-            },
+            // product
             {
               path: "/products",
               element: <Products />,
             },
             {
-              path: "/blogs",
-              element: <Posts />,
+              path: "/addProduct",
+              element: <AddProduct />,
             },
+            {
+              path: "/products/:id",
+              element: <Product />,
+            },
+            // promotion
             {
               path: "/promotions",
               element: <Promotions />,
             },
             {
-              path: "/messages",
-              element: <Messages />,
+              path: "/addPromotion",
+              element: <AddPromotion />,
+            },
+            {
+              path: "/promotions/:id",
+              element: <UpdatePromotion />,
+            },
+
+            // blog
+            {
+              path: "/blogs",
+              element: <Posts />,
             },
             {
               path: "/blog/:id",
@@ -93,21 +106,19 @@ function App() {
               path: "/addBlog",
               element: <AddBlog />,
             },
+            //user
             {
-              path: "/addPromotion",
-              element: <AddPromotion />,
-            },
-            {
-              path: "/addProduct",
-              element: <AddProduct />,
+              path: "/users",
+              element: <Users />,
             },
             {
               path: "/user/:id",
               element: <User />,
             },
+            // message
             {
-              path: "/products/:id",
-              element: <Product />,
+              path: "/messages",
+              element: <Messages />,
             },
           ],
         },
