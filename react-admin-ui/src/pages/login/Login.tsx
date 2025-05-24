@@ -31,10 +31,13 @@ const Login = () => {
       }
 
       const response = await apiCustom.post("/auth/login", valueLogin);
+      if (response.data.idCode === 1) {
+        toast.error(response.data.message);
+        return;
+      }
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       toast.success("Đăng nhập thành công ");
-
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error);

@@ -21,6 +21,7 @@ import BlogUpdate from "./pages/Blog/blogUpdate/BlogUpdate";
 import Promotions from "./pages/Promotion/promotions/promotions";
 import AddPromotion from "./pages/Promotion/addPromotions/AddPromotion";
 import UpdatePromotion from "./pages/Promotion/updatePromotion/UpdatePromotion";
+import Order from "./pages/Order/Orders/Order";
 
 const queryClient = new QueryClient();
 
@@ -119,6 +120,11 @@ function App() {
             {
               path: "/messages",
               element: <Messages />,
+            },
+            // Order
+            {
+              path: "/orders",
+              element: <Order />,
             },
           ],
         },
