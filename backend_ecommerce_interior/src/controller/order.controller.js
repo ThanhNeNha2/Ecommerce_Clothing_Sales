@@ -31,7 +31,7 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    if (!["cash", "card", "online"].includes(payment_method)) {
+    if (!["cash", "card", "transfer"].includes(payment_method)) {
       return res.status(400).json({
         message: "Phương thức thanh toán không hợp lệ",
         idCode: 1,
@@ -169,6 +169,66 @@ export const createOrder = async (req, res) => {
     console.log("Error in createOrder:", error);
     return res.status(500).json({
       message: "Tạo đơn hàng không thành công",
+      idCode: 1,
+    });
+  }
+};
+
+// Lấy danh sách đơn hàng của người dùng với vai trò admin
+export const getAllOrders = async (req, res) => {
+  try {
+    const { page = 1, limit = 100, status } = req.query;
+
+    // Xây dựng query
+    const query = {};
+    if (status) {
+      if (
+        ![
+          "pending",
+          "confirmed",
+          "shipped",
+          "delivered",
+          "cancelled",
+          "completed",
+        ].includes(status)
+      ) {
+        return res.status(400).json({
+          message: "Trạng thái không hợp lệ",
+          idCode: 1,
+        });
+      }
+      query.status = status;
+    }
+
+    const orders = await Order.find(query)
+      .populate({
+        path: "order_items.product_id",
+        select: "nameProduct salePrice image_url mainCategory subCategory",
+      })
+      .populate({
+        path: "order_items.size_id",
+        select: "name",
+      })
+      .populate("promotion_id", "code discount_type discount_value")
+      .populate("user_id", "fullName email") // Có thể thêm thông tin người dùng
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit))
+      .lean();
+
+    const totalOrders = await Order.countDocuments(query);
+
+    return res.status(200).json({
+      message: "OK",
+      idCode: 0,
+      orders,
+      total: totalOrders,
+      page: Number(page),
+      pages: Math.ceil(totalOrders / Number(limit)),
+    });
+  } catch (error) {
+    console.error("Error in getAllOrders:", error);
+    return res.status(500).json({
+      message: "Truy cập danh sách đơn hàng không thành công",
       idCode: 1,
     });
   }

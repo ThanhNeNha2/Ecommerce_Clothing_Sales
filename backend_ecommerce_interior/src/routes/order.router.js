@@ -6,6 +6,7 @@ import {
   updateOrderStatus,
   payOrder,
   cancelOrder,
+  getAllOrders,
 } from "../controller/order.controller";
 
 const router = express.Router();
@@ -13,8 +14,9 @@ const router = express.Router();
 // Định nghĩa các route
 router.post("/orders", createOrder);
 router.get("/orders", getOrdersByUser);
+router.get("/ordersAdmin", getAllOrders);
 router.get("/orders/:id", getOrderById);
-router.put("/orders/:id/status", updateOrderStatus);
+router.put("/orders/:id", updateOrderStatus);
 router.post("/orders/:id/pay", payOrder);
 router.post("/orders/:id/cancel", cancelOrder);
 
