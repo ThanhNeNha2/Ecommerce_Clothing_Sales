@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CreditCard,
   ShieldCheck,
@@ -14,9 +14,14 @@ import {
 } from "lucide-react";
 import Header from "../../components/Header/Header";
 import { notification } from "antd";
-import { createOrder, getPromotionByCode } from "../../services/api";
+import {
+  createCodePayment,
+  createOrder,
+  getPromotionByCode,
+} from "../../services/api";
 import { useFinalPriceStore } from "../../Custom/Zustand/Store";
 import { useNavigate } from "react-router-dom";
+import Pay from "../InfoPayment/Pay";
 
 const Payment = () => {
   // Mock data - thay thế bằng dữ liệu thực từ store
@@ -27,6 +32,8 @@ const Payment = () => {
     discount_value: 0,
     discount_id: "",
   });
+  const [clientSecret, setClientSecret] = useState("");
+
   const [promotion, setPromotion] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [checkPaymentCard, setCheckPaymentCard] = useState(false);
@@ -44,6 +51,29 @@ const Payment = () => {
   });
   const navigator = useNavigate();
   const final_price = useFinalPriceStore((state) => state.final_price);
+  useEffect(() => {
+    if (paymentMethod === "card") {
+      const handleCreatePayment = async () => {
+        try {
+          const res = await createCodePayment();
+          console.log("check res code pay ", res);
+          setClientSecret(res.clientSecret);
+        } catch (error) {
+          console.error("Payment creation failed:", error);
+        }
+      };
+      handleCreatePayment();
+    }
+  }, [paymentMethod]);
+
+  const appearance = {
+    theme: "stripe",
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+
   // Tính tổng giá
   const calculateTotal = () => {
     let discount = 0;
@@ -73,11 +103,6 @@ const Payment = () => {
   };
 
   const handleSubmit = async () => {
-    // Xử lý logic thanh toán
-    // console.log("Processing payment...", formData);
-    // console.log("paymentMethod ...", paymentMethod);
-    // console.log("final_amount...", calculateTotal());
-    // console.log("promotion_id ...", voucher.discount_id);
     const final_amount = calculateTotal();
     const res = await createOrder({
       promotion_id: voucher.discount_id,
@@ -316,7 +341,7 @@ const Payment = () => {
 
                   {paymentMethod === "card" && (
                     <>
-                      <div className="mb-6">
+                      {/* <div className="mb-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">
                           Thông tin thẻ
                         </h3>
@@ -389,7 +414,7 @@ const Payment = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                     </>
                   )}
 

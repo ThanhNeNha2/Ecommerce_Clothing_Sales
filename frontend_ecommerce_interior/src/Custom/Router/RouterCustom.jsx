@@ -15,6 +15,7 @@ import DetailBlog from "../../page/DetailBlog/DetailBlog";
 import Promotion from "../../page/Promotion/Promotion";
 import Order from "../../page/Order/Order";
 import Payment from "../../page/Payment/Payment";
+import Pay from "../../page/InfoPayment/Pay";
 
 // Component PrivateRoute để bảo vệ các tuyến đường
 const PrivateRoute = ({ element }) => {
@@ -69,6 +70,7 @@ const RouterCustom = () => {
         element={<PrivateRoute element={<DetailBlog />} />}
       />
       <Route path="/order" element={<PrivateRoute element={<Order />} />} />
+      <Route path="/pay" element={<PrivateRoute element={<Pay />} />} />
       <Route path="/payment" element={<PrivateRoute element={<Payment />} />} />
     </Routes>
   );

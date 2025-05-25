@@ -374,3 +374,15 @@ export const cancelOrder = async (id) => {
     throw error;
   }
 };
+
+// PAYMENT
+
+export const createCodePayment = async () => {
+  try {
+    const response = await instance.post(`payments`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
