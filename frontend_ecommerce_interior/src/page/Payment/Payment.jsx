@@ -37,6 +37,7 @@ const Payment = () => {
   const [promotion, setPromotion] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [checkPaymentCard, setCheckPaymentCard] = useState(false);
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     cardNumber: "",
     expiryDate: "",
@@ -51,20 +52,20 @@ const Payment = () => {
   });
   const navigator = useNavigate();
   const final_price = useFinalPriceStore((state) => state.final_price);
-  useEffect(() => {
-    if (paymentMethod === "card") {
-      const handleCreatePayment = async () => {
-        try {
-          const res = await createCodePayment();
-          console.log("check res code pay ", res);
-          setClientSecret(res.clientSecret);
-        } catch (error) {
-          console.error("Payment creation failed:", error);
-        }
-      };
-      handleCreatePayment();
-    }
-  }, [paymentMethod]);
+  // useEffect(() => {
+  //   if (paymentMethod === "card") {
+  //     const handleCreatePayment = async () => {
+  //       try {
+  //         const res = await createCodePayment();
+  //         console.log("check res code pay ", res);
+  //         setClientSecret(res.clientSecret);
+  //       } catch (error) {
+  //         console.error("Payment creation failed:", error);
+  //       }
+  //     };
+  //     handleCreatePayment();
+  //   }
+  // }, [paymentMethod]);
 
   const appearance = {
     theme: "stripe",
@@ -110,11 +111,19 @@ const Payment = () => {
       final_amount,
       payment_method: paymentMethod,
     });
+
     if (res.idCode === 0) {
-      notification.success({
-        message: "Order successfully",
-      });
-      navigator("/order");
+      if (paymentMethod === "cash") {
+        navigator("/order");
+        notification.success({
+          message: "Order successfully",
+        });
+      }
+
+      if (paymentMethod === "card") {
+        setClientSecret(res.clientSecret);
+        setStep(2);
+      }
     } else {
       notification.warning({
         message: "Không thể order vui lòng kiểm tra lại!",
@@ -338,86 +347,11 @@ const Payment = () => {
                       </div>
                     </div>
                   )}
-
-                  {paymentMethod === "card" && (
+                  {step === 2 && (
                     <>
-                      {/* <div className="mb-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          Thông tin thẻ
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Số thẻ
-                            </label>
-                            <div className="relative">
-                              <input
-                                type="text"
-                                name="cardNumber"
-                                value={formData.cardNumber}
-                                onChange={handleInputChange}
-                                placeholder="1234 5678 9012 3456"
-                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                              />
-                              <CreditCard className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                            </div>
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Ngày hết hạn
-                            </label>
-                            <div className="relative">
-                              <input
-                                type="text"
-                                name="expiryDate"
-                                value={formData.expiryDate}
-                                onChange={handleInputChange}
-                                placeholder="MM/YY"
-                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                              />
-                              <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                            </div>
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              CVV
-                            </label>
-                            <div className="relative">
-                              <input
-                                type="text"
-                                name="cvv"
-                                value={formData.cvv}
-                                onChange={handleInputChange}
-                                placeholder="123"
-                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                              />
-                              <Lock className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                            </div>
-                          </div>
-
-                          <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Tên chủ thẻ
-                            </label>
-                            <div className="relative">
-                              <input
-                                type="text"
-                                name="cardHolder"
-                                value={formData.cardHolder}
-                                onChange={handleInputChange}
-                                placeholder="NGUYEN VAN A"
-                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                              />
-                              <User className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                            </div>
-                          </div>
-                        </div>
-                      </div> */}
+                      <Pay clientSecret={clientSecret} />
                     </>
                   )}
-
                   {/* Billing Information - Only show for card and wallet payments */}
                   {
                     // paymentMethod === "card" ||
@@ -492,108 +426,111 @@ const Payment = () => {
                       </div>
                     )
                   }
+                  {step !== 2 && (
+                    <>
+                      {/* Contact Information - Show for all payment methods */}
+                      <div className="mb-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          Thông tin liên hệ
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Email *
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                placeholder="your@email.com"
+                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                                required
+                              />
+                              <Mail className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                            </div>
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Số điện thoại *
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone || ""}
+                                onChange={handleInputChange}
+                                placeholder="0901234567"
+                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                                required
+                              />
+                              <Phone className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                            </div>
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Địa chỉ giao hàng *
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="text"
+                                name="shipping_address"
+                                value={formData.shipping_address}
+                                onChange={handleInputChange}
+                                placeholder="123 Đường ABC, Quận XYZ"
+                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                                required
+                              />
+                              <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                            </div>
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Ghi chú *
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="text"
+                                name="notes"
+                                value={formData.notes}
+                                onChange={handleInputChange}
+                                placeholder="123 Đường ABC, Quận XYZ"
+                                className="w-full px-5 py-3  border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                                required
+                              />
+                              <Book className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <div className="flex items-center">
+                          <ShieldCheck className="w-5 h-5 text-green-600 mr-3" />
+                          <div>
+                            <p className="text-sm font-medium text-green-800">
+                              Thanh toán an toàn
+                            </p>
+                            <p className="text-xs text-green-600 mt-1">
+                              Thông tin của bạn được mã hóa và bảo mật với SSL
+                              256-bit
+                            </p>
+                          </div>
+                        </div>
+                      </div>
 
-                  {/* Contact Information - Show for all payment methods */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      Thông tin liên hệ
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Email *
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="your@email.com"
-                            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                            required
-                          />
-                          <Mail className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                        </div>
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Số điện thoại *
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone || ""}
-                            onChange={handleInputChange}
-                            placeholder="0901234567"
-                            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                            required
-                          />
-                          <Phone className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                        </div>
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Địa chỉ giao hàng *
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            name="shipping_address"
-                            value={formData.shipping_address}
-                            onChange={handleInputChange}
-                            placeholder="123 Đường ABC, Quận XYZ"
-                            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                            required
-                          />
-                          <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                        </div>
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Ghi chú *
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            name="notes"
-                            value={formData.notes}
-                            onChange={handleInputChange}
-                            placeholder="123 Đường ABC, Quận XYZ"
-                            className="w-full px-5 py-3  border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                            required
-                          />
-                          <Book className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                    <div className="flex items-center">
-                      <ShieldCheck className="w-5 h-5 text-green-600 mr-3" />
-                      <div>
-                        <p className="text-sm font-medium text-green-800">
-                          Thanh toán an toàn
-                        </p>
-                        <p className="text-xs text-green-600 mt-1">
-                          Thông tin của bạn được mã hóa và bảo mật với SSL
-                          256-bit
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg"
-                  >
-                    {paymentMethod === "cash"
-                      ? `Xác nhận đặt hàng ${formatPrice(final_price)}`
-                      : `Hoàn tất thanh toán ${formatPrice(final_price)}`}
-                  </button>
+                      {/* Submit Button */}
+                      <button
+                        type="button"
+                        onClick={handleSubmit}
+                        className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg"
+                      >
+                        {paymentMethod === "cash"
+                          ? `Xác nhận đặt hàng ${formatPrice(final_price)}`
+                          : `Hoàn tất thanh toán ${formatPrice(final_price)}`}
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

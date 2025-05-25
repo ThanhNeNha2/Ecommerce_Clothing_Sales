@@ -377,9 +377,24 @@ export const cancelOrder = async (id) => {
 
 // PAYMENT
 
-export const createCodePayment = async () => {
+export const createCodePayment = async ({ payment_intent, price }) => {
   try {
-    const response = await instance.post(`payments`);
+    const response = await instance.post(`payments`, {
+      payment_intent,
+      price,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
+export const getPaymentByIntent = async (payment_intent) => {
+  try {
+    // const response = await instance.get(`payment/pi_3RSjiz1QGnpllpL60E94Eqfp`);
+    const response = await instance.get(`payment/${payment_intent}`);
+
     return response.data;
   } catch (error) {
     console.error("Error in getAllProductChatbotSeeMore:", error);

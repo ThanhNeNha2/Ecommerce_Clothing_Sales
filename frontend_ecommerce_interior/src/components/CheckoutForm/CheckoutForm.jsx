@@ -60,7 +60,7 @@ const CheckoutForm = () => {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:5173/success",
+        return_url: "http://localhost:5174/success",
       },
     });
 
@@ -89,11 +89,24 @@ const CheckoutForm = () => {
         onChange={(e) => setEmail(e.target.value)}
       />
       <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <button disabled={isLoading || !stripe || !elements} id="submit">
-        <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-        </span>
-      </button>
+      <div className="flex justify-end">
+        <button
+          disabled={isLoading || !stripe || !elements}
+          id="submit"
+          className="inline-flex items-center px-5 py-2 mt-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span id="button-text" className="flex items-center">
+            {isLoading ? (
+              <div
+                className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"
+                id="spinner"
+              ></div>
+            ) : null}
+            Pay now
+          </span>
+        </button>
+      </div>
+
       {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </form>
