@@ -3,6 +3,8 @@ import Order from "../models/Order.model.js";
 import Promotion from "../models/Promotion.model.js";
 import Product from "../models/Product.model.js";
 import Cart from "../models/Cart.model.js";
+import Stripe from "stripe";
+import Payment from "../models/Payment.model";
 
 // Tạo đơn hàng từ giỏ hàng
 export const createOrder = async (req, res) => {
@@ -14,7 +16,10 @@ export const createOrder = async (req, res) => {
       promotion_id,
       final_amount,
       notes,
+      phone,
     } = req.body;
+
+    const stripe = new Stripe(process.env.STRIPE);
 
     // Kiểm tra dữ liệu đầu vào
     if (
@@ -143,6 +148,18 @@ export const createOrder = async (req, res) => {
         $inc: { usedCount: 1 },
       });
     }
+    let paymentIntentRes = null;
+
+    if (payment_method === "card") {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: final_amount * 100,
+        currency: "usd",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+      paymentIntentRes = paymentIntent;
+    }
 
     // Tạo đơn hàng
     const order = await Order.create({
@@ -155,15 +172,24 @@ export const createOrder = async (req, res) => {
       payment_status: "pending",
       shipping_address,
       notes: notes || "",
+      phone: phone || "",
+      payment_intent: paymentIntentRes?.id || null, // nếu không dùng card
     });
 
+    await Payment.create({
+      payment_intent: paymentIntentRes?.id,
+      price: final_amount,
+      OrderCode: order._id,
+    });
     // Xóa giỏ hàng
     await Cart.deleteMany({ user_id });
 
+    // Trả response
     return res.status(201).json({
       message: "OK",
       idCode: 0,
       order,
+      clientSecret: paymentIntentRes?.client_secret || null,
     });
   } catch (error) {
     console.log("Error in createOrder:", error);

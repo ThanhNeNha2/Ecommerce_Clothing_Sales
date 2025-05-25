@@ -67,6 +67,17 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    payment_intent: {
+      type: String,
+    },
+    phone: {
+      type: String,
+      default: "",
+    },
+    email: {
+      type: String,
+      default: "",
+    },
     notes: {
       type: String,
       default: "",
