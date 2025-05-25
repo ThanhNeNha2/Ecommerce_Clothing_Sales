@@ -112,12 +112,7 @@ const Header = () => {
                       </button>
                     </Link>
                   ) : (
-                    <button
-                      className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins"
-                      onClick={handleLogout}
-                    >
-                      Logout <TbLogout />
-                    </button>
+                    <></>
                   )}
                   {/* Cụm 3 */}
                   {isAuthenticated() ? (

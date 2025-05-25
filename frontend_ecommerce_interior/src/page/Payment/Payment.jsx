@@ -29,6 +29,7 @@ const Payment = () => {
   });
   const [promotion, setPromotion] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [checkPaymentCard, setCheckPaymentCard] = useState(false);
   const [formData, setFormData] = useState({
     cardNumber: "",
     expiryDate: "",
@@ -96,7 +97,7 @@ const Payment = () => {
     }
   };
 
-  const handleVoucherBlur = async () => {
+  const handleVoucher = async () => {
     const res = await getPromotionByCode(promotion);
 
     if (res.idCode === 0) {
@@ -393,76 +394,79 @@ const Payment = () => {
                   )}
 
                   {/* Billing Information - Only show for card and wallet payments */}
-                  {(paymentMethod === "card" || paymentMethod === "wallet") && (
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Thông tin thanh toán
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="email"
-                              name="email"
-                              value={formData.email}
-                              onChange={handleInputChange}
-                              placeholder="your@email.com"
-                              className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
-                            />
-                            <Mail className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                  {
+                    // paymentMethod === "card" ||
+                    paymentMethod === "wallet" && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          Thông tin thanh toán
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Email
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                placeholder="your@email.com"
+                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                              />
+                              <Mail className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Địa chỉ
-                          </label>
-                          <div className="relative">
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Địa chỉ
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="text"
+                                name="shipping_address"
+                                value={formData.shipping_address}
+                                onChange={handleInputChange}
+                                placeholder="123 Đường ABC, Quận XYZ"
+                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                              />
+                              <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Thành phố
+                            </label>
                             <input
                               type="text"
-                              name="shipping_address"
-                              value={formData.shipping_address}
+                              name="city"
+                              value={formData.city}
                               onChange={handleInputChange}
-                              placeholder="123 Đường ABC, Quận XYZ"
-                              className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                              placeholder="Hồ Chí Minh"
+                              className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
-                            <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Mã bưu điện
+                            </label>
+                            <input
+                              type="text"
+                              name="zipCode"
+                              value={formData.zipCode}
+                              onChange={handleInputChange}
+                              placeholder="700000"
+                              className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
                           </div>
                         </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Thành phố
-                          </label>
-                          <input
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleInputChange}
-                            placeholder="Hồ Chí Minh"
-                            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Mã bưu điện
-                          </label>
-                          <input
-                            type="text"
-                            name="zipCode"
-                            value={formData.zipCode}
-                            onChange={handleInputChange}
-                            placeholder="700000"
-                            className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          />
-                        </div>
                       </div>
-                    </div>
-                  )}
+                    )
+                  }
 
                   {/* Contact Information - Show for all payment methods */}
                   <div className="mb-6">
@@ -623,7 +627,7 @@ const Payment = () => {
                     <button
                       type="button"
                       className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                      onClick={handleVoucherBlur}
+                      onClick={handleVoucher}
                     >
                       Áp dụng
                     </button>

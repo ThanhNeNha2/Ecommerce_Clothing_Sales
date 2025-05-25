@@ -348,13 +348,11 @@ export const getAllOder = async () => {
     return response.data;
   } catch (error) {
     console.error("Error in getAllProductChatbotSeeMore:", error);
-    throw error; // để có thể bắt được lỗi ở useEffect
+    throw error;
   }
 };
 
 export const createOrder = async (info) => {
-  // console.log("check thong tin truyen qua ", { user_id: user._id, ...info });
-
   try {
     const response = await instance.post(`orders`, {
       user_id: user._id,
@@ -363,6 +361,16 @@ export const createOrder = async (info) => {
     return response.data;
   } catch (error) {
     console.error("Error in getAllProductChatbotSeeMore:", error);
-    throw error; // để có thể bắt được lỗi ở useEffect
+    throw error;
+  }
+};
+
+export const cancelOrder = async (id) => {
+  try {
+    const response = await instance.post(`orders/${id}/cancel`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
   }
 };
