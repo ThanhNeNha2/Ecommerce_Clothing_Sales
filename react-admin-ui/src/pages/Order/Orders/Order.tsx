@@ -1,147 +1,24 @@
 import React, { useState, useEffect } from "react";
 import "./order.scss";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiCustom } from "../../../custom/customApi";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Order = () => {
   const [activeFilter, setActiveFilter] = useState<any>("all");
   const [filteredOrders, setFilteredOrders] = useState<any>([]);
+  const [openUpdate, setOpenUpdate] = useState<any>(false);
+  const [IdUpdateState, setIdUpdateState] = useState<any>("");
+  const [stateUpdate, setStateUpdate] = useState<any>("");
+  const navigator = useNavigate();
+  const queryClient = useQueryClient();
+  const { isLoading, data, error } = useQuery({
+    queryKey: ["allorders"],
+    queryFn: () => apiCustom.get("/ordersAdmin").then((res) => res.data),
+  });
 
-  const ordersData = [
-    {
-      _id: "68303ce818d78f30f037d6c0",
-      user_id: "68199ed7dfe2631008c16e94",
-      order_items: [
-        {
-          product_id: {
-            _id: "681f7a7ad3b861a9798069da",
-            nameProduct: "Áo thun nam",
-            salePrice: 180000,
-            mainCategory: "Topwear",
-            subCategory: ["T-Shirt", "Sweater", "Jacket"],
-            image_url: [
-              "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
-            ],
-          },
-          size_id: { _id: "681b33349dfe7219f417031a", name: "S" },
-          quantity: 1,
-          price: 180000,
-        },
-      ],
-      final_amount: 100000,
-      promotion_id: {
-        _id: "682efa6597c49030c8e59dc4",
-        code: "HAHA",
-        discount_type: "fixed",
-        discount_value: 100,
-      },
-      status: "pending",
-      payment_method: "card",
-      payment_status: "pending",
-      shipping_address: "123 Đường ABC, Quận 1, TP.HCM",
-      notes: "Giao hàng vào buổi sáng",
-      createdAt: "2025-05-23T09:16:24.971Z",
-    },
-    {
-      _id: "6830aed94993698cf073298e",
-      user_id: "68199ed7dfe2631008c16e94",
-      order_items: [
-        {
-          product_id: {
-            _id: "68204dcb32e9abcfb542852d",
-            nameProduct:
-              "DAZZI BRAND solid form Babytee T-shirt💖Women's bodycon long-sleeved t-shirt with 4-way stretch ribbed elastic A01",
-            salePrice: 180,
-            mainCategory: "Topwear",
-            subCategory: ["T-Shirt", "Shirt"],
-            image_url: [
-              "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947526/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/d7rkz8fpcafizxawyqot.webp",
-            ],
-          },
-          size_id: { _id: "681b33349dfe7219f4170319", name: "XS" },
-          quantity: 1,
-          price: 180,
-        },
-        {
-          product_id: {
-            _id: "682052ce32e9abcfb5428558",
-            nameProduct:
-              "DAZZI women's plain straight pants, wide leg wrinkled wind pants, high waisted long wide leg straight pants with elastic waistband, high quality products",
-            salePrice: 212.5,
-            mainCategory: "Bottomwear",
-            subCategory: ["Trousers", "Skirt"],
-            image_url: [
-              "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746948809/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/ymxzwlrqog8f0svxhfbk.webp",
-            ],
-          },
-          size_id: { _id: "681b33349dfe7219f4170323", name: "32" },
-          quantity: 1,
-          price: 212.5,
-        },
-      ],
-      final_amount: 292.5,
-      promotion_id: {
-        _id: "682efa6597c49030c8e59dc4",
-        code: "HAHA",
-        discount_type: "fixed",
-        discount_value: 100,
-      },
-      status: "pending",
-      payment_method: "cash",
-      payment_status: "pending",
-      shipping_address: "xã nghĩa thắng",
-      notes: "đừng có giao buổi trưa nha",
-      createdAt: "2025-05-23T17:22:33.959Z",
-    },
-    {
-      _id: "6830b0264993698cf07329cd",
-      user_id: "68199ed7dfe2631008c16e94",
-      order_items: [
-        {
-          product_id: {
-            _id: "68204dcb32e9abcfb542852d",
-            nameProduct:
-              "DAZZI BRAND solid form Babytee T-shirt💖Women's bodycon long-sleeved t-shirt with 4-way stretch ribbed elastic A01",
-            salePrice: 180,
-            mainCategory: "Topwear",
-            subCategory: ["T-Shirt", "Shirt"],
-            image_url: [
-              "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947526/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/d7rkz8fpcafizxawyqot.webp",
-            ],
-          },
-          size_id: { _id: "681b33349dfe7219f4170319", name: "XS" },
-          quantity: 1,
-          price: 180,
-        },
-        {
-          product_id: {
-            _id: "6820c1a31be7665f0a7c2e34",
-            nameProduct: "Hat Accessories 3",
-            salePrice: 293637,
-            mainCategory: "Accessories",
-            subCategory: ["Hat"],
-            image_url: [
-              "https://i.pinimg.com/736x/09/a8/4b/09a84b2931d51baf3c2ff52a4d027c5e.jpg",
-            ],
-          },
-          size_id: { _id: "681b33349dfe7219f4170319", name: "XS" },
-          quantity: 1,
-          price: 293637,
-        },
-      ],
-      final_amount: 293717,
-      promotion_id: {
-        _id: "682efa6597c49030c8e59dc4",
-        code: "HAHA",
-        discount_type: "fixed",
-        discount_value: 100,
-      },
-      status: "confirmed",
-      payment_method: "cash",
-      payment_status: "pending",
-      shipping_address: "xã nghĩa thắng",
-      notes: "tôi tên thanh",
-      createdAt: "2025-05-23T17:28:06.677Z",
-    },
-  ];
+  const ordersData = data?.orders || [];
 
   const formatCurrency = (amount: any) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -170,30 +47,56 @@ const Order = () => {
     if (status === "all") {
       setFilteredOrders(ordersData);
     } else {
-      setFilteredOrders(ordersData.filter((order) => order.status === status));
+      setFilteredOrders(
+        ordersData.filter((order: any) => order.status === status)
+      );
     }
   };
 
   const getOrderStats = () => {
     const totalOrders = ordersData.length;
     const pendingOrders = ordersData.filter(
-      (order) => order.status === "pending"
+      (order: any) => order.status === "pending"
     ).length;
     const confirmedOrders = ordersData.filter(
-      (order) => order.status === "confirmed"
+      (order: any) => order.status === "confirmed"
     ).length;
 
     return { totalOrders, pendingOrders, confirmedOrders };
   };
 
   const handleViewOrder = (orderId: any) => {
-    alert(`Xem chi tiết đơn hàng: ${orderId}`);
+    navigator(`/detailorders/${orderId}`);
   };
 
   const handleEditOrder = (orderId: any) => {
-    alert(`Chỉnh sửa đơn hàng: ${orderId}`);
+    setOpenUpdate(true);
+    setIdUpdateState(orderId);
   };
 
+  const mutation = useMutation({
+    mutationFn: () => {
+      return apiCustom.put(`/orders/${IdUpdateState}`, { status: stateUpdate });
+    },
+    onSuccess: () => {
+      toast.success("🎉 Chỉnh sửa trạng thái đơn hàng thành công!");
+      queryClient.invalidateQueries(["allorders"]);
+      setOpenUpdate(false);
+    },
+    onError: (error: any) => {
+      console.log("error", error);
+
+      toast.error(
+        `🚨 Lỗi khi tạo mã giảm giá: ${
+          error.response.data.message || "Vui lòng thử lại!"
+        }`
+      );
+    },
+  });
+
+  const handleConfirmUpdateOrder = async () => {
+    mutation.mutate();
+  };
   const renderOrderItems = (items: any) => {
     return items.map((item: any, index: any) => (
       <div key={index} className="item">
@@ -234,7 +137,7 @@ const Order = () => {
 
   useEffect(() => {
     setFilteredOrders(ordersData);
-  }, []);
+  }, [ordersData, activeFilter]);
 
   const stats = getOrderStats();
 
@@ -342,11 +245,43 @@ const Order = () => {
                       </div>
                     </td>
                     <td>
-                      <span className={`status-badge ${order.status}`}>
-                        {order.status === "pending"
-                          ? "Chờ xử lý"
-                          : "Đã xác nhận"}
-                      </span>
+                      {order._id === IdUpdateState && openUpdate === true ? (
+                        <select
+                          className="status-select"
+                          onChange={(e) => setStateUpdate(e.target.value)}
+                        >
+                          <option value="pending">Đang chờ</option>
+                          <option value="confirmed">Đã xác nhận</option>
+                          <option value="shipped">Đã giao hàng</option>
+                          <option value="delivered">Đã giao thành công</option>
+                          <option value="cancelled">Đã hủy</option>
+                          <option value="completed">Hoàn tất</option>
+                        </select>
+                      ) : (
+                        <span className={`status-badge ${order.status}`}>
+                          {order.status}
+                        </span>
+                      )}
+                      {order._id === IdUpdateState && openUpdate && (
+                        <>
+                          <button
+                            className="cancelButton"
+                            onClick={() => {
+                              setOpenUpdate(false);
+                            }}
+                          >
+                            Hủy
+                          </button>
+                          <button
+                            className="saveButton"
+                            onClick={() => {
+                              handleConfirmUpdateOrder();
+                            }}
+                          >
+                            Lưu
+                          </button>
+                        </>
+                      )}
                     </td>
                     <td>
                       <span className={`payment-badge ${order.payment_method}`}>

@@ -22,6 +22,7 @@ import Promotions from "./pages/Promotion/promotions/promotions";
 import AddPromotion from "./pages/Promotion/addPromotions/AddPromotion";
 import UpdatePromotion from "./pages/Promotion/updatePromotion/UpdatePromotion";
 import Order from "./pages/Order/Orders/Order";
+import DetailOrder from "./pages/Order/DetailOrder/DetailOrder";
 
 const queryClient = new QueryClient();
 
@@ -125,6 +126,10 @@ function App() {
             {
               path: "/orders",
               element: <Order />,
+            },
+            {
+              path: "/detailorders/:id",
+              element: <DetailOrder />,
             },
           ],
         },

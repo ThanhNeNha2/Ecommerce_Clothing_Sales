@@ -15,11 +15,29 @@ export const menu = [
         url: "/users/1",
         icon: "user.svg",
       },
+      {
+        id: 3,
+        title: "Money Statistics",
+        url: "/money_statistics",
+        icon: "icons8-stocks-growth-48.png",
+      },
+      {
+        id: 4,
+        title: "Product Statistics",
+        url: "/money_statistics",
+        icon: "icons8-clothes-32.png",
+      },
+      {
+        id: 5,
+        title: "Order Statistics",
+        url: "/money_statistics",
+        icon: "icons8-purchase-order-30.png",
+      },
     ],
   },
   {
     id: 2,
-    title: "lists",
+    title: "Manager",
     listItems: [
       {
         id: 1,
@@ -728,4 +746,266 @@ export const singleProduct = {
       time: "2 months ago",
     },
   ],
+};
+
+export const ordersData2 = [
+  {
+    _id: "68303ce818d78f30f037d6c0",
+    user_id: {
+      _id: "68199ed7dfe2631008c16e94",
+      email: "thanhhihihihi2@gmail.com",
+    },
+    order_items: [
+      {
+        product_id: {
+          _id: "681f7a7ad3b861a9798069da",
+          nameProduct: "Áo thun nam",
+          salePrice: 180000,
+          mainCategory: "Topwear",
+          subCategory: ["T-Shirt", "Sweater", "Jacket"],
+          image_url: [
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+            "https://i.pinimg.com/736x/6d/e5/a3/6de5a3c0eee32dad6c1c273a92f79932.jpg",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f417031a",
+          name: "S",
+        },
+        quantity: 1,
+        price: 180000,
+        _id: "68303ce818d78f30f037d6c1",
+      },
+    ],
+    final_amount: 100000,
+    promotion_id: {
+      _id: "682efa6597c49030c8e59dc4",
+      code: "HAHA",
+      discount_type: "fixed",
+      discount_value: 100,
+    },
+    status: "pending",
+    payment_method: "card",
+    payment_status: "pending",
+    shipping_address: "123 Đường ABC, Quận 1, TP.HCM",
+    notes: "Giao hàng vào buổi sáng",
+    createdAt: "2025-05-23T09:16:24.971Z",
+    updatedAt: "2025-05-23T09:16:24.971Z",
+    __v: 0,
+  },
+  {
+    _id: "6830aed94993698cf073298e",
+    user_id: {
+      _id: "68199ed7dfe2631008c16e94",
+      email: "thanhhihihihi2@gmail.com",
+    },
+    order_items: [
+      {
+        product_id: {
+          _id: "68204dcb32e9abcfb542852d",
+          nameProduct:
+            "DAZZI BRAND solid form Babytee T-shirt💖Women's bodycon long-sleeved t-shirt with 4-way stretch ribbed elastic A01",
+          salePrice: 180,
+          mainCategory: "Topwear",
+          subCategory: ["T-Shirt", "Shirt"],
+          image_url: [
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947526/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/d7rkz8fpcafizxawyqot.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947527/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/pof3awgqeyljnxtsgnin.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947527/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/pjos87ozhk3ebzurj9eu.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947528/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/sbfvj8pkzhl58h1ns8gi.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947529/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/mefkwbxdiovopkh9az73.webp",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f4170319",
+          name: "XS",
+        },
+        quantity: 1,
+        price: 180,
+        _id: "6830aed94993698cf073298f",
+      },
+      {
+        product_id: {
+          _id: "682052ce32e9abcfb5428558",
+          nameProduct:
+            "DAZZI women's plain straight pants, wide leg wrinkled wind pants, high waisted long wide leg straight pants with elastic waistband, high quality products",
+          salePrice: 212.5,
+          mainCategory: "Bottomwear",
+          subCategory: ["Trousers", "Skirt"],
+          image_url: [
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746948809/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/ymxzwlrqog8f0svxhfbk.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746948810/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/tyie8szd3wlhcix52oqv.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746948811/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/uqiz5ropkoagjjjwqrtg.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746948811/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/j0cstluaw79o1ui43ngg.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746948812/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/bmmejxvwhrtlw9xazqje.webp",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f4170323",
+          name: "32",
+        },
+        quantity: 1,
+        price: 212.5,
+        _id: "6830aed94993698cf0732990",
+      },
+    ],
+    final_amount: 292.5,
+    promotion_id: {
+      _id: "682efa6597c49030c8e59dc4",
+      code: "HAHA",
+      discount_type: "fixed",
+      discount_value: 100,
+    },
+    status: "pending",
+    payment_method: "cash",
+    payment_status: "pending",
+    shipping_address: "xã nghĩa thắng ",
+    notes: "đừng có giao buổi trưa nha ",
+    createdAt: "2025-05-23T17:22:33.959Z",
+    updatedAt: "2025-05-23T17:22:33.959Z",
+    __v: 0,
+  },
+  {
+    _id: "6830b0264993698cf07329cd",
+    user_id: {
+      _id: "68199ed7dfe2631008c16e94",
+      email: "thanhhihihihi2@gmail.com",
+    },
+    order_items: [
+      {
+        product_id: {
+          _id: "68204dcb32e9abcfb542852d",
+          nameProduct:
+            "DAZZI BRAND solid form Babytee T-shirt💖Women's bodycon long-sleeved t-shirt with 4-way stretch ribbed elastic A01",
+          salePrice: 180,
+          mainCategory: "Topwear",
+          subCategory: ["T-Shirt", "Shirt"],
+          image_url: [
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947526/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/d7rkz8fpcafizxawyqot.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947527/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/pof3awgqeyljnxtsgnin.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947527/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/pjos87ozhk3ebzurj9eu.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947528/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/sbfvj8pkzhl58h1ns8gi.webp",
+            "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947529/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/mefkwbxdiovopkh9az73.webp",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f4170319",
+          name: "XS",
+        },
+        quantity: 1,
+        price: 180,
+        _id: "6830b0264993698cf07329ce",
+      },
+      {
+        product_id: {
+          _id: "6820c1a31be7665f0a7c2e34",
+          nameProduct: "Hat Accessories 3",
+          salePrice: 293637,
+          mainCategory: "Accessories",
+          subCategory: ["Hat"],
+          image_url: [
+            "https://i.pinimg.com/736x/09/a8/4b/09a84b2931d51baf3c2ff52a4d027c5e.jpg",
+            "https://i.pinimg.com/736x/24/8b/ac/248bac6e5d0bfa896d5f7ba6f468f00e.jpg",
+            "https://i.pinimg.com/736x/42/ad/5c/42ad5c8006535a4a3eeb9f3556f52e94.jpg",
+            "https://i.pinimg.com/736x/c5/7f/95/c57f95143b8555222275a738ef119f8a.jpg",
+            "https://i.pinimg.com/736x/43/31/0e/43310e4d60f5dfd48459ccc8ede02b17.jpg",
+          ],
+        },
+        size_id: {
+          _id: "681b33349dfe7219f4170319",
+          name: "XS",
+        },
+        quantity: 1,
+        price: 293637,
+        _id: "6830b0264993698cf07329cf",
+      },
+    ],
+    final_amount: 293717,
+    promotion_id: {
+      _id: "682efa6597c49030c8e59dc4",
+      code: "HAHA",
+      discount_type: "fixed",
+      discount_value: 100,
+    },
+    status: "confirmed",
+    payment_method: "cash",
+    payment_status: "pending",
+    shipping_address: "xã nghĩa thắng ",
+    notes: "tôi tên  thanh ",
+    createdAt: "2025-05-23T17:28:06.677Z",
+    updatedAt: "2025-05-23T17:28:06.677Z",
+    __v: 0,
+  },
+];
+
+export const singleOrder = {
+  _id: "6830b0264993698cf07329cd",
+  user_id: "68199ed7dfe2631008c16e94",
+  order_items: [
+    {
+      product_id: {
+        _id: "68204dcb32e9abcfb542852d",
+        nameProduct:
+          "DAZZI BRAND solid form Babytee T-shirt💖Women's bodycon long-sleeved t-shirt with 4-way stretch ribbed elastic A01",
+        salePrice: 180,
+        mainCategory: "Topwear",
+        subCategory: ["T-Shirt", "Shirt"],
+        image_url: [
+          "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947526/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/d7rkz8fpcafizxawyqot.webp",
+          "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947527/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/pof3awgqeyljnxtsgnin.webp",
+          "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947527/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/pjos87ozhk3ebzurj9eu.webp",
+          "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947528/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/sbfvj8pkzhl58h1ns8gi.webp",
+          "https://res.cloudinary.com/dqgn2mwuw/image/upload/v1746947529/WebSite-ecommerce-interior/WebSite-ecommerce-interior-product/mefkwbxdiovopkh9az73.webp",
+        ],
+      },
+      size_id: {
+        _id: "681b33349dfe7219f4170319",
+        name: "XS",
+      },
+      quantity: 1,
+      price: 180,
+      _id: "6830b0264993698cf07329ce",
+    },
+    {
+      product_id: {
+        _id: "6820c1a31be7665f0a7c2e34",
+        nameProduct: "Hat Accessories 3",
+        salePrice: 293637,
+        mainCategory: "Accessories",
+        subCategory: ["Hat"],
+        image_url: [
+          "https://i.pinimg.com/736x/09/a8/4b/09a84b2931d51baf3c2ff52a4d027c5e.jpg",
+          "https://i.pinimg.com/736x/24/8b/ac/248bac6e5d0bfa896d5f7ba6f468f00e.jpg",
+          "https://i.pinimg.com/736x/42/ad/5c/42ad5c8006535a4a3eeb9f3556f52e94.jpg",
+          "https://i.pinimg.com/736x/c5/7f/95/c57f95143b8555222275a738ef119f8a.jpg",
+          "https://i.pinimg.com/736x/43/31/0e/43310e4d60f5dfd48459ccc8ede02b17.jpg",
+        ],
+      },
+      size_id: {
+        _id: "681b33349dfe7219f4170319",
+        name: "XS",
+      },
+      quantity: 1,
+      price: 293637,
+      _id: "6830b0264993698cf07329cf",
+    },
+  ],
+  final_amount: 293717,
+  promotion_id: {
+    _id: "682efa6597c49030c8e59dc4",
+    code: "HAHA",
+    discount_type: "fixed",
+    discount_value: 100,
+  },
+  status: "delivered",
+  payment_method: "cash",
+  payment_status: "completed",
+  shipping_address: "xã nghĩa thắng ",
+  notes: "tôi tên  thanh ",
+  createdAt: "2025-05-23T17:28:06.677Z",
+  updatedAt: "2025-05-24T10:50:10.543Z",
+  __v: 0,
 };
