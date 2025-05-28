@@ -23,6 +23,7 @@ import AddPromotion from "./pages/Promotion/addPromotions/AddPromotion";
 import UpdatePromotion from "./pages/Promotion/updatePromotion/UpdatePromotion";
 import Order from "./pages/Order/Orders/Order";
 import DetailOrder from "./pages/Order/DetailOrder/DetailOrder";
+import MoneyStatistics from "./pages/Money_Statistics/MoneyStatistics";
 
 const queryClient = new QueryClient();
 
@@ -130,6 +131,12 @@ function App() {
             {
               path: "/detailorders/:id",
               element: <DetailOrder />,
+            },
+
+            //  Statistics
+            {
+              path: "/money_statistics",
+              element: <MoneyStatistics />,
             },
           ],
         },
