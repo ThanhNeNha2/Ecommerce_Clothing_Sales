@@ -8,5 +8,6 @@ const router = express.Router();
 
 // Định nghĩa route với controller đúng chuẩn Express
 router.get("/monthly-revenue", getMonthlyRevenueHandler);
+router.get("/product-revenue", getProductRevenueHandler);
 
 export default router;
