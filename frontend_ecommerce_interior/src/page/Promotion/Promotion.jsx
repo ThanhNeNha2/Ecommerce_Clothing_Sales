@@ -184,7 +184,7 @@ const Promotion = () => {
       <Header />
 
       {/* Header Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 text-white pt-16">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="text-center">
@@ -196,7 +196,7 @@ const Promotion = () => {
             </p>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-pink-50 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-pink-50 to-transparent"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12">

@@ -121,11 +121,21 @@ const Products = ({ listProducts }) => {
                 className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
                 aria-label="Thêm vào giỏ hàng"
                 onClick={() => {
-                  handleAddCart(
-                    user._id,
-                    product.id,
-                    product.sizes[0].size_id._id
-                  );
+                  let selectedSizeId = "";
+
+                  if (product.sizes[0].stock > 0) {
+                    selectedSizeId = product.sizes[0].size_id._id;
+                  } else if (product.sizes[1] && product.sizes[1].stock > 0) {
+                    selectedSizeId = product.sizes[1].size_id._id;
+                  }
+
+                  if (selectedSizeId) {
+                    handleAddCart(user._id, product.id, selectedSizeId);
+                  } else {
+                    notification.warning(
+                      "Sản phẩm này đã hết hàng ở tất cả các size !"
+                    );
+                  }
                 }}
               >
                 Add to Cart

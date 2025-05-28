@@ -32,6 +32,7 @@ const DetailProduct = () => {
       setReviews(response.data.reviews);
     }
   };
+
   const addWishlistMutation = useMutation({
     mutationFn: ({ user_id, product_id }) =>
       addProductToWishlist(user_id, product_id),
@@ -300,12 +301,15 @@ const DetailProduct = () => {
               </button>
             </div>
             <button
-              className="px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80"
+              className={`px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80 ${
+                selectedStock < 0 ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
               style={{ background: "#FFCC99" }}
               onClick={() => {
                 handleAddCart(user._id, singleItem._id);
               }}
               aria-label="Add to cart"
+              disabled={selectedStock < 0 ? true : false}
             >
               Add To Cart
             </button>

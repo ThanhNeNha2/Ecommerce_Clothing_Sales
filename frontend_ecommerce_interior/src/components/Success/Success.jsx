@@ -188,7 +188,7 @@ const Success = () => {
           <button
             onClick={() => {
               // Add your track order logic here
-              console.log("Track order clicked");
+              window.location.href = "/order";
             }}
             className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 shadow-lg"
           >

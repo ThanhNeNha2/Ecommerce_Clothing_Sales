@@ -142,7 +142,10 @@ const Cart = () => {
   };
   const handleCheckout = async () => {
     await setFinalPrice(calculateTotal().toFixed(2));
-    navigator("/payment");
+
+    navigator("/payment", {
+      state: { final_price: calculateTotal().toFixed(2) },
+    });
   };
   return (
     <div className="min-h-screen flex flex-col">
@@ -330,7 +333,9 @@ const Cart = () => {
             <div className="flex items-center justify-center pt-2">
               <button
                 disabled={carts.length === 0}
-                className="px-5 bg-colorMain text-white font-medium hover:opacity-85 rounded py-2"
+                className={`px-5 bg-colorMain text-white font-medium hover:opacity-85 rounded py-2 ${
+                  carts.length === 0 ? "cursor-not-allowed" : "cursor-pointer"
+                }  `}
                 onClick={() => {
                   handleCheckout();
                 }}

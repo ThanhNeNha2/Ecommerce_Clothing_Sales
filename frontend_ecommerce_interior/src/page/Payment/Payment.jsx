@@ -20,8 +20,9 @@ import {
   getPromotionByCode,
 } from "../../services/api";
 import { useFinalPriceStore } from "../../Custom/Zustand/Store";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Pay from "../InfoPayment/Pay";
+import { errorMonitor } from "supertest/lib/test";
 
 const Payment = () => {
   // Mock data - thay thế bằng dữ liệu thực từ store
@@ -33,7 +34,7 @@ const Payment = () => {
     discount_id: "",
   });
   const [clientSecret, setClientSecret] = useState("");
-
+  const user = JSON.parse(localStorage.getItem("user"));
   const [promotion, setPromotion] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [checkPaymentCard, setCheckPaymentCard] = useState(false);
@@ -50,8 +51,11 @@ const Payment = () => {
     phone: "",
     notes: "",
   });
+  const location = useLocation();
+  const { final_price } = location.state || {};
+
   const navigator = useNavigate();
-  const final_price = useFinalPriceStore((state) => state.final_price);
+  // const final_price = useFinalPriceStore((state) => state.final_price);
   // useEffect(() => {
   //   if (paymentMethod === "card") {
   //     const handleCreatePayment = async () => {
@@ -105,6 +109,7 @@ const Payment = () => {
 
   const handleSubmit = async () => {
     const final_amount = calculateTotal();
+
     const res = await createOrder({
       promotion_id: voucher.discount_id,
       ...formData,
@@ -143,13 +148,14 @@ const Payment = () => {
       setErrorVoucher("");
 
       notification.success({
-        message: "Voucher applied successfully",
+        message: "Áp dụng mã giảm giá thành công!",
       });
     }
-    if (res.idCode === 2) {
-      setErrorVoucher("Invalid coupon code");
+    if (res.idCode > 0) {
+      setErrorVoucher(res.message);
     }
   };
+
   return (
     <>
       <Header />
@@ -442,10 +448,11 @@ const Payment = () => {
                               <input
                                 type="email"
                                 name="email"
-                                value={formData.email}
+                                value={user.email}
                                 onChange={handleInputChange}
                                 placeholder="your@email.com"
-                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12"
+                                disabled
+                                className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12 bg-gray-200"
                                 required
                               />
                               <Mail className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
@@ -580,10 +587,13 @@ const Payment = () => {
                     <input
                       type="text"
                       placeholder="Nhập mã giảm giá"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      defaultValue={promotion}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 uppercase"
+                      value={promotion}
                       onChange={(e) => {
-                        setPromotion(e.target.value);
+                        setPromotion(
+                          e.target.value.toUpperCase(),
+                          setErrorVoucher("")
+                        );
                       }}
                     />
                     <button
@@ -594,6 +604,12 @@ const Payment = () => {
                       Áp dụng
                     </button>
                   </div>
+
+                  {errorVoucher && (
+                    <p className="mt-2 text-sm text-red-600">
+                      ⚠️ {errorVoucher}
+                    </p>
+                  )}
                 </div>
 
                 {/* Trust Badges */}
