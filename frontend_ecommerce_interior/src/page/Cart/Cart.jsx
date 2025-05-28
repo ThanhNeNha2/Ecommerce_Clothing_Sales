@@ -291,7 +291,7 @@ const Cart = () => {
               </div>
 
               {/* Voucher */}
-              <div className="flex gap-3 items-start">
+              {/* <div className="flex gap-3 items-start">
                 <span className="min-w-[100px] text-left pt-2">Voucher</span>
                 <div className="flex flex-col w-[250px]">
                   <input
@@ -304,7 +304,7 @@ const Cart = () => {
                     <p className="text-red-500 text-sm mt-1">{errorVoucher}</p>
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* Sale */}
               <div className="flex gap-3">

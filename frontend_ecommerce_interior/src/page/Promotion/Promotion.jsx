@@ -65,6 +65,18 @@ const mockPromotions = [
     maxUses: 150,
     category: "expired",
   },
+  {
+    code: "FUTURE2025",
+    description: "Khuyến mãi đặc biệt 2025-2026",
+    discount_type: "Percentage",
+    discount_value: 15,
+    start_date: "2025-05-23",
+    end_date: "2026-06-20",
+    status: "Active",
+    usedCount: 10,
+    maxUses: 100,
+    category: "seasonal",
+  },
 ];
 
 const Promotion = () => {
@@ -74,17 +86,14 @@ const Promotion = () => {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    // Simulate API call
     const fetchData = async () => {
       try {
-        // Replace with actual API call: const res = await getAllPromotion();
+        // Giả lập API call với mock data
         const res = await getAllPromotion();
-        console.log("res", res.promotions);
-
-        setTimeout(() => {
-          setPromotions(res.promotions);
-          setLoading(false);
-        }, 1000);
+        // const res = { promotions: mockPromotions }; // Sử dụng mock data
+        // console.log("API Response:", res.promotions);
+        setPromotions(res.promotions);
+        setLoading(false);
       } catch (err) {
         setError("Lỗi khi tải dữ liệu khuyến mãi.");
         console.error(err);
@@ -136,16 +145,12 @@ const Promotion = () => {
       const currentDate = toDateOnly(new Date());
       const start_date = toDateOnly(new Date(promo.start_date));
       const end_date = toDateOnly(new Date(promo.end_date));
-      return (
-        currentDate >= start_date &&
-        currentDate <= end_date &&
-        promo.status === "Active"
-      );
+      return currentDate >= start_date && currentDate <= end_date;
     }
     if (filter === "expired") {
       const currentDate = toDateOnly(new Date());
       const end_date = toDateOnly(new Date(promo.end_date));
-      return end_date < currentDate || promo.status === "Inactive";
+      return end_date < currentDate;
     }
     return true;
   });
@@ -179,7 +184,7 @@ const Promotion = () => {
       <Header />
 
       {/* Header Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 text-white ">
+      <div className="relative overflow-hidden bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 text-white">
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="text-center">
@@ -200,7 +205,7 @@ const Promotion = () => {
           <div className="bg-white rounded-2xl p-2 shadow-lg inline-flex">
             {[
               { key: "all", label: "Tất cả", icon: "🎯" },
-              //   { key: "active", label: "Đang hoạt động", icon: "✨" },
+              { key: "active", label: "Đang hoạt động", icon: "✨" },
               { key: "expired", label: "Hết hạn", icon: "⏰" },
             ].map((tab) => (
               <button
@@ -237,11 +242,9 @@ const Promotion = () => {
               const start_date = toDateOnly(new Date(promo.start_date));
               const end_date = toDateOnly(new Date(promo.end_date));
 
-              const isExpired =
-                end_date < currentDate || promo.status === "Inactive";
+              const isExpired = end_date < currentDate;
               const isNotStarted = currentDate < start_date;
-              const isActive =
-                !isExpired && !isNotStarted && promo.status === "Active";
+              const isActive = !isExpired && !isNotStarted;
 
               const DiscountIcon =
                 promo.discount_type === "Percentage" ? Percent : DollarSign;
@@ -299,7 +302,7 @@ const Promotion = () => {
                           {promo.discount_value}
                         </span>
                         <span className="text-xl">
-                          {promo.discount_type === "percentage" ? "%" : "₫"}
+                          {promo.discount_type === "Percentage" ? "%" : "₫"}
                         </span>
                       </div>
                       <div className="text-sm opacity-90">GIẢM GIÁ</div>
@@ -408,8 +411,6 @@ const Promotion = () => {
             })}
           </div>
         )}
-
-        {/* Call to Action Section */}
       </div>
     </div>
   );
