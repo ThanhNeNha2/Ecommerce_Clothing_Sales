@@ -25,7 +25,10 @@ const SingleProduct = () => {
       );
 
       // console.log("check thong tin res ", res.data.products);
-      setListProducts(res.data.products || []);
+      const filteredProducts = (res.data.products || []).filter(
+        (product) => product.id !== id
+      );
+      setListProducts(filteredProducts);
     } catch (err) {
       console.error("Lỗi khi lấy sản phẩm:", err);
       setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");
