@@ -13,6 +13,7 @@ import promotion from "./routes/promotion.router";
 import order from "./routes/order.router";
 import payment from "./routes/payment.router";
 import review from "./routes/review.router";
+import revenue from "./routes/revenue.router";
 
 var cors = require("cors");
 import bodyParser from "body-parser";
@@ -49,6 +50,7 @@ app.use("/api", promotion);
 app.use("/api", order);
 app.use("/api", review);
 app.use("/api", payment);
+app.use("/api", revenue);
 
 // chuyen thong tin user qua bên nguoi dung chuyen doi nguoi qua bên phuong thuc thu 2 của trinh duyet
 app.listen(port, () =>
