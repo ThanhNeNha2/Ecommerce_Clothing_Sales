@@ -235,6 +235,7 @@ export const getPromotionByCode = async (req, res) => {
     }
 
     const processedCode = code.trim();
+
     const promotion = await Promotion.findOne({
       code: { $regex: `^${processedCode}$`, $options: "i" },
     })
@@ -247,6 +248,30 @@ export const getPromotionByCode = async (req, res) => {
       return res.status(404).json({
         message: "Mã giảm giá không tồn tại",
         idCode: 2,
+      });
+    }
+
+    // Kiểm tra thời hạn
+    const now = new Date();
+    if (now < new Date(promotion.start_date)) {
+      return res.status(400).json({
+        message: "Mã giảm giá chưa bắt đầu",
+        idCode: 4,
+      });
+    }
+
+    if (now > new Date(promotion.end_date)) {
+      return res.status(400).json({
+        message: "Mã giảm giá đã hết hạn",
+        idCode: 5,
+      });
+    }
+
+    // Kiểm tra lượt sử dụng
+    if (promotion.usedCount >= promotion.maxUses) {
+      return res.status(400).json({
+        message: "Mã giảm giá đã được sử dụng hết",
+        idCode: 6,
       });
     }
 

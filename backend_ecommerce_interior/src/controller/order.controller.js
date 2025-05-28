@@ -442,6 +442,55 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
+// Cập nhật trạng thái thanh toán  đơn hàng thông qua payment_intent
+export const completeOrderByPaymentIntent = async (req, res) => {
+  try {
+    const { payment_intent } = req.body;
+
+    // Kiểm tra payment_intent hợp lệ
+    if (!payment_intent || typeof payment_intent !== "string") {
+      return res.status(400).json({
+        message: "Mã thanh toán không hợp lệ",
+        idCode: 1,
+      });
+    }
+
+    // Tìm đơn hàng theo payment_intent
+    const order = await Order.findOne({ payment_intent });
+    if (!order) {
+      return res.status(404).json({
+        message: "Không tìm thấy đơn hàng với mã thanh toán này",
+        idCode: 2,
+      });
+    }
+
+    // Kiểm tra trạng thái hiện tại
+    if (order.status === "completed" || order.status === "cancelled") {
+      return res.status(400).json({
+        message: "Đơn hàng đã hoàn tất hoặc đã hủy",
+        idCode: 3,
+      });
+    }
+
+    // Cập nhật trạng thái
+    // order.status = "completed";
+    order.payment_status = "completed";
+    await order.save();
+
+    return res.status(200).json({
+      message: "Cập nhật trạng thái thành công",
+      idCode: 0,
+      order,
+    });
+  } catch (error) {
+    console.error("Error in completeOrderByPaymentIntent:", error);
+    return res.status(500).json({
+      message: "Cập nhật đơn hàng thất bại",
+      idCode: 4,
+    });
+  }
+};
+
 // Thanh toán đơn hàng
 export const payOrder = async (req, res) => {
   try {

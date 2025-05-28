@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import USER from "../models/User.model";
 import * as bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-import { sendEmail } from "../service/nodeMailer";
+import { sendCodeAccess } from "../service/nodeMailer";
 var refreshTokens = [];
 import jwt from "jsonwebtoken";
 
@@ -29,7 +29,7 @@ export const Register = async (req, res) => {
       codeExpired: dayjs().add(5, "minutes"),
       codeId: codeId,
     });
-    await sendEmail(user.username, codeId, user.email);
+    await sendCodeAccess(user.username, codeId, user.email);
     return res.status(200).json({
       message: "OK",
       idCode: 0,
@@ -172,7 +172,7 @@ export const reSendKey = async (req, res) => {
         codeExpired: dayjs().add(5, "minutes"),
         codeId: codeId,
       });
-      await sendEmail(user.username, codeId, user.email);
+      await sendCodeAccess(user.username, codeId, user.email);
       return res.status(200).json({
         message: "OK",
         idCode: 0,
@@ -203,7 +203,7 @@ export const resetKeyActivateAccount = async (req, res) => {
         codeExpired: dayjs().add(5, "minutes"),
         codeId: codeId,
       });
-      await sendEmail(user.username, codeId, user.email);
+      await sendCodeAccess(user.username, codeId, user.email);
       return res.status(200).json({
         message: "OK",
         idCode: 0,
