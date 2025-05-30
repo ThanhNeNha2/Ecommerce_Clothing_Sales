@@ -24,6 +24,7 @@ import UpdatePromotion from "./pages/Promotion/updatePromotion/UpdatePromotion";
 import Order from "./pages/Order/Orders/Order";
 import DetailOrder from "./pages/Order/DetailOrder/DetailOrder";
 import MoneyStatistics from "./pages/Money_Statistics/MoneyStatistics";
+import ProductOrderStatistics from "./pages/Product_Statistics/Product_Order_Statistics";
 
 const queryClient = new QueryClient();
 
@@ -137,6 +138,10 @@ function App() {
             {
               path: "/money_statistics",
               element: <MoneyStatistics />,
+            },
+            {
+              path: "/product_statistics",
+              element: <ProductOrderStatistics />,
             },
           ],
         },

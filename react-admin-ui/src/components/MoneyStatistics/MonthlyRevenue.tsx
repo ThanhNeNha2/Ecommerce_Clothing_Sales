@@ -54,61 +54,63 @@ const MonthlyRevenue = () => {
   };
 
   return (
-    <div className="money-statistics-container">
-      <div className="header-section">
-        <h2 className="chart-title">
-          Biểu đồ doanh thu theo từng tháng trong năm {year}
-        </h2>
+    <div className="money">
+      <div className="money-statistics-container">
+        <div className="header-section">
+          <h2 className="chart-title">
+            Biểu đồ doanh thu theo từng tháng trong năm {year}
+          </h2>
 
-        <div className="year-selector">
-          <label htmlFor="year-input" className="year-label">
-            Chọn năm:
-          </label>
-          <select
-            id="year-input"
-            value={year}
-            onChange={handleYearChange}
-            className="year-input"
-          >
-            {Array.from({ length: 10 }, (_, i) => 2020 + i).map(
-              (yearOption) => (
-                <option key={yearOption} value={yearOption}>
-                  {yearOption}
-                </option>
-              )
-            )}
-          </select>
+          <div className="year-selector">
+            <label htmlFor="year-input" className="year-label">
+              Chọn năm:
+            </label>
+            <select
+              id="year-input"
+              value={year}
+              onChange={handleYearChange}
+              className="year-input"
+            >
+              {Array.from({ length: 10 }, (_, i) => 2020 + i).map(
+                (yearOption) => (
+                  <option key={yearOption} value={yearOption}>
+                    {yearOption}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
         </div>
-      </div>
 
-      {loading && <div className="loading">Đang tải dữ liệu...</div>}
+        {loading && <div className="loading">Đang tải dữ liệu...</div>}
 
-      <div className="chart-container">
-        <ResponsiveContainer width="100%" height={500}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip
-              formatter={(value: any) => [
-                new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(value),
-                "Doanh thu",
-              ]}
-            />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="revenue"
-              stroke="#8884d8"
-              strokeWidth={2}
-              activeDot={{ r: 6 }}
-              name="Doanh thu"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="chart-container">
+          <ResponsiveContainer width="100%" height={500}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip
+                formatter={(value: any) => [
+                  new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(value),
+                  "Doanh thu",
+                ]}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#8884d8"
+                strokeWidth={2}
+                activeDot={{ r: 6 }}
+                name="Doanh thu"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

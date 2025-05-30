@@ -24,7 +24,7 @@ export const menu = [
       {
         id: 4,
         title: "Product Statistics",
-        url: "/money_statistics",
+        url: "/product_statistics",
         icon: "icons8-clothes-32.png",
       },
       {

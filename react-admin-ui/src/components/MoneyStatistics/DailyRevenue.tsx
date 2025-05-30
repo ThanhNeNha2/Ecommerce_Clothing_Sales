@@ -58,93 +58,95 @@ const DailyRevenue = () => {
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
-    <div className="money-statistics-container">
-      <div className="header-section">
-        <h2 className="chart-title">
-          Biểu đồ doanh thu theo ngày trong tháng {month}/{year}
-        </h2>
+    <div className="money">
+      <div className="money-statistics-container">
+        <div className="header-section">
+          <h2 className="chart-title">
+            Biểu đồ doanh thu theo ngày trong tháng {month}/{year}
+          </h2>
 
-        <div className="selector-group">
-          <div className="year-selector">
-            <label htmlFor="year-input" className="year-label">
-              Chọn năm:
-            </label>
-            <select
-              id="year-input"
-              value={year}
-              onChange={handleYearChange}
-              className="year-input"
-            >
-              {Array.from({ length: 10 }, (_, i) => 2020 + i).map(
-                (yearOption) => (
-                  <option key={yearOption} value={yearOption}>
-                    {yearOption}
+          <div className="selector-group">
+            <div className="year-selector">
+              <label htmlFor="year-input" className="year-label">
+                Chọn năm:
+              </label>
+              <select
+                id="year-input"
+                value={year}
+                onChange={handleYearChange}
+                className="year-input"
+              >
+                {Array.from({ length: 10 }, (_, i) => 2020 + i).map(
+                  (yearOption) => (
+                    <option key={yearOption} value={yearOption}>
+                      {yearOption}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
+            <div className="month-selector">
+              <label htmlFor="month-input" className="month-label">
+                Chọn tháng:
+              </label>
+              <select
+                id="month-input"
+                value={month}
+                onChange={handleMonthChange}
+                className="month-input"
+              >
+                {months.map((monthOption) => (
+                  <option key={monthOption} value={monthOption}>
+                    Tháng {monthOption}
                   </option>
-                )
-              )}
-            </select>
-          </div>
-
-          <div className="month-selector">
-            <label htmlFor="month-input" className="month-label">
-              Chọn tháng:
-            </label>
-            <select
-              id="month-input"
-              value={month}
-              onChange={handleMonthChange}
-              className="month-input"
-            >
-              {months.map((monthOption) => (
-                <option key={monthOption} value={monthOption}>
-                  Tháng {monthOption}
-                </option>
-              ))}
-            </select>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
-      </div>
 
-      {loading && <div className="loading">Đang tải dữ liệu...</div>}
+        {loading && <div className="loading">Đang tải dữ liệu...</div>}
 
-      <div className="chart-container">
-        <ResponsiveContainer width="100%" height={500}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="date"
-              label={{ value: "", position: "insideBottom", offset: -5 }}
-            />
-            <YAxis
-              label={{
-                value: "Doanh thu (VND)",
-                angle: -90,
-                position: "insideLeft",
-              }}
-            />
-            <Tooltip
-              formatter={(value: any, name) => [
-                name === "revenue"
-                  ? new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(value)
-                  : value,
-                name === "revenue" ? "Doanh thu" : "Số đơn hàng",
-              ]}
-            />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="revenue"
-              stroke="#8884d8"
-              strokeWidth={2}
-              className="hihi"
-              activeDot={{ r: 6 }}
-              name="Doanh thu"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="chart-container">
+          <ResponsiveContainer width="100%" height={500}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="date"
+                label={{ value: "", position: "insideBottom", offset: -5 }}
+              />
+              <YAxis
+                label={{
+                  value: "Doanh thu (VND)",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip
+                formatter={(value: any, name) => [
+                  name === "revenue"
+                    ? new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(value)
+                    : value,
+                  name === "revenue" ? "Doanh thu" : "Số đơn hàng",
+                ]}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#8884d8"
+                strokeWidth={2}
+                className="hihi"
+                activeDot={{ r: 6 }}
+                name="Doanh thu"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
