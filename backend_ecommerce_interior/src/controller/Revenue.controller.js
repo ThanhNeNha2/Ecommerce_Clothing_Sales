@@ -183,3 +183,108 @@ export const getDailyRevenueByMonthHandler = async (req, res) => {
       .json({ message: "Không thể tính doanh thu theo ngày" });
   }
 };
+
+// Logic tính phần trăm doanh thu theo giới tính
+export const getGenderSalesPercentageHandler = async (req, res) => {
+  try {
+    const { period } = req.query;
+    let matchStage = { status: "completed" };
+
+    // Xử lý điều kiện thời gian
+    if (period && period !== "all") {
+      const year = parseInt(period);
+      if (!Number.isInteger(year)) {
+        return res.status(400).json({ message: "Năm không hợp lệ" });
+      }
+      const startDate = new Date(year, 0, 1); // 1/1 của năm
+      const endDate = new Date(year + 1, 0, 1); // 1/1 của năm sau
+      matchStage.createdAt = { $gte: startDate, $lt: endDate };
+    }
+
+    const result = await mongoose.model("Order").aggregate([
+      {
+        $match: matchStage,
+      },
+      { $unwind: "$order_items" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "order_items.product_id",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      {
+        $group: {
+          _id: "$product.gender",
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$order_items.quantity", "$order_items.price"],
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          genderBreakdown: {
+            $push: {
+              gender: "$_id",
+              totalRevenue: "$totalRevenue",
+            },
+          },
+          overallTotal: { $sum: "$totalRevenue" },
+        },
+      },
+      {
+        $unwind: "$genderBreakdown",
+      },
+      {
+        $project: {
+          _id: 0,
+          gender: "$genderBreakdown.gender",
+          totalRevenue: "$genderBreakdown.totalRevenue",
+          percentage: {
+            $cond: {
+              if: { $eq: ["$overallTotal", 0] },
+              then: 0,
+              else: {
+                $multiply: [
+                  {
+                    $divide: ["$genderBreakdown.totalRevenue", "$overallTotal"],
+                  },
+                  100,
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $sort: { gender: 1 },
+      },
+    ]);
+
+    // Đảm bảo tất cả các danh mục giới tính đều được bao gồm, kể cả khi không có doanh thu
+    const allGenders = ["Men", "Women", "Unisex", "Kids"];
+    const finalResult = allGenders.map((gender) => {
+      const found = result.find((r) => r.gender === gender);
+      return {
+        gender,
+        totalRevenue: found ? found.totalRevenue : 0,
+        percentage: found ? Number(found.percentage.toFixed(2)) : 0,
+      };
+    });
+
+    return res.status(200).json(finalResult);
+  } catch (error) {
+    console.error(
+      "Lỗi khi tính phần trăm doanh thu theo giới tính:",
+      error.message
+    );
+    return res
+      .status(500)
+      .json({ message: "Không thể tính phần trăm doanh thu theo giới tính" });
+  }
+};
