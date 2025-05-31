@@ -8,32 +8,34 @@ import {
   getAllProductChatbot,
   getAllProductChatbotSeeMore,
 } from "../../services/api";
-import { translationMap } from "../../constants/ChatbotTranslate";
+import {
+  faqConfig,
+  translateToEnglish,
+} from "../../constants/ChatbotTranslate";
 
-// Hàm lấy thời gian theo múi giờ +07
 const getTimeInVietnam = () => {
   const now = new Date();
-  const offsetVietnam = 7 * 60; // +07:00 in minutes
-  const localOffset = now.getTimezoneOffset(); // Offset của múi giờ hiện tại
+
+  // Tạo đối tượng Date ở UTC, rồi chuyển sang giờ Việt Nam
   const vietnamTime = new Date(
-    now.getTime() + (offsetVietnam - localOffset) * 60 * 1000
+    now.toLocaleString("en-US", { timeZone: "Asia/Ho_Chi_Minh" })
   );
 
-  return vietnamTime.toLocaleTimeString("en-US", {
+  // Định dạng ngày kiểu Việt Nam
+  const day = vietnamTime.getDate().toString().padStart(2, "0");
+  const month = (vietnamTime.getMonth() + 1).toString().padStart(2, "0");
+  const year = vietnamTime.getFullYear();
+  const dateStr = `Hôm nay, ${day}/${month}/${year}`;
+
+  // Định dạng giờ 24h
+  const timeStr = vietnamTime.toLocaleTimeString("vi-VN", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: true,
+    hour12: false,
   });
+
+  return { date: dateStr, time: timeStr };
 };
-
-// Ánh xạ từ tiếng Việt sang tiếng Anh
-
-// Hàm chuyển đổi từ tiếng Việt sang tiếng Anh
-const translateToEnglish = (value, type) => {
-  if (!value || !translationMap[type]) return value;
-  return translationMap[type][value.toLowerCase()] || value;
-};
-
 const Chatbot = ({ setOpenMessage }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [avataruser, setAvatar] = useState(user.image);
@@ -42,28 +44,63 @@ const Chatbot = ({ setOpenMessage }) => {
     {
       sender: false,
       content: {
-        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam'",
+        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam', 'sản phẩm từ 200 đến 500 cho nữ loại áo thun'",
         products: [],
       },
-      time: getTimeInVietnam(),
+      time: getTimeInVietnam().time, // Sử dụng giờ mới
       avatar:
         "https://i.pinimg.com/736x/c2/86/19/c28619a38709546b8f4b662b64f75760.jpg",
     },
   ]);
   const [input, setInput] = useState("");
 
+  // Hàm phân tích câu hỏi và trích xuất từ khóa
+  const extractKeysFromMessage = (message) => {
+    const keys = {};
+    for (const pattern of faqConfig.patterns) {
+      for (const example of pattern.examples) {
+        const regexPattern = example
+          .replace(/{price}/g, "(\\d+)")
+          .replace(/{minPrice}/g, "(\\d+)")
+          .replace(/{maxPrice}/g, "(\\d+)")
+          .replace(/{gender}/g, "(\\w+(?: \\w+)?)")
+          .replace(/{category}/g, "(\\w+(?: \\w+)?)")
+          .replace(/{subCategory}/g, "(\\w+(?: \\w+)?)")
+          .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(regexPattern, "i");
+        const match = message.match(regex);
+        if (match) {
+          let index = 1;
+          for (const key in pattern.keys) {
+            let value = match[index];
+            if (value) {
+              if (key === "maxPrice" || key === "minPrice") {
+                keys[key] = Number(value);
+              } else {
+                keys[key] = translateToEnglish(value, key);
+              }
+              index++;
+            }
+          }
+          return keys;
+        }
+      }
+    }
+    return keys;
+  };
+
   // Hàm xử lý gửi tin nhắn
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
     if (!input.trim()) return;
 
-    const currentTime = getTimeInVietnam();
+    const { time } = getTimeInVietnam(); // Lấy giờ mới
 
     // Thêm tin nhắn của người dùng
     const userMessage = {
       sender: true,
       content: { text: input, products: [] },
-      time: currentTime,
+      time: time,
       avatar: avataruser,
     };
     setMessages((prev) => [...prev, userMessage]);
@@ -81,7 +118,7 @@ const Chatbot = ({ setOpenMessage }) => {
       {
         sender: false,
         content: response,
-        time: currentTime,
+        time: time,
         avatar:
           "https://i.pinimg.com/736x/c2/86/19/c28619a38709546b8f4b662b64f75760.jpg",
       },
@@ -90,35 +127,24 @@ const Chatbot = ({ setOpenMessage }) => {
 
   // Hàm xử lý tin nhắn người dùng
   const processMessage = async (message) => {
-    const maxPriceMatch = message.match(/(dưới|nhỏ hơn) (\d+)/i);
-    const minPriceMatch = message.match(/(trên|lớn hơn) (\d+)/i);
-    const genderMatch = message.match(/cho (nam|nữ|unisex|trẻ|trẻ em)/i);
-    const categoryMatch = message.match(/loại (\w+( \w+)?)/i);
-    const subCategoryMatch = message.match(/phụ loại (\w+( \w+)?)/i);
-
+    const keys = extractKeysFromMessage(message);
     let queryParams = "";
-    if (maxPriceMatch) {
-      const maxPrice = Number(maxPriceMatch[2]);
-      queryParams += `maxPrice=${maxPrice}`;
+    if (keys.maxPrice) {
+      queryParams += `maxPrice=${keys.maxPrice}`;
     }
-    if (minPriceMatch) {
-      const minPrice = Number(minPriceMatch[2]);
-      queryParams += `${queryParams ? "&" : ""}minPrice=${minPrice}`;
+    if (keys.minPrice) {
+      queryParams += `${queryParams ? "&" : ""}minPrice=${keys.minPrice}`;
     }
-    if (genderMatch) {
-      const gender = translateToEnglish(genderMatch[1], "gender");
-      queryParams += `${queryParams ? "&" : ""}gender=${gender}`;
+    if (keys.gender) {
+      queryParams += `${queryParams ? "&" : ""}gender=${keys.gender}`;
     }
-    if (categoryMatch) {
-      const category = translateToEnglish(categoryMatch[1], "mainCategory");
-      queryParams += `${queryParams ? "&" : ""}mainCategory=${category}`;
+    if (keys.mainCategory) {
+      queryParams += `${queryParams ? "&" : ""}mainCategory=${
+        keys.mainCategory
+      }`;
     }
-    if (subCategoryMatch) {
-      const subCategory = translateToEnglish(
-        subCategoryMatch[1],
-        "subCategory"
-      );
-      queryParams += `${queryParams ? "&" : ""}subCategory=${subCategory}`;
+    if (keys.subCategory) {
+      queryParams += `${queryParams ? "&" : ""}subCategory=${keys.subCategory}`;
     }
 
     if (queryParams) {
@@ -130,8 +156,8 @@ const Chatbot = ({ setOpenMessage }) => {
           return { text: "Không tìm thấy sản phẩm nào phù hợp.", products: [] };
         }
 
-        let text = "Dưới đây là một vài sản phẩm phù hợp:\n";
-        if (total > 5) text += "\n";
+        let text = "Dưới đây là các sản phẩm phù hợp:\n";
+        if (total > 5) text += "\nNhập 'xem thêm' để thấy thêm sản phẩm.";
         return { text, products };
       } catch (error) {
         return {
@@ -142,7 +168,7 @@ const Chatbot = ({ setOpenMessage }) => {
     }
 
     return {
-      text: "Xin lỗi, tôi chưa hiểu yêu cầu của bạn. Bạn có thể nói rõ hơn không? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam'",
+      text: "Xin lỗi, tôi chưa hiểu yêu cầu của bạn. Bạn có thể nói rõ hơn không? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam', 'sản phẩm từ 200 đến 500 cho nữ loại áo thun'",
       products: [],
     };
   };
@@ -154,38 +180,20 @@ const Chatbot = ({ setOpenMessage }) => {
         (m) => m.sender === false && m.content.text.includes("xem thêm")
       ).length + 1;
     const lastBotMessage = messages.filter((m) => m.sender === false).pop();
-    const maxPriceMatch =
-      lastBotMessage?.content.text.match(/(dưới|nhỏ hơn) (\d+)/i);
-    const minPriceMatch =
-      lastBotMessage?.content.text.match(/(trên|lớn hơn) (\d+)/i);
-    const genderMatch = lastBotMessage?.content.text.match(
-      /cho (nam|nữ|unisex|trẻ|trẻ em)/i
-    );
-    const categoryMatch =
-      lastBotMessage?.content.text.match(/loại (\w+( \w+)?)/i);
-    const subCategoryMatch = lastBotMessage?.content.text.match(
-      /phụ loại (\w+( \w+)?)/i
-    );
+    const keys = extractKeysFromMessage(lastBotMessage?.content.text || "");
 
     let queryParams = "";
-    if (maxPriceMatch) queryParams += `maxPrice=${maxPriceMatch[2]}`;
-    if (minPriceMatch)
-      queryParams += `${queryParams ? "&" : ""}minPrice=${minPriceMatch[2]}`;
-    if (genderMatch) {
-      const gender = translateToEnglish(genderMatch[1], "gender");
-      queryParams += `${queryParams ? "&" : ""}gender=${gender}`;
-    }
-    if (categoryMatch) {
-      const category = translateToEnglish(categoryMatch[1], "mainCategory");
-      queryParams += `${queryParams ? "&" : ""}mainCategory=${category}`;
-    }
-    if (subCategoryMatch) {
-      const subCategory = translateToEnglish(
-        subCategoryMatch[1],
-        "subCategory"
-      );
-      queryParams += `${queryParams ? "&" : ""}subCategory=${subCategory}`;
-    }
+    if (keys.maxPrice) queryParams += `maxPrice=${keys.maxPrice}`;
+    if (keys.minPrice)
+      queryParams += `${queryParams ? "&" : ""}minPrice=${keys.minPrice}`;
+    if (keys.gender)
+      queryParams += `${queryParams ? "&" : ""}gender=${keys.gender}`;
+    if (keys.mainCategory)
+      queryParams += `${queryParams ? "&" : ""}mainCategory=${
+        keys.mainCategory
+      }`;
+    if (keys.subCategory)
+      queryParams += `${queryParams ? "&" : ""}subCategory=${keys.subCategory}`;
 
     if (queryParams) {
       try {
@@ -209,6 +217,9 @@ const Chatbot = ({ setOpenMessage }) => {
     }
     return { text: "Không thể xử lý yêu cầu 'xem thêm'.", products: [] };
   };
+
+  // Lấy ngày để hiển thị
+  const { date } = getTimeInVietnam();
 
   return (
     <>
@@ -249,7 +260,8 @@ const Chatbot = ({ setOpenMessage }) => {
         {/* ĐOẠN CHAT */}
         <div className="flex-1 bg-white rounded p-4 shadow-md overflow-y-auto h-[calc(100vh-100px)] my-2">
           <div className="flex justify-center items-center my-4">
-            <span className="bg-gray-200 px-2 py-1 rounded">Today, May 17</span>
+            <span className="bg-gray-200 px-2 py-1 rounded">{date}</span>{" "}
+            {/* Hiển thị ngày mới */}
           </div>
           {messages.map((msg, index) => (
             <div
@@ -272,7 +284,7 @@ const Chatbot = ({ setOpenMessage }) => {
                     : "bg-gray-200 text-black"
                 }`}
               >
-                <p>{msg.content.text}</p>
+                <p>{msg.content.text} </p>
                 {msg.content.products.length > 0 && (
                   <div className="mt-2 space-y-2">
                     {msg.content.products.map((product, pIndex) => (
@@ -298,7 +310,7 @@ const Chatbot = ({ setOpenMessage }) => {
                   </div>
                 )}
                 <span className="text-xs text-gray-500 mt-1 block text-right">
-                  {msg.time}
+                  {msg.time} {/* Hiển thị giờ mới */}
                 </span>
               </div>
               {msg.sender && (
