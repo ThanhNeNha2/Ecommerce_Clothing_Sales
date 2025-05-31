@@ -8,6 +8,7 @@ import {
   getAllProductChatbot,
   getAllProductChatbotSeeMore,
 } from "../../services/api";
+import { translationMap } from "../../constants/ChatbotTranslate";
 
 // Hàm lấy thời gian theo múi giờ +07
 const getTimeInVietnam = () => {
@@ -25,6 +26,14 @@ const getTimeInVietnam = () => {
   });
 };
 
+// Ánh xạ từ tiếng Việt sang tiếng Anh
+
+// Hàm chuyển đổi từ tiếng Việt sang tiếng Anh
+const translateToEnglish = (value, type) => {
+  if (!value || !translationMap[type]) return value;
+  return translationMap[type][value.toLowerCase()] || value;
+};
+
 const Chatbot = ({ setOpenMessage }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [avataruser, setAvatar] = useState(user.image);
@@ -33,7 +42,7 @@ const Chatbot = ({ setOpenMessage }) => {
     {
       sender: false,
       content: {
-        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay?",
+        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam'",
         products: [],
       },
       time: getTimeInVietnam(),
@@ -42,6 +51,7 @@ const Chatbot = ({ setOpenMessage }) => {
     },
   ]);
   const [input, setInput] = useState("");
+
   // Hàm xử lý gửi tin nhắn
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
@@ -80,22 +90,35 @@ const Chatbot = ({ setOpenMessage }) => {
 
   // Hàm xử lý tin nhắn người dùng
   const processMessage = async (message) => {
-    const priceMatch = message.match(/dưới (\d+)/i);
-    const genderMatch = message.match(/cho (nam|nữ)/i);
-    const categoryMatch = message.match(/loại (\w+)/i); // Ví dụ: "loại áo"
+    const maxPriceMatch = message.match(/(dưới|nhỏ hơn) (\d+)/i);
+    const minPriceMatch = message.match(/(trên|lớn hơn) (\d+)/i);
+    const genderMatch = message.match(/cho (nam|nữ|unisex|trẻ|trẻ em)/i);
+    const categoryMatch = message.match(/loại (\w+( \w+)?)/i);
+    const subCategoryMatch = message.match(/phụ loại (\w+( \w+)?)/i);
 
     let queryParams = "";
-    if (priceMatch) {
-      const maxPrice = Number(priceMatch[1]);
+    if (maxPriceMatch) {
+      const maxPrice = Number(maxPriceMatch[2]);
       queryParams += `maxPrice=${maxPrice}`;
     }
+    if (minPriceMatch) {
+      const minPrice = Number(minPriceMatch[2]);
+      queryParams += `${queryParams ? "&" : ""}minPrice=${minPrice}`;
+    }
     if (genderMatch) {
-      const gender = genderMatch[1] === "nam" ? "Nam" : "Nữ";
+      const gender = translateToEnglish(genderMatch[1], "gender");
       queryParams += `${queryParams ? "&" : ""}gender=${gender}`;
     }
     if (categoryMatch) {
-      const category = categoryMatch[1];
+      const category = translateToEnglish(categoryMatch[1], "mainCategory");
       queryParams += `${queryParams ? "&" : ""}mainCategory=${category}`;
+    }
+    if (subCategoryMatch) {
+      const subCategory = translateToEnglish(
+        subCategoryMatch[1],
+        "subCategory"
+      );
+      queryParams += `${queryParams ? "&" : ""}subCategory=${subCategory}`;
     }
 
     if (queryParams) {
@@ -107,7 +130,8 @@ const Chatbot = ({ setOpenMessage }) => {
           return { text: "Không tìm thấy sản phẩm nào phù hợp.", products: [] };
         }
 
-        let text = "Dưới đây là các sản phẩm phù hợp:\n";
+        let text = "Dưới đây là một vài sản phẩm phù hợp:\n";
+        if (total > 5) text += "\n";
         return { text, products };
       } catch (error) {
         return {
@@ -118,7 +142,7 @@ const Chatbot = ({ setOpenMessage }) => {
     }
 
     return {
-      text: "Xin lỗi, tôi chưa hiểu yêu cầu của bạn. Bạn có thể nói rõ hơn không? Ví dụ: 'Tôi muốn tìm sản phẩm dưới 500 cho nam'",
+      text: "Xin lỗi, tôi chưa hiểu yêu cầu của bạn. Bạn có thể nói rõ hơn không? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam'",
       products: [],
     };
   };
@@ -130,20 +154,38 @@ const Chatbot = ({ setOpenMessage }) => {
         (m) => m.sender === false && m.content.text.includes("xem thêm")
       ).length + 1;
     const lastBotMessage = messages.filter((m) => m.sender === false).pop();
-    const priceMatch = lastBotMessage?.content.text.match(/dưới (\d+)/i);
-    const genderMatch = lastBotMessage?.content.text.match(/cho (nam|nữ)/i);
-    const categoryMatch = lastBotMessage?.content.text.match(/loại (\w+)/i);
+    const maxPriceMatch =
+      lastBotMessage?.content.text.match(/(dưới|nhỏ hơn) (\d+)/i);
+    const minPriceMatch =
+      lastBotMessage?.content.text.match(/(trên|lớn hơn) (\d+)/i);
+    const genderMatch = lastBotMessage?.content.text.match(
+      /cho (nam|nữ|unisex|trẻ|trẻ em)/i
+    );
+    const categoryMatch =
+      lastBotMessage?.content.text.match(/loại (\w+( \w+)?)/i);
+    const subCategoryMatch = lastBotMessage?.content.text.match(
+      /phụ loại (\w+( \w+)?)/i
+    );
 
     let queryParams = "";
-    if (priceMatch) queryParams += `maxPrice=${priceMatch[1]}`;
-    if (genderMatch)
-      queryParams += `${queryParams ? "&" : ""}gender=${
-        genderMatch[1] === "nam" ? "Nam" : "Nữ"
-      }`;
-    if (categoryMatch)
-      queryParams += `${queryParams ? "&" : ""}mainCategory=${
-        categoryMatch[1]
-      }`;
+    if (maxPriceMatch) queryParams += `maxPrice=${maxPriceMatch[2]}`;
+    if (minPriceMatch)
+      queryParams += `${queryParams ? "&" : ""}minPrice=${minPriceMatch[2]}`;
+    if (genderMatch) {
+      const gender = translateToEnglish(genderMatch[1], "gender");
+      queryParams += `${queryParams ? "&" : ""}gender=${gender}`;
+    }
+    if (categoryMatch) {
+      const category = translateToEnglish(categoryMatch[1], "mainCategory");
+      queryParams += `${queryParams ? "&" : ""}mainCategory=${category}`;
+    }
+    if (subCategoryMatch) {
+      const subCategory = translateToEnglish(
+        subCategoryMatch[1],
+        "subCategory"
+      );
+      queryParams += `${queryParams ? "&" : ""}subCategory=${subCategory}`;
+    }
 
     if (queryParams) {
       try {

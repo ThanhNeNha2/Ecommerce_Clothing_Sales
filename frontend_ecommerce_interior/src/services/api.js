@@ -236,6 +236,16 @@ export const getPromotionByCode = async (code) => {
   }
 };
 
+export const getAllPromotion = async () => {
+  try {
+    const response = await instance.get(`promotions`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
 //  REVIEW
 
 export const getAllReview = async (productId) => {
@@ -300,42 +310,6 @@ export const deleteReview = async (idReview, user_id) => {
     return res;
   } catch (error) {
     console.error("Error in deleteReview:", error);
-    throw error; // để có thể bắt được lỗi ở useEffect
-  }
-};
-
-// chat
-
-export const getAllProductChatbot = async (queryParams) => {
-  try {
-    const response = await instance.get(
-      `product/chatbot?${queryParams}&page=1&limit=5`
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error in getAllProductChatbot:", error);
-    throw error; // để có thể bắt được lỗi ở useEffect
-  }
-};
-
-export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
-  try {
-    const response = await instance.get(
-      `product/chatbot?${queryParams}&page=${currentPage}&limit=5`
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error in getAllProductChatbotSeeMore:", error);
-    throw error; // để có thể bắt được lỗi ở useEffect
-  }
-};
-
-export const getAllPromotion = async () => {
-  try {
-    const response = await instance.get(`promotions`);
-    return response.data;
-  } catch (error) {
-    console.error("Error in getAllProductChatbotSeeMore:", error);
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
@@ -409,5 +383,31 @@ export const getPaymentByIntent = async (payment_intent) => {
   } catch (error) {
     console.error("Error in getAllProductChatbotSeeMore:", error);
     throw error;
+  }
+};
+
+// chat
+
+export const getAllProductChatbot = async (queryParams) => {
+  try {
+    const response = await instance.get(
+      `product/chatbot?${queryParams}&page=1&limit=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbot:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
+  try {
+    const response = await instance.get(
+      `product/chatbot?${queryParams}&page=${currentPage}&limit=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
