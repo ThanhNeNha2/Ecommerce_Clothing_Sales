@@ -10,8 +10,8 @@ import { instance } from "../../Custom/Axios/AxiosCustom";
 const SingleProduct = () => {
   const { id } = useParams();
   const [addProduct, setaddProduct] = useState(8);
-
   const [listProducts, setListProducts] = useState([]);
+  const [nameProduct, setNameProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const mainCategory = JSON.parse(localStorage.getItem("mainCategory"));
@@ -23,6 +23,10 @@ const SingleProduct = () => {
       const res = await instance.get(
         `/product?limit=${8}&mainCategory=${mainCategory}`
       );
+      const oneProduct = (res.data.products || []).filter(
+        (product) => product.id === id
+      );
+      setNameProduct(oneProduct);
 
       // console.log("check thong tin res ", res.data.products);
       const filteredProducts = (res.data.products || []).filter(
@@ -59,21 +63,21 @@ const SingleProduct = () => {
         }}
       >
         <div className="flex items-center">
-          <span>Home</span> <MdKeyboardArrowRight />
+          <span>Trang chủ</span> <MdKeyboardArrowRight />
         </div>
 
         <div className="flex items-center">
-          <span>Shop</span> <MdKeyboardArrowRight />
+          <span>Sản phẩm</span> <MdKeyboardArrowRight />
         </div>
         <div>
-          <span className="font-medium">Asgaard sofa</span>
+          <span className="font-medium"> {nameProduct[0].nameProduct}</span>
         </div>
       </div>
       <DetailProduct />
       <hr className="my-7" />
       <div>
         <span className="font-poppins text-[28px] font-bold flex justify-center mt-16 mb-8">
-          Related Products
+          Gợi ý sản phẩm
         </span>
       </div>
       <Products listProducts={listProducts} />

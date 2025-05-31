@@ -12,6 +12,11 @@ import {
 import { notification } from "antd";
 import { useMutation, useQueryClient } from "react-query";
 
+import {
+  mainCategoryTranslate,
+  subCategoryTranslate,
+} from "../../constants/categoryTranslate";
+
 const DetailProduct = () => {
   const { id } = useParams();
   const [singleItem, setSingleItem] = useState(null);
@@ -132,7 +137,6 @@ const DetailProduct = () => {
       console.log("Error adding product to cart:", error);
     }
   };
-  console.log("check setSizeId", SizeId);
 
   const handleAddWishlist = (user_id, product_id) => {
     addWishlistMutation.mutate({ user_id, product_id });
@@ -218,27 +222,43 @@ const DetailProduct = () => {
             )}
             <div className="border border-gray-300 h-[20px]"></div>
             <span className="text-[14px] text-gray-400">
-              {reviews.length} Customer Review
+              {reviews.length} Đánh giá của khách hàng
             </span>
           </div>
           <span>{singleItem.descriptionShort || "Không có mô tả"}</span>
           <ul className="flex flex-col justify-center gap-3">
             <li className="flex">
-              <span className="w-[15%]">Gender</span>
-              <p>: {singleItem.gender || "N/A"}</p>
-            </li>
-            <li className="flex">
-              <span className="w-[15%]">Category</span>
-              <p className="ml-2">: {singleItem.mainCategory || "N/A"}</p>
-            </li>
-            <li className="flex">
-              <span className="w-[15%]">Tags</span>
-              <p className="ml-2">
-                : {singleItem.subCategory?.join(", ") || "N/A"}
+              <span className="w-[15%]">Giới tính </span>
+              <p>
+                :{" "}
+                {singleItem.gender === "Men"
+                  ? "Nam"
+                  : singleItem.gender === "Women"
+                  ? "Nữ"
+                  : singleItem.gender === "Unisex"
+                  ? "Cả nam và nữ"
+                  : singleItem.gender === "Kids"
+                  ? "Trẻ em"
+                  : "N/A"}
               </p>
             </li>
             <li className="flex">
-              <span className="w-[15%]">Stock</span>
+              <span className="w-[15%]">Loại </span>
+              <p className="ml-2">
+                : {mainCategoryTranslate[singleItem.mainCategory] || "N/A"}
+              </p>
+            </li>
+            <li className="flex">
+              <span className="w-[15%]">Thẻ sản phẩm</span>
+              <p className="ml-2">
+                :{" "}
+                {singleItem.subCategory
+                  ?.map((item) => subCategoryTranslate[item] || item)
+                  .join(", ") || "N/A"}
+              </p>
+            </li>
+            <li className="flex">
+              <span className="w-[15%]">Số lượng</span>
               <p className="ml-2">
                 : {selectedStock} (Size {selectedSize})
               </p>

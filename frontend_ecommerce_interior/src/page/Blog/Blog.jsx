@@ -12,6 +12,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { instance } from "../../Custom/Axios/AxiosCustom";
 
 const Blog = () => {
   dayjs.extend(utc);
@@ -22,6 +23,8 @@ const Blog = () => {
   const [itemOffset, setItemOffset] = useState(0);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 4;
+  const mainCategory = JSON.parse(localStorage.getItem("mainCategory"));
+  const [listProducts, setListProducts] = useState([]);
 
   useEffect(() => {
     const fetchAllBlog = async () => {
@@ -49,6 +52,25 @@ const Blog = () => {
     const newOffset = (event.selected * itemsPerPage) % items.length;
     setItemOffset(newOffset);
   };
+  const getAllProduct = async () => {
+    try {
+      setLoading(true);
+      // const res = await instance.get(`/product?limit=${8}`);
+      const res = await instance.get(
+        `/product?limit=${8}&mainCategory=${mainCategory}`
+      );
+
+      setListProducts(res.data.products);
+    } catch (err) {
+      console.error("Lỗi khi lấy sản phẩm:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllProduct();
+  }, []);
 
   if (loading) return <div className="px-[200px] py-5">Đang tải...</div>;
 
@@ -126,7 +148,7 @@ const Blog = () => {
             />
           </div>
         </div>
-        <div className="flex-[2] flex flex-col gap-5 min-w-[250px]">
+        <div className="flex-[2] flex flex-col  min-w-[250px]">
           <div className="relative">
             <input
               type="text"
@@ -137,97 +159,72 @@ const Blog = () => {
               <IoSearchSharp />
             </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <span className="font-poppins font-medium text-xl">Categories</span>
-            <ul className="w-[80%] px-5 flex flex-col gap-5">
-              <li className="flex justify-between text-gray-400">
-                <span>Crafts</span>
-                <p>2</p>
-              </li>
-              <li className="flex justify-between text-gray-400">
-                <span>Design</span>
-                <p>8</p>
-              </li>
-              <li className="flex justify-between text-gray-400">
-                <span>Handmade</span>
-                <p>7</p>
-              </li>
-              <li className="flex justify-between text-gray-400">
-                <span>Interior</span>
-                <p>2</p>
-              </li>
-              <li className="flex justify-between text-gray-400">
-                <span>Wood</span>
-                <p>6</p>
-              </li>
-            </ul>
-          </div>
+
           <div className="flex flex-col gap-3 mt-16">
-            <span className="font-poppins font-medium text-xl">
-              Recent Posts
-            </span>
-            <ul className="w-[100%] flex flex-col gap-5">
-              <li className="flex gap-5 text-gray-400">
-                <div className="w-[100px] h-[100px]">
-                  <img
-                    src="https://images.pexels.com/photos/8581013/pexels-photo-8581013.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Recent post"
-                    className="h-full w-full object-cover object-bottom"
-                  />
-                </div>
-                <div className="p-1">
-                  <span className="text-black">
-                    Going all-in with millennial design
-                  </span>
-                  <p className="text-sm">03 Aug 2022</p>
-                </div>
-              </li>
-              <li className="flex gap-5 text-gray-400">
-                <div className="w-[100px] h-[100px]">
-                  <img
-                    src="https://images.pexels.com/photos/8581013/pexels-photo-8581013.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Recent post"
-                    className="h-full w-full object-cover object-bottom"
-                  />
-                </div>
-                <div className="p-1">
-                  <span className="text-black">
-                    Going all-in with millennial design
-                  </span>
-                  <p className="text-sm">03 Aug 2022</p>
-                </div>
-              </li>
-              <li className="flex gap-5 text-gray-400">
-                <div className="w-[100px] h-[100px]">
-                  <img
-                    src="https://images.pexels.com/photos/8581013/pexels-photo-8581013.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Recent post"
-                    className="h-full w-full object-cover object-bottom"
-                  />
-                </div>
-                <div className="p-1">
-                  <span className="text-black">
-                    Going all-in with millennial design
-                  </span>
-                  <p className="text-sm">03 Aug 2022</p>
-                </div>
-              </li>
-              <li className="flex gap-5 text-gray-400">
-                <div className="w-[100px] h-[100px]">
-                  <img
-                    src="https://images.pexels.com/photos/8581013/pexels-photo-8581013.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Recent post"
-                    className="h-full w-full object-cover object-bottom"
-                  />
-                </div>
-                <div className="p-1">
-                  <span className="text-black">
-                    Going all-in with millennial design
-                  </span>
-                  <p className="text-sm">03 Aug 2022</p>
-                </div>
-              </li>
-            </ul>
+            <h3 className="font-poppins font-medium text-xl text-gray-900">
+              Sản phẩm liên quan gần đây
+            </h3>
+
+            {listProducts && listProducts.length > 0 ? (
+              <ul className="w-full flex flex-col gap-3" role="list">
+                {listProducts.map((product, index) => {
+                  // Kiểm tra dữ liệu product hợp lệ
+                  if (!product) return null;
+
+                  const productId =
+                    product.id || product._id || `product-${index}`;
+                  const productName =
+                    product.nameProduct ||
+                    product.name ||
+                    "Sản phẩm không có tên";
+                  const productImage =
+                    product.image_url?.[0] ||
+                    product.image ||
+                    "/placeholder-image.jpg";
+                  const productPrice =
+                    product.salePrice || product.price || "Liên hệ";
+
+                  return (
+                    <li key={productId} className="w-full">
+                      <Link
+                        to={`/SingleProduct/${productId}`}
+                        className="block w-full border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-gray-300 transition-all duration-200 bg-white text-inherit no-underline"
+                      >
+                        <div className="flex gap-4">
+                          <div className="w-[100px] h-[100px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-100">
+                            <img
+                              src={productImage}
+                              alt={productName}
+                              className="h-full w-full object-cover object-center"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.target.src = "/placeholder-image.jpg";
+                                e.target.alt = "Hình ảnh không khả dụng";
+                              }}
+                            />
+                          </div>
+
+                          <div className="flex-1 min-w-0 flex flex-col justify-center">
+                            <h4 className="text-gray-900 font-medium text-base line-clamp-2 mb-2 hover:text-blue-600 transition-colors">
+                              {productName}
+                            </h4>
+                            <p className="text-lg text-blue-600 font-semibold">
+                              {typeof productPrice === "number"
+                                ? `${productPrice.toLocaleString("vi-VN")} VNĐ`
+                                : productPrice}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <div className="w-full py-8 text-center text-gray-500">
+                <p>Không có sản phẩm liên quan nào</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

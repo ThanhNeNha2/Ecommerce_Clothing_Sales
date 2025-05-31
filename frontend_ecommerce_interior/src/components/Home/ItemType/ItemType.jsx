@@ -28,7 +28,7 @@ const ItemType = ({ img1, img2, img3, img4 }) => {
               />
             </div>
             <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-              {`Men's Clothes`}
+              Quần áo nam
             </span>
           </div>
         </Link>
@@ -43,7 +43,7 @@ const ItemType = ({ img1, img2, img3, img4 }) => {
               />
             </div>
             <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-              {`Women's Clothes`}
+              Quần áo nữ
             </span>
           </div>
         </Link>
@@ -58,7 +58,7 @@ const ItemType = ({ img1, img2, img3, img4 }) => {
               />
             </div>
             <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-              {`Children's Clothes`}
+              Quần áo trẻ em
             </span>
           </div>
         </Link>
@@ -73,7 +73,7 @@ const ItemType = ({ img1, img2, img3, img4 }) => {
               />
             </div>
             <span className="font-poppins font-semibold text-xl sm:text-2xl 2xl:text-xl text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
-              {`Unisex's Clothes`}
+              Quần áo Unisex
             </span>
           </div>
         </Link>

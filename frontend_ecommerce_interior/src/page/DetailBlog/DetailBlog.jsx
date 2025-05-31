@@ -123,7 +123,7 @@ const DetailBlog = () => {
         <div className="w-full md:w-1/3 lg:w-1/4 rounded border px-3 py-3">
           <div className="py-3 flex justify-center mb-3">
             <span className="font-poppins font-semibold text-xl">
-              Suggested products
+              Sản phẩm liên quan
             </span>
           </div>
 

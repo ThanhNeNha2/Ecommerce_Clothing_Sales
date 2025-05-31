@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { addProductToCart, addProductToWishlist } from "../../services/api";
 import { notification } from "antd";
 import { useMutation, useQueryClient } from "react-query";
+import { subCategoryTranslate } from "../../constants/categoryTranslate";
 
 const Products = ({ listProducts }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -92,9 +93,9 @@ const Products = ({ listProducts }) => {
                 {product.subCategory.map((item, index) => (
                   <span
                     key={index}
-                    className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-sm"
+                    className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-sm mr-1"
                   >
-                    {item}
+                    {subCategoryTranslate[item] || item}
                   </span>
                 ))}
               </div>

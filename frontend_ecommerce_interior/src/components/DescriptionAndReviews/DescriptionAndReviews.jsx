@@ -321,7 +321,7 @@ const DescriptionAndReviews = ({ description, quantityReview }) => {
           } hover:text-black transition-colors`}
           onClick={() => setActiveTab("Description")}
         >
-          Description
+          Chi tiết
         </button>
         <button
           className={`font-poppins font-medium text-[20px] ${
@@ -331,7 +331,7 @@ const DescriptionAndReviews = ({ description, quantityReview }) => {
           } hover:text-black transition-colors`}
           onClick={() => setActiveTab("Additional Information")}
         >
-          Additional Information
+          Thông tin bổ sung
         </button>
         <button
           className={`font-poppins font-medium text-[20px] ${
@@ -339,7 +339,7 @@ const DescriptionAndReviews = ({ description, quantityReview }) => {
           } hover:text-black transition-colors`}
           onClick={() => setActiveTab("Reviews")}
         >
-          Reviews [{quantityReview}]
+          Nhận xét [{quantityReview}]
         </button>
       </div>
       {isCheckDelete && (

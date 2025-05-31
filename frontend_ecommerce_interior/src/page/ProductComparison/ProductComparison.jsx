@@ -113,7 +113,7 @@ const ProductComparison = () => {
                 </div>
                 <div className="border border-gray-300 h-[20px]"></div>
                 <span className="text-[12px] text-gray-400">
-                  5 Customer Review
+                  5 Đánh giá của khách hàng
                 </span>
               </div>
             </div>
@@ -144,7 +144,7 @@ const ProductComparison = () => {
                 </div>
                 <div className="border border-gray-300 h-[20px]"></div>
                 <span className="text-[12px] text-gray-400">
-                  5 Customer Review
+                  5 Đánh giá của khách hàng
                 </span>
               </div>
             </div>
