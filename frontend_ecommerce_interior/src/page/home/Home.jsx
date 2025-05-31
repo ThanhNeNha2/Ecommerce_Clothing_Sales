@@ -51,16 +51,16 @@ const Home = () => {
 
       <div>
         <span className="font-poppins text-[28px] font-bold flex justify-center mt-16 mb-8">
-          Our Products
+          Sản phẩm của chúng tôi
         </span>
       </div>
       <Products listProducts={listProducts} />
       <div className="flex justify-center items-center mt-7 ">
         <button
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
-          onClick={() => setaddProduct(addProduct + 4)}
+          onClick={() => setaddProduct(addProduct + 8)}
         >
-          Show More
+          Xem thêm
         </button>
       </div>
       <SliceProduct />

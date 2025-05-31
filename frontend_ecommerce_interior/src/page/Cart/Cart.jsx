@@ -150,7 +150,7 @@ const Cart = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <CoverImg namePage="Cart" />
+      <CoverImg namePage="Giỏ hàng" />
       <div className="flex gap-6 h-auto mt-8 px-[130px] py-10">
         <div className="w-[65%]">
           {/* Header giỏ hàng */}
@@ -161,10 +161,10 @@ const Cart = () => {
             }}
           >
             <span className="text-xl font-poppins font-semibold text-gray-800">
-              Shopping Cart
+              Giỏ hàng
             </span>
             <p className="text-gray-600">
-              {carts.length} item{carts.length !== 1 ? "s" : ""}
+              {carts.length} sản phẩm {carts.length !== 1 ? "s" : ""}
             </p>
           </div>
           {/* Danh sách sản phẩm */}
@@ -280,14 +280,14 @@ const Cart = () => {
           }}
         >
           <span className="font-poppins font-semibold text-[22px]">
-            Cart Totals
+            Tổng số tiền
           </span>
           <div className="border border-gray-300 w-[400px]"></div>
           <div className="flex flex-col gap-3 w-[400px] px-4 ">
             <div className="flex flex-col gap-3 w-[400px] ">
               {/* Subtotal */}
               <div className="flex gap-3">
-                <span className="min-w-[100px] text-left">Subtotal</span>
+                <span className="min-w-[100px] text-left">Tổng cộng</span>
                 <p className="text-[15px] text-gray-400 text-left">
                   ${subtotal.toFixed(2)}
                 </p>
@@ -311,7 +311,7 @@ const Cart = () => {
 
               {/* Sale */}
               <div className="flex gap-3">
-                <span className="min-w-[100px] text-left">Sale</span>
+                <span className="min-w-[100px] text-left">Giảm giá</span>
                 <p className="text-[15px] text-gray-400 text-left">
                   {voucher.discount_value}
                   {voucher.discount_type === "percentage"
@@ -324,7 +324,7 @@ const Cart = () => {
 
               {/* Total */}
               <div className="flex gap-3">
-                <span className="min-w-[100px] text-left">Total</span>
+                <span className="min-w-[100px] text-left">Giá cuối cùng</span>
                 <p className="text-[15px] text-colorMain font-medium text-left">
                   $ {calculateTotal().toFixed(2)}
                 </p>
@@ -340,7 +340,7 @@ const Cart = () => {
                   handleCheckout();
                 }}
               >
-                Check Out
+                Thanh toán
               </button>
             </div>
           </div>

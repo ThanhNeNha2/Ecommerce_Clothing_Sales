@@ -29,16 +29,16 @@ const SliceProduct = () => {
       <div className="w-[calc(100%/3)] flex flex-col pr-8 gap-3 items-center justify-center">
         <div>
           <span className="font-poppins font-bold text-[32px] leading-[120%]">
-            50+ Beautiful rooms inspiration
+            50+ Nhãn hàng đã hợp tác
           </span>
           <p>
-            Our designer already made a lot of beautiful prototipe of rooms that
-            inspire you
+            Nhà thiết kế của chúng tôi đã tạo ra rất nhiều nguyên mẫu thời trang
+            đẹp có thể truyền cảm hứng cho bạn.
           </p>
         </div>
         <div className="w-full">
           <button className="px-5 py-2 bg-colorMain font-poppins font-medium text-white">
-            Explore More
+            Xem thêm
           </button>
         </div>
       </div>

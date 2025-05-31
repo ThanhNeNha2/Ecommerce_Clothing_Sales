@@ -375,6 +375,16 @@ export const cancelOrder = async (id) => {
   }
 };
 
+export const completeOrderByPaymentIntent = async (payment_intent) => {
+  try {
+    const response = await instance.put(`orders`, { payment_intent });
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
 // PAYMENT
 
 export const createCodePayment = async ({ payment_intent, price }) => {

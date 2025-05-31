@@ -88,7 +88,7 @@ const ListProduct = () => {
     setPerPage(Number(e.target.value));
   };
 
-  // Handle "Show More" button
+  // Handle "Xem thêm " button
   const handleShowMore = () => {
     setPerPage((prev) => prev + 16);
   };
@@ -114,7 +114,7 @@ const ListProduct = () => {
   return (
     <div>
       <Header />
-      <CoverImg namePage={"Shop"} />
+      <CoverImg namePage={"Sản phẩm"} />
       <div
         className="px-6 sm:px-10 md:px-20 pb-6 mb-10"
         style={{ background: "#F9F1E7" }}
@@ -125,7 +125,7 @@ const ListProduct = () => {
             <div className="flex items-center gap-3">
               <button className="flex items-center gap-2 text-gray-700 hover:text-gray-900">
                 <IoList className="text-xl" />
-                <span className="font-poppins font-medium">Filter</span>
+                <span className="font-poppins font-medium">Bộ lọc</span>
               </button>
               <div className="flex items-center gap-3 text-gray-700">
                 <TbGridDots className="text-xl" />
@@ -134,29 +134,20 @@ const ListProduct = () => {
             </div>
             <hr className="h-8 border-l border-gray-300 mx-4" />
             <span className="font-poppins text-sm text-gray-600">
-              Showing 1-{Math.min(perPage * perPage, products.length)} of{" "}
-              {products.length} results
+              Hiển thị 1–{Math.min(perPage * perPage, products.length)} trên
+              tổng số {products.length} sản phẩm
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <select
-              value={perPage}
-              onChange={handlePerPageChange}
-              className="border border-gray-300 px-3 py-1.5 rounded-md font-poppins font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <option value="16">16 per page</option>
-              <option value="32">32 per page</option>
-              <option value="48">48 per page</option>
-            </select>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
               className="border border-gray-300 px-3 py-1.5 rounded-md font-poppins font-medium text-gray-700 hover:bg-gray-50"
             >
-              <option value="Default">Default</option>
-              <option value="Price: Low to High">Price: Low to High</option>
-              <option value="Price: High to Low">Price: High to Low</option>
-              <option value="Newest">Newest</option>
+              <option value="Default">Mặc định</option>
+              <option value="Price: Low to High">Giá: Thấp đến cao</option>
+              <option value="Price: High to Low">Giá: Cao đến thấp</option>
+              <option value="Newest">Mới nhất</option>
             </select>
           </div>
         </div>
@@ -165,7 +156,7 @@ const ListProduct = () => {
         <div className="mt-6">
           <div className="flex flex-col items-center py-3">
             <span className="font-poppins font-medium text-lg text-gray-800">
-              Find Your Style
+              Tìm kiếm phong cách của bạn
             </span>
           </div>
           <form
@@ -173,53 +164,53 @@ const ListProduct = () => {
             className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6"
           >
             <div className="flex flex-col">
-              <span className="text-sm text-gray-600">Search by Name</span>
+              <span className="text-sm text-gray-600">Tìm theo tên</span>
               <input
                 type="text"
                 name="search"
                 value={filters.search}
                 onChange={handleFilterChange}
-                placeholder="Search products..."
+                placeholder="Tìm sản phẩm..."
                 className="border border-gray-300 py-1.5 px-3 rounded-md text-sm text-gray-700 hover:bg-gray-50"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-600">Category</span>
+              <span className="text-sm text-gray-600">Danh mục</span>
               <select
                 name="category"
                 value={filters.category}
                 onChange={handleFilterChange}
                 className="border border-gray-300 py-1.5 px-3 rounded-md text-sm text-gray-700 hover:bg-gray-50"
               >
-                <option value="">All</option>
-                <option value="Topwear">Topwear</option>
-                <option value="Bottomwear">Bottomwear</option>
-                <option value="OnePiece">OnePiece</option>
-                <option value="Footwear">Footwear</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Underwear">Underwear</option>
-                <option value="Sportswear">Sportswear</option>
-                <option value="Sleepwear">Sleepwear</option>
-                <option value="Swimwear">Swimwear</option>
+                <option value="">Tất cả</option>
+                <option value="Topwear">Áo</option>
+                <option value="Bottomwear">Quần</option>
+                <option value="OnePiece">Đồ liền</option>
+                <option value="Footwear">Giày dép</option>
+                <option value="Accessories">Phụ kiện</option>
+                <option value="Underwear">Đồ lót</option>
+                <option value="Sportswear">Đồ thể thao</option>
+                <option value="Sleepwear">Đồ ngủ</option>
+                <option value="Swimwear">Đồ bơi</option>
               </select>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-600">Gender</span>
+              <span className="text-sm text-gray-600">Giới tính</span>
               <select
                 name="gender"
                 value={filters.gender}
                 onChange={handleFilterChange}
                 className="border border-gray-300 py-1.5 px-3 rounded-md text-sm text-gray-700 hover:bg-gray-50"
               >
-                <option value="">All</option>
-                <option value="Men">Men</option>
-                <option value="Women">Women</option>
-                <option value="Kids">Kids</option>
-                <option value="Unisex">Unisex</option>
+                <option value="">Tất cả</option>
+                <option value="Men">Nam</option>
+                <option value="Women">Nữ</option>
+                <option value="Kids">Trẻ em</option>
+                <option value="Unisex">Phi giới tính</option>
               </select>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-600">Min Price</span>
+              <span className="text-sm text-gray-600">Giá tối thiểu</span>
               <input
                 type="number"
                 name="minPrice"
@@ -230,7 +221,7 @@ const ListProduct = () => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-600">Max Price</span>
+              <span className="text-sm text-gray-600">Giá tối đa</span>
               <input
                 type="number"
                 name="maxPrice"
@@ -248,7 +239,7 @@ const ListProduct = () => {
                   checked={filters.isOnSale}
                   onChange={handleFilterChange}
                 />
-                <span className="text-sm text-gray-600">On Sale</span>
+                <span className="text-sm text-gray-600">Đang giảm giá</span>
               </label>
             </div>
             <div className="flex items-end">
@@ -256,7 +247,7 @@ const ListProduct = () => {
                 type="submit"
                 className="px-6 py-2 bg-[#B88E2F] text-white font-medium rounded-md hover:bg-[#a47926] transition-colors duration-200"
               >
-                Search
+                Tìm kiếm
               </button>
             </div>
           </form>
@@ -277,7 +268,7 @@ const ListProduct = () => {
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
           onClick={handleShowMore}
         >
-          Show More
+          Xem thêm
         </button>
       </div>
       <Quality />

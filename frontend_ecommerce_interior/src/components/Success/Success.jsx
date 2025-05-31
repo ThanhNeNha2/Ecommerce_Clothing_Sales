@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getPaymentByIntent } from "../../services/api";
+import {
+  completeOrderByPaymentIntent,
+  getPaymentByIntent,
+} from "../../services/api";
 
 const Success = () => {
   const [searchParams] = useSearchParams();
@@ -43,9 +46,23 @@ const Success = () => {
     }
   };
 
+  const updateStatusPayment = async (clientSecret) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await completeOrderByPaymentIntent(clientSecret);
+      console.log(" check completeOrderByPaymentIntent", res);
+    } catch (err) {
+      console.error("Error completeOrderByPaymentIntent:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (clientSecret) {
       fetchInfoPayment(clientSecret);
+      updateStatusPayment(clientSecret);
     } else {
       setError("Không tìm thấy thông tin thanh toán");
       setLoading(false);

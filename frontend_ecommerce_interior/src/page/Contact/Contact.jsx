@@ -10,88 +10,91 @@ const Contact = () => {
   return (
     <div>
       <Header />
-      <CoverImg namePage={"Contact"} />
+      <CoverImg namePage={"Liên hệ"} />
       <div className="px-[300px] mb-16">
         <div className="flex flex-col gap-3 justify-center items-center mt-10 text-center">
           <span className="font-poppins font-semibold text-[25px]">
-            Get In Touch With Us
+            Liên Hệ Với Chúng Tôi
           </span>
           <p className="w-[60%] text-gray-400">
-            For More Information About Our Product & Services. Please Feel Free
-            To Drop Us An Email. Our Staff Always Be There To Help You Out. Do
-            Not Hesitate!
+            Để biết thêm thông tin về sản phẩm và dịch vụ của chúng tôi, vui
+            lòng gửi email cho chúng tôi. Nhân viên của chúng tôi luôn sẵn sàng
+            hỗ trợ bạn. Đừng ngần ngại!
           </p>
         </div>
 
         <div className="flex gap-16 mt-10">
           <div className="w-[30%] flex flex-col gap-10">
-            {/* dia diem  */}
+            {/* Địa chỉ */}
             <div className="flex gap-3">
               <div className="text-2xl">
                 <IoLocation />
               </div>
               <div>
                 <span className="font-poppins font-medium text-lg">
-                  Address
+                  Địa chỉ
                 </span>
-                <p>236 5th SE Avenue, New York NY10000, United States</p>
+                <p>236 5th SE Avenue, New York NY10000, Hoa Kỳ</p>
               </div>
             </div>
-            {/* dien thoai  */}
+            {/* Điện thoại */}
             <div className="flex gap-3">
               <div className="text-2xl">
                 <FaPhone />
               </div>
               <div>
-                <span className="font-poppins font-medium text-lg">Phone</span>
-                <p>Mobile: +(84) 546-6789</p>
+                <span className="font-poppins font-medium text-lg">
+                  Điện thoại
+                </span>
+                <p>Di động: +(84) 546-6789</p>
                 <p>Hotline: +(84) 456-6789</p>
               </div>
             </div>
-            {/* dia diem  */}
+            {/* Thời gian làm việc */}
             <div className="flex gap-3">
               <div className="text-2xl">
                 <IoTime />
               </div>
               <div>
                 <span className="font-poppins font-medium text-lg">
-                  Working Time
+                  Thời gian làm việc
                 </span>
-                <p>Monday-Friday: 9:00 - 22:00</p>
-                <p>Saturday-Sunday: 9:00 - 21:00</p>
+                <p>Thứ 2 - Thứ 6: 9:00 - 22:00</p>
+                <p>Thứ 7 - Chủ nhật: 9:00 - 21:00</p>
               </div>
             </div>
           </div>
+
           <div className="flex-1 flex flex-col gap-5 ">
             <div className="flex flex-col gap-2 w-[100%]">
-              <span>Your Name </span>
+              <span>Họ và tên</span>
               <input
                 type="text"
                 name=""
                 id=""
-                className="border border-gray-400 py-[5px] rounded "
+                className="border border-gray-400 py-[5px] rounded"
               />
             </div>
             <div className="flex flex-col gap-2 w-[100%]">
-              <span>Email Address </span>
+              <span>Địa chỉ Email</span>
               <input
                 type="text"
                 name=""
                 id=""
-                className="border border-gray-400 py-[5px] rounded "
+                className="border border-gray-400 py-[5px] rounded"
               />
-            </div>{" "}
+            </div>
             <div className="flex flex-col gap-2 w-[100%]">
-              <span>Subject </span>
+              <span>Tiêu đề</span>
               <input
                 type="text"
                 name=""
                 id=""
-                className="border border-gray-400 py-[5px] rounded "
+                className="border border-gray-400 py-[5px] rounded"
               />
-            </div>{" "}
+            </div>
             <div className="flex flex-col gap-2 w-[100%]">
-              <span>Message</span>
+              <span>Nội dung</span>
               <textarea
                 className="border border-gray-400 py-2 px-3 rounded resize-none"
                 rows="4"
@@ -100,12 +103,13 @@ const Contact = () => {
             </div>
             <div className="">
               <button className="px-10 py-[7px] bg-colorMain text-white rounded">
-                Submit
+                Gửi
               </button>
             </div>
           </div>
         </div>
       </div>
+
       <Quality />
       <Footer />
     </div>

@@ -7,10 +7,11 @@ const ItemType = ({ img1, img2, img3, img4 }) => {
       {/* Header Section */}
       <div className="flex flex-col items-center text-center max-w-2xl">
         <h2 className="font-poppins font-bold text-4xl sm:text-5xl 2xl:text-4xl text-gray-900">
-          Browse the Range
+          Trang phục theo đối tượng
         </h2>
         <p className="font-poppins font-normal text-lg sm:text-xl 2xl:text-lg mt-3 text-gray-600">
-          Explore our curated collection of premium clothing for all ages.
+          Khám phá bộ sưu tập quần áo cao cấp được tuyển chọn của chúng tôi dành
+          cho mọi lứa tuổi.
         </p>
       </div>
 

@@ -109,7 +109,16 @@ const Products = ({ listProducts }) => {
                 </del>
               </div>
               <span className="font-semibold">
-                For: {product.gender || "N/A"}
+                Dành cho:{" "}
+                {product.gender === "Men"
+                  ? "Nam"
+                  : product.gender === "Women"
+                  ? "Nữ"
+                  : product.gender === "Unisex"
+                  ? "Nam , Nữ"
+                  : product.gender === "Kids"
+                  ? "Trẻ em"
+                  : "N/A"}
               </span>
             </div>
           </div>
@@ -118,7 +127,7 @@ const Products = ({ listProducts }) => {
           <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center gap-6 opacity-0 group-hover:!opacity-100 transition-opacity duration-300 z-[5]">
             <div className="flex gap-3">
               <button
-                className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
+                className="bg-white py-2 px-4  text-sm font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
                 aria-label="Thêm vào giỏ hàng"
                 onClick={() => {
                   let selectedSizeId = "";
@@ -138,14 +147,14 @@ const Products = ({ listProducts }) => {
                   }
                 }}
               >
-                Add to Cart
+                Thêm giỏ hàng
               </button>
               <Link to={`/SingleProduct/${product.id}`}>
                 <button
-                  className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
+                  className="bg-white py-2 px-4 font-poppins   text-sm font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
                   aria-label={`Xem chi tiết ${product.nameProduct}`}
                 >
-                  Show Detail
+                  Xem chi tiết
                 </button>
               </Link>
             </div>

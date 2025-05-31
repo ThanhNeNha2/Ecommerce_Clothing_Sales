@@ -94,7 +94,7 @@ const Blog = () => {
                       to={`/DetailBlog/${item.id}`}
                       className="relative inline-block font-medium cursor-pointer after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-black hover:text-blue-400"
                     >
-                      Read more
+                      Chi tiết
                     </Link>
                   </div>
                 </div>
@@ -105,12 +105,12 @@ const Blog = () => {
           )}
           <div className="flex justify-center">
             <ReactPaginate
-              nextLabel="next"
+              nextLabel="Sau"
               onPageChange={handlePageClick}
               pageRangeDisplayed={3}
               marginPagesDisplayed={2}
               pageCount={pageCount}
-              previousLabel="previous"
+              previousLabel="Trước"
               pageClassName="page-item"
               pageLinkClassName="page-link"
               previousClassName="page-item"

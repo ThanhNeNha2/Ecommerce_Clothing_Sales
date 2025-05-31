@@ -83,7 +83,7 @@ const SingleProduct = () => {
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
           onClick={() => setaddProduct(addProduct + 4)}
         >
-          Show More
+          Xem thêm 
         </button>
       </div> */}
       <Footer />

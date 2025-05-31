@@ -52,6 +52,7 @@ const Order = () => {
     });
   };
 
+  // màu sắc cho trạng thái đơn hàng status
   const getStatusBadge = (status) => {
     const statusColors = {
       pending: "bg-yellow-100 text-yellow-800",
@@ -59,8 +60,8 @@ const Order = () => {
       shipped: "bg-purple-100 text-purple-800",
       delivered: "bg-green-100 text-green-800",
       cancelled: "bg-red-100 text-red-800",
+      completed: "bg-emerald-100 text-emerald-800",
     };
-
     return (
       <span
         className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -72,10 +73,11 @@ const Order = () => {
     );
   };
 
+  // màu sắc cho thanh toán
   const getPaymentStatusBadge = (status) => {
     const statusColors = {
       pending: "bg-orange-100 text-orange-800",
-      paid: "bg-green-100 text-green-800",
+      completed: "bg-green-100 text-green-800",
       failed: "bg-red-100 text-red-800",
     };
 

@@ -80,10 +80,10 @@ const ProfileUser = () => {
   };
 
   const fieldLabels = {
-    username: "Username",
-    email: "Email Address",
-    phone: "Phone Number",
-    address: "Address",
+    username: "Tên người dùng",
+    email: "Email ",
+    phone: "Số điện thoại ",
+    address: "Địa chỉ",
   };
 
   return (
@@ -94,10 +94,10 @@ const ProfileUser = () => {
         <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-12">
             <h1 className="text-4xl font-bold text-white text-center">
-              My Profile
+              Thông tin cá nhân
             </h1>
             <p className="text-blue-100 text-center mt-2">
-              Manage your personal information
+              Quản lý thông tin cá nhân của bạn
             </p>
           </div>
 
@@ -189,7 +189,7 @@ const ProfileUser = () => {
                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                       />
                     </svg>
-                    Edit Profile
+                    Chỉnh sửa thông tin
                   </button>
                 ) : (
                   <div className="flex gap-3">
@@ -200,7 +200,7 @@ const ProfileUser = () => {
                         setPreviewImage("");
                       }}
                     >
-                      Cancel
+                      Hủy
                     </button>
                     <button
                       className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-105"
@@ -209,7 +209,7 @@ const ProfileUser = () => {
                         setCheckUpdate(false);
                       }}
                     >
-                      Save Changes
+                      Lưu thay đổi
                     </button>
                   </div>
                 )}
@@ -235,7 +235,7 @@ const ProfileUser = () => {
                             : "bg-white border-gray-300 text-gray-800 hover:border-blue-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                         }`}
                         onChange={(e) => handleChangeUpdate(e, field)}
-                        placeholder={`Enter your ${fieldLabels[
+                        placeholder={`Vui lòng nhập ${fieldLabels[
                           field
                         ].toLowerCase()}`}
                       />
@@ -262,7 +262,7 @@ const ProfileUser = () => {
 
                 <div className="group">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Gender
+                    Giới tính
                   </label>
                   <div className="relative">
                     <select
@@ -275,9 +275,9 @@ const ProfileUser = () => {
                       }`}
                       onChange={(e) => handleChangeUpdate(e, "sex")}
                     >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
+                      <option value="Male">Nam </option>
+                      <option value="Female">Nữ </option>
+                      <option value="Other">Khác</option>
                     </select>
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       <svg
@@ -319,9 +319,9 @@ const ProfileUser = () => {
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-gray-900">
-                        Account Status
+                        Trạng thái tài khoản
                       </p>
-                      <p className="text-sm text-gray-600">Active</p>
+                      <p className="text-sm text-gray-600">Hoạt động</p>
                     </div>
                   </div>
                 </div>
@@ -345,9 +345,9 @@ const ProfileUser = () => {
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-gray-900">
-                        Security
+                        Bảo vệ
                       </p>
-                      <p className="text-sm text-gray-600">Protected</p>
+                      <p className="text-sm text-gray-600">Được bảo vệ </p>
                     </div>
                   </div>
                 </div>
