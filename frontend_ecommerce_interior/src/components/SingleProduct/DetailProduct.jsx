@@ -1,43 +1,96 @@
 import React, { useEffect, useState } from "react";
-import { IoStar, IoStarHalf } from "react-icons/io5";
+import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5";
 import SlideImgSingleProduct from "../SingleProduct_IMG/SlideImgSingleProduct";
 import DescriptionAndReviews from "../DescriptionAndReviews/DescriptionAndReviews";
 import { useParams } from "react-router-dom";
 import {
   addProductToCart,
   addProductToWishlist,
+  getAllReview,
   getProductById,
 } from "../../services/api";
 import { notification } from "antd";
+import { useMutation, useQueryClient } from "react-query";
+
+import {
+  mainCategoryTranslate,
+  subCategoryTranslate,
+} from "../../constants/categoryTranslate";
 
 const DetailProduct = () => {
   const { id } = useParams();
-  console.log("id", id);
-
   const [singleItem, setSingleItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const queryClient = useQueryClient();
+  const [SizeId, setSizeId] = useState("");
+
   const [valueAddCart, setValueAddCart] = useState(1);
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const fetchReviews = async () => {
+    const response = await getAllReview(id);
+    if (response.status === 200) {
+      setReviews(response.data.reviews);
+    }
+  };
+
+  const addWishlistMutation = useMutation({
+    mutationFn: ({ user_id, product_id }) =>
+      addProductToWishlist(user_id, product_id),
+    onSuccess: (res, variables) => {
+      const { user_id } = variables;
+      if (res.status === 201) {
+        notification.success({
+          message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+        });
+        queryClient.invalidateQueries(["wishlist", user_id]);
+      } else if (res.status === 409) {
+        notification.success({
+          message: "Sản phẩm đã có trong danh sách yêu thích",
+        });
+      }
+    },
+    onError: (error) => {
+      notification.error({
+        message: "Thêm vào danh sách yêu thích thất bại",
+        description: error.response?.data?.message || "Đã xảy ra lỗi.",
+      });
+    },
+  });
+
+  // Kiểm tra và tính toán điểm đánh giá trung bình chỉ khi có đánh giá
+  let averageRating = 0;
+  let fullStars = 0;
+  let hasHalfStar = false;
+  let emptyStars = 5;
+
+  if (reviews && reviews.length > 0) {
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    averageRating = totalRating / reviews.length;
+    fullStars = Math.floor(averageRating);
+    hasHalfStar = averageRating - fullStars >= 0.5;
+    emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  }
 
   const fetchSingleProduct = async () => {
     try {
       setLoading(true);
       const res = await getProductById(id);
-
       setSingleItem(res.data.product || null);
+      localStorage.setItem(
+        "mainCategory",
+        JSON.stringify(res.data.product.mainCategory)
+      );
+
       if (res.data.product?.sizes?.length > 0) {
-        const sizeMap = { 0: "S", 1: "M", 2: "L" };
-        const sizeData = res.data.product.sizes.map((size, index) => {
-          const sizeName =
-            sizeMap[index] ||
-            (typeof size.size_id === "object"
-              ? size.size_id.name
-              : size.size_id);
+        setSizeId(res.data.product?.sizes?.[0]?.size_id._id);
+        const sizeData = res.data.product.sizes.map((size) => {
           return {
-            name: sizeName || "N/A",
+            name: size.size_id?.name || "N/A",
             stock: size.stock,
           };
         });
@@ -53,6 +106,7 @@ const DetailProduct = () => {
 
   useEffect(() => {
     fetchSingleProduct();
+    fetchReviews();
   }, [id]);
 
   if (loading) return <div className="px-[130px] py-5">Đang tải...</div>;
@@ -61,23 +115,19 @@ const DetailProduct = () => {
     return <div className="px-[130px] py-5">Không tìm thấy sản phẩm</div>;
 
   const sizeData =
-    singleItem.sizes?.map((size, index) => {
-      const sizeMap = { 0: "S", 1: "M", 2: "L" };
-      const sizeName =
-        sizeMap[index] ||
-        (typeof size.size_id === "object" ? size.size_id.name : size.size_id);
+    singleItem.sizes?.map((size) => {
       return {
-        name: sizeName || "N/A",
+        id: size.size_id?._id || "N/A",
+        name: size.size_id?.name || "N/A",
         stock: size.stock,
       };
     }) || [];
-
   const selectedStock =
     sizeData.find((size) => size.name === selectedSize)?.stock || 0;
 
   const handleAddCart = async (user_id, product_id) => {
     try {
-      const res = await addProductToCart(user_id, product_id);
+      const res = await addProductToCart(user_id, product_id, SizeId);
       if (res.status === 201) {
         notification.success({
           message: "Thêm sản phẩm vào giỏ hàng thành công",
@@ -88,21 +138,9 @@ const DetailProduct = () => {
     }
   };
 
-  const handleAddWishlist = async (user_id, product_id) => {
-    const res = await addProductToWishlist(user_id, product_id);
-
-    if (res.status === 201) {
-      notification.success({
-        message: "Thêm sản phẩm vào danh sách yêu thích thành công",
-      });
-    }
-    if (res.status === 409) {
-      notification.success({
-        message: "Sản phẩm đã có trong danh sách yêu thích",
-      });
-    }
+  const handleAddWishlist = (user_id, product_id) => {
+    addWishlistMutation.mutate({ user_id, product_id });
   };
-
   return (
     <div className="">
       <div className="flex mt-[30px] px-[130px] flex-wrap gap-5">
@@ -157,34 +195,70 @@ const DetailProduct = () => {
             </del>
           </p>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 text-yellow-500">
-              <IoStar />
-              <IoStar />
-              <IoStar />
-              <IoStar />
-              <IoStarHalf />
-            </div>
+            {reviews.length > 0 ? (
+              <div className="flex items-center gap-2">
+                <div className="flex text-yellow-500">
+                  {[...Array(fullStars)].map((_, i) => (
+                    <IoStar key={`full-${i}`} />
+                  ))}
+                  {hasHalfStar && <IoStarHalf />}
+                  {[...Array(emptyStars)].map((_, i) => (
+                    <IoStarOutline key={`empty-${i}`} />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600">
+                  ({averageRating.toFixed(1)} / 5)
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <div className="flex text-yellow-500">
+                  {[...Array(5)].map((_, i) => (
+                    <IoStarOutline key={`empty-${i}`} />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600">(0 / 5)</span>
+              </div>
+            )}
             <div className="border border-gray-300 h-[20px]"></div>
-            <span className="text-[14px] text-gray-400">5 Customer Review</span>
+            <span className="text-[14px] text-gray-400">
+              {reviews.length} Đánh giá của khách hàng
+            </span>
           </div>
           <span>{singleItem.descriptionShort || "Không có mô tả"}</span>
           <ul className="flex flex-col justify-center gap-3">
             <li className="flex">
-              <span className="w-[15%]">Gender</span>
-              <p>: {singleItem.gender || "N/A"}</p>
-            </li>
-            <li className="flex">
-              <span className="w-[15%]">Category</span>
-              <p className="ml-2">: {singleItem.mainCategory || "N/A"}</p>
-            </li>
-            <li className="flex">
-              <span className="w-[15%]">Tags</span>
-              <p className="ml-2">
-                : {singleItem.subCategory?.join(", ") || "N/A"}
+              <span className="w-[15%]">Giới tính </span>
+              <p>
+                :{" "}
+                {singleItem.gender === "Men"
+                  ? "Nam"
+                  : singleItem.gender === "Women"
+                  ? "Nữ"
+                  : singleItem.gender === "Unisex"
+                  ? "Cả nam và nữ"
+                  : singleItem.gender === "Kids"
+                  ? "Trẻ em"
+                  : "N/A"}
               </p>
             </li>
             <li className="flex">
-              <span className="w-[15%]">Stock</span>
+              <span className="w-[15%]">Loại </span>
+              <p className="ml-2">
+                : {mainCategoryTranslate[singleItem.mainCategory] || "N/A"}
+              </p>
+            </li>
+            <li className="flex">
+              <span className="w-[15%]">Thẻ sản phẩm</span>
+              <p className="ml-2">
+                :{" "}
+                {singleItem.subCategory
+                  ?.map((item) => subCategoryTranslate[item] || item)
+                  .join(", ") || "N/A"}
+              </p>
+            </li>
+            <li className="flex">
+              <span className="w-[15%]">Số lượng</span>
               <p className="ml-2">
                 : {selectedStock} (Size {selectedSize})
               </p>
@@ -205,7 +279,9 @@ const DetailProduct = () => {
                     style={{
                       background: selectedSize === size.name ? "" : "#F9F1E7",
                     }}
-                    onClick={() => setSelectedSize(size.name)}
+                    onClick={() => {
+                      setSelectedSize(size.name), setSizeId(size.id);
+                    }}
                     aria-label={`Select size ${size.name}`}
                   >
                     {typeof size.name === "string" ? size.name : "N/A"}
@@ -245,12 +321,15 @@ const DetailProduct = () => {
               </button>
             </div>
             <button
-              className="px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80"
+              className={`px-3 py-[5px] text-black rounded text-[14px] hover:opacity-80 ${
+                selectedStock < 0 ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
               style={{ background: "#FFCC99" }}
               onClick={() => {
                 handleAddCart(user._id, singleItem._id);
               }}
               aria-label="Add to cart"
+              disabled={selectedStock < 0 ? true : false}
             >
               Add To Cart
             </button>
@@ -266,7 +345,10 @@ const DetailProduct = () => {
         </div>
       </div>
       <hr className="my-7" />
-      <DescriptionAndReviews description={singleItem.description} />
+      <DescriptionAndReviews
+        description={singleItem.description}
+        quantityReview={reviews.length}
+      />
     </div>
   );
 };

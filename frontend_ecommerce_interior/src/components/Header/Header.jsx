@@ -4,9 +4,10 @@ import { FaRegHeart, FaUserAlt, FaUserEdit } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { TbLogin, TbLogout } from "react-icons/tb";
+import { TbLogin, TbLogout, TbRosetteDiscountFilled } from "react-icons/tb";
 import { MdAssignmentInd } from "react-icons/md";
 import ProductFavourite from "../ProductFavourite/ProductFavourite";
+import { RiShoppingBagFill } from "react-icons/ri";
 
 const Header = () => {
   const [checkShow, setCheckShow] = useState({
@@ -61,17 +62,23 @@ const Header = () => {
         <div>
           <ul className="flex items-center gap-[75px] 2xl:gap-[60px]">
             <Link to={"/"}>
-              <li className="text-lg font-medium hover:text-gray-400">Home</li>
+              <li className="text-lg font-medium hover:text-gray-400">
+                Trang chủ
+              </li>
             </Link>
             <Link to={"/ListProduct"}>
-              <li className="text-lg font-medium hover:text-gray-400">Shop</li>
+              <li className="text-lg font-medium hover:text-gray-400">
+                Sản phẩm
+              </li>
             </Link>
             <Link to={"/blog"}>
-              <li className="text-lg font-medium hover:text-gray-400">Blog</li>
+              <li className="text-lg font-medium hover:text-gray-400">
+                Bài viết
+              </li>
             </Link>
             <Link to={"/Contact"}>
               <li className="text-lg font-medium hover:text-gray-400">
-                Contact
+                Liên hệ
               </li>
             </Link>
           </ul>
@@ -94,27 +101,37 @@ const Header = () => {
                     <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
                       {isAuthenticated() ? (
                         <>
-                          Profile <FaUserEdit />
+                          Thông tin cá nhân <FaUserEdit />
                         </>
                       ) : (
                         <>
-                          Login <TbLogin />
+                          Đăng nhập <TbLogin />
                         </>
                       )}
                     </button>
                   </Link>
                   {/* Cụm 2 */}
                   {isAuthenticated() ? (
+                    <Link to="/order">
+                      <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
+                        Đơn hàng <RiShoppingBagFill />
+                      </button>
+                    </Link>
+                  ) : (
+                    <></>
+                  )}
+                  {/* Cụm 3 */}
+                  {isAuthenticated() ? (
                     <button
                       className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins"
                       onClick={handleLogout}
                     >
-                      Logout <TbLogout />
+                      Đăng xuất <TbLogout />
                     </button>
                   ) : (
                     <Link to="/register">
                       <button className="w-full py-2 flex justify-center items-center gap-2 hover:bg-red-300 font-medium font-poppins">
-                        Register <MdAssignmentInd />
+                        Đăng ký <MdAssignmentInd />
                       </button>
                     </Link>
                   )}
@@ -124,6 +141,11 @@ const Header = () => {
             <Link to={"/ListProduct"}>
               <li className="text-[25px] 2xl:text-[18px] hover:text-gray-400">
                 <IoSearch />
+              </li>
+            </Link>
+            <Link to={"/listPromotion"}>
+              <li className="text-[25px] 2xl:text-[20px] hover:text-gray-400">
+                <TbRosetteDiscountFilled />
               </li>
             </Link>
             {/* Yêu Thích */}

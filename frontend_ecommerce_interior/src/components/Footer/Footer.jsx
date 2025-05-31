@@ -2,8 +2,8 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className=" border-t border-gray-200">
-      <div className="py-10 mx-[150px] flex gap-20 border-b border-gray-200 ">
+    <div className="border-t border-gray-200">
+      <div className="py-10 mx-[150px] flex gap-20 border-b border-gray-200">
         <div className="flex flex-col gap-10">
           <h1 className="font-poppins font-bold text-[20px]">TRENDORY.</h1>
           <span className="text-[16px]  text-gray-400">
@@ -13,44 +13,48 @@ const Footer = () => {
         <div>
           <ul className="flex flex-col gap-10">
             <li className="font-poppins font-medium text-[16px] text-gray-400">
-              Links
+              Liên kết
             </li>
-            <li className="font-poppins font-medium text-[16px]">Home</li>
-            <li className="font-poppins font-medium text-[16px]">Shop</li>
-            <li className="font-poppins font-medium text-[16px]">About</li>
-            <li className="font-poppins font-medium text-[16px]">Contact</li>
+            <li className="font-poppins font-medium text-[16px]">Trang chủ</li>
+            <li className="font-poppins font-medium text-[16px]">Cửa hàng</li>
+            <li className="font-poppins font-medium text-[16px]">Giới thiệu</li>
+            <li className="font-poppins font-medium text-[16px]">Liên hệ</li>
           </ul>
         </div>
         <div>
           <ul className="flex flex-col gap-10">
             <li className="font-poppins font-medium text-[16px] text-gray-400">
-              Help
+              Hỗ trợ
             </li>
             <li className="font-poppins font-medium text-[16px]">
-              Payment Options
+              Phương thức thanh toán
             </li>
-            <li className="font-poppins font-medium text-[16px]">Returns</li>
             <li className="font-poppins font-medium text-[16px]">
-              Privacy Policies
+              Chính sách đổi trả
+            </li>
+            <li className="font-poppins font-medium text-[16px]">
+              Chính sách bảo mật
             </li>
           </ul>
         </div>
         <div className="flex flex-col gap-10">
           <span className="font-poppins font-medium text-[16px] text-gray-400">
-            Newsletter
+            Nhận tin
           </span>
-          <div className="flex  ">
-            <input type="text" className="py-1 px-2 ring-1 ring-gray-300  " />
+          <div className="flex">
+            <input
+              type="text"
+              className="py-1 px-2 ring-1 ring-gray-300"
+              placeholder="Nhập email của bạn"
+            />
             <button className="py-1 px-2 text-sm font-medium bg-gray-300 ring-1 ring-gray-300">
-              SUBSCRIBE
+              ĐĂNG KÝ
             </button>
           </div>
         </div>
       </div>
       <div className="mx-[150px] py-5">
-        <span className="text-[16px]   ">
-          2025 trendory. All rights reverved
-        </span>
+        <span className="text-[16px]">2025 trendory. Đã đăng ký bản quyền</span>
       </div>
     </div>
   );

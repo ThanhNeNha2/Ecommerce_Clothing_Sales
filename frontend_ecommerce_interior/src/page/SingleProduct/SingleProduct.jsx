@@ -10,21 +10,29 @@ import { instance } from "../../Custom/Axios/AxiosCustom";
 const SingleProduct = () => {
   const { id } = useParams();
   const [addProduct, setaddProduct] = useState(8);
-
   const [listProducts, setListProducts] = useState([]);
+  const [nameProduct, setNameProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const mainCategory = JSON.parse(localStorage.getItem("mainCategory"));
 
   const getAllProduct = async () => {
     try {
       setLoading(true);
       // const res = await instance.get(`/product?limit=${8}`);
       const res = await instance.get(
-        `/product?limit=${8}&mainCategory=${"Swimwear"}`
+        `/product?limit=${8}&mainCategory=${mainCategory}`
       );
+      const oneProduct = (res.data.products || []).filter(
+        (product) => product.id === id
+      );
+      setNameProduct(oneProduct);
 
       // console.log("check thong tin res ", res.data.products);
-      setListProducts(res.data.products || []);
+      const filteredProducts = (res.data.products || []).filter(
+        (product) => product.id !== id
+      );
+      setListProducts(filteredProducts);
     } catch (err) {
       console.error("Lỗi khi lấy sản phẩm:", err);
       setError("Không thể tải sản phẩm. Vui lòng thử lại sau.");
@@ -55,21 +63,21 @@ const SingleProduct = () => {
         }}
       >
         <div className="flex items-center">
-          <span>Home</span> <MdKeyboardArrowRight />
+          <span>Trang chủ</span> <MdKeyboardArrowRight />
         </div>
 
         <div className="flex items-center">
-          <span>Shop</span> <MdKeyboardArrowRight />
+          <span>Sản phẩm</span> <MdKeyboardArrowRight />
         </div>
         <div>
-          <span className="font-medium">Asgaard sofa</span>
+          <span className="font-medium"> {nameProduct[0].nameProduct}</span>
         </div>
       </div>
       <DetailProduct />
       <hr className="my-7" />
       <div>
         <span className="font-poppins text-[28px] font-bold flex justify-center mt-16 mb-8">
-          Related Products
+          Gợi ý sản phẩm
         </span>
       </div>
       <Products listProducts={listProducts} />
@@ -79,7 +87,7 @@ const SingleProduct = () => {
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
           onClick={() => setaddProduct(addProduct + 4)}
         >
-          Show More
+          Xem thêm 
         </button>
       </div> */}
       <Footer />

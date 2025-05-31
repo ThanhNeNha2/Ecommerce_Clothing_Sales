@@ -1,4 +1,5 @@
 import { instance } from "../Custom/Axios/AxiosCustom";
+const user = JSON.parse(localStorage.getItem("user"));
 
 export const getAllUser = async () => {
   try {
@@ -124,6 +125,7 @@ export const getAllWishlist = async (id) => {
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };
+
 export const addProductToWishlist = async (userId, productId) => {
   try {
     const res = await instance.post(`wishlist`, {
@@ -192,15 +194,220 @@ export const updateQuantityCart = async (id, quantity) => {
   }
 };
 
-export const addProductToCart = async (userId, productId) => {
+export const addProductToCart = async (userId, productId, size_id) => {
   try {
     const res = await instance.post(`cart`, {
       user_id: userId,
       product_id: productId,
+      size_id: size_id,
     });
     return res;
   } catch (error) {
     console.error("Error in addProductToCart:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+// PROMOTION
+export const getPromotionByCode = async (code) => {
+  try {
+    const res = await instance.get(
+      `promotionsSearch?code=${encodeURIComponent(code)}`
+    );
+    return {
+      status: res.status,
+      ...res.data,
+    };
+  } catch (error) {
+    if (error.response) {
+      // Lỗi từ server trả về: vẫn trả về dữ liệu để xử lý
+      return {
+        status: error.response.status,
+        ...error.response.data,
+      };
+    }
+    // Lỗi không có response (network, server die,...)
+    console.error("Lỗi không có response:", error);
+    return {
+      status: 500,
+      message: "Lỗi không xác định",
+      idCode: 99,
+    };
+  }
+};
+
+export const getAllPromotion = async () => {
+  try {
+    const response = await instance.get(`promotions`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+//  REVIEW
+
+export const getAllReview = async (productId) => {
+  try {
+    const res = await instance.get(`reviews/product/${productId}`);
+    return res;
+  } catch (error) {
+    console.error("Error in getAllReview:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const getReviewById = async (productId, user_id) => {
+  try {
+    const res = await instance.post(`reviews/${productId}`, { user_id });
+    return res;
+  } catch (error) {
+    console.error("Error in getReviewById:", error);
+    throw error;
+  }
+};
+
+export const addReview = async (userId, productId, comment, rating) => {
+  try {
+    const res = await instance.post(`reviews`, {
+      user_id: userId,
+      product_id: productId,
+      rating,
+      comment,
+    });
+    return {
+      status: res.status,
+      ...res.data,
+    };
+  } catch (error) {
+    return {
+      status: error.response.status,
+      ...error.response.data,
+    };
+  }
+};
+
+export const updateReview = async (idReview, user_id, rating, comment) => {
+  try {
+    const res = await instance.put(`reviews/${idReview}`, {
+      user_id: user_id,
+      rating,
+      comment,
+    });
+    return res;
+  } catch (error) {
+    console.error("Error in addReview:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const deleteReview = async (idReview, user_id) => {
+  try {
+    const res = await instance.delete(`reviews/${idReview}`, {
+      data: { user_id },
+    });
+    return res;
+  } catch (error) {
+    console.error("Error in deleteReview:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+// ORDER
+
+export const getAllOder = async () => {
+  try {
+    const response = await instance.get(`orders?user_id=${user._id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
+export const createOrder = async (info) => {
+  try {
+    const response = await instance.post(`orders`, {
+      user_id: user._id,
+      ...info,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
+export const cancelOrder = async (id) => {
+  try {
+    const response = await instance.post(`orders/${id}/cancel`);
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
+export const completeOrderByPaymentIntent = async (payment_intent) => {
+  try {
+    const response = await instance.put(`orders`, { payment_intent });
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
+// PAYMENT
+
+export const createCodePayment = async ({ payment_intent, price }) => {
+  try {
+    const response = await instance.post(`payments`, {
+      payment_intent,
+      price,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
+export const getPaymentByIntent = async (payment_intent) => {
+  try {
+    // const response = await instance.get(`payment/pi_3RSjiz1QGnpllpL60E94Eqfp`);
+    const response = await instance.get(`payment/${payment_intent}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
+    throw error;
+  }
+};
+
+// chat
+
+export const getAllProductChatbot = async (queryParams) => {
+  try {
+    const response = await instance.get(
+      `product/chatbot?${queryParams}&page=1&limit=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbot:", error);
+    throw error; // để có thể bắt được lỗi ở useEffect
+  }
+};
+
+export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
+  try {
+    const response = await instance.get(
+      `product/chatbot?${queryParams}&page=${currentPage}&limit=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllProductChatbotSeeMore:", error);
     throw error; // để có thể bắt được lỗi ở useEffect
   }
 };

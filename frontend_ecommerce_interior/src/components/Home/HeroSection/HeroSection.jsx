@@ -17,11 +17,12 @@ const HeroSection = ({ imgslide }) => {
             className="font-poppins text-4xl sm:text-5xl 2xl:text-4xl leading-tight font-bold"
             style={{ color: "#B88E2F" }}
           >
-            Explore Our New Clothing Collection
+            Khám phá Bộ sưu tập quần áo mới của chúng tôi
           </h1>
           <p className="font-poppins font-medium text-base sm:text-lg 2xl:text-base leading-6 text-gray-700">
-            Discover the latest trends with our exclusive range of stylish
-            outfits for men, women, and kids. Elevate your wardrobe today!
+            Khám phá những xu hướng mới nhất với bộ sưu tập trang phục thời
+            trang độc quyền dành cho nam, nữ và trẻ em. Nâng tầm tủ đồ của bạn
+            ngay hôm nay!
           </p>
         </div>
         <div>
@@ -29,7 +30,7 @@ const HeroSection = ({ imgslide }) => {
             className="font-poppins font-bold text-base py-3 px-8 sm:py-4 sm:px-10 rounded-md transition-colors duration-200 hover:bg-[#a47926]"
             style={{ background: "#B88E2F", color: "#ffffff" }}
           >
-            Shop Now
+            Mua ngay
           </button>
         </div>
       </div>

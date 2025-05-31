@@ -4,27 +4,44 @@ import { RiArrowLeftRightLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { addProductToCart, addProductToWishlist } from "../../services/api";
 import { notification } from "antd";
+import { useMutation, useQueryClient } from "react-query";
+import { subCategoryTranslate } from "../../constants/categoryTranslate";
 
 const Products = ({ listProducts }) => {
   const user = JSON.parse(localStorage.getItem("user"));
-  const handleAddWishlist = async (user_id, product_id) => {
-    const res = await addProductToWishlist(user_id, product_id);
+  const queryClient = useQueryClient();
+  const addWishlistMutation = useMutation({
+    mutationFn: ({ user_id, product_id }) =>
+      addProductToWishlist(user_id, product_id),
 
-    if (res.status === 201) {
-      notification.success({
-        message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+    onSuccess: (res, variables) => {
+      if (res.status === 201) {
+        notification.success({
+          message: "Thêm sản phẩm vào danh sách yêu thích thành công",
+        });
+        queryClient.invalidateQueries(["wishlist", variables.user_id]);
+      } else if (res.status === 409) {
+        notification.success({
+          message: "Sản phẩm đã có trong danh sách yêu thích",
+        });
+      }
+    },
+
+    onError: (error) => {
+      notification.error({
+        message: "Lỗi khi thêm vào danh sách yêu thích",
+        description: error?.response?.data?.message || "Đã xảy ra lỗi.",
       });
-    }
-    if (res.status === 409) {
-      notification.success({
-        message: "Sản phẩm đã có trong danh sách yêu thích",
-      });
-    }
+    },
+  });
+
+  const handleAddWishlist = (user_id, product_id) => {
+    addWishlistMutation.mutate({ user_id, product_id });
   };
 
-  const handleAddCart = async (user_id, product_id) => {
+  const handleAddCart = async (user_id, product_id, size_id) => {
     try {
-      const res = await addProductToCart(user_id, product_id);
+      const res = await addProductToCart(user_id, product_id, size_id);
       if (res.status === 201) {
         notification.success({
           message: "Thêm sản phẩm vào giỏ hàng thành công",
@@ -76,9 +93,9 @@ const Products = ({ listProducts }) => {
                 {product.subCategory.map((item, index) => (
                   <span
                     key={index}
-                    className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-sm"
+                    className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-sm mr-1"
                   >
-                    {item}
+                    {subCategoryTranslate[item] || item}
                   </span>
                 ))}
               </div>
@@ -93,7 +110,16 @@ const Products = ({ listProducts }) => {
                 </del>
               </div>
               <span className="font-semibold">
-                For: {product.gender || "N/A"}
+                Dành cho:{" "}
+                {product.gender === "Men"
+                  ? "Nam"
+                  : product.gender === "Women"
+                  ? "Nữ"
+                  : product.gender === "Unisex"
+                  ? "Nam , Nữ"
+                  : product.gender === "Kids"
+                  ? "Trẻ em"
+                  : "N/A"}
               </span>
             </div>
           </div>
@@ -102,18 +128,34 @@ const Products = ({ listProducts }) => {
           <div className="absolute inset-0 bg-black/50 rounded-lg flex flex-col justify-center items-center gap-6 opacity-0 group-hover:!opacity-100 transition-opacity duration-300 z-[5]">
             <div className="flex gap-3">
               <button
-                className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
+                className="bg-white py-2 px-4  text-sm font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
                 aria-label="Thêm vào giỏ hàng"
-                onClick={() => handleAddCart(user._id, product.id)}
+                onClick={() => {
+                  let selectedSizeId = "";
+
+                  if (product.sizes[0].stock > 0) {
+                    selectedSizeId = product.sizes[0].size_id._id;
+                  } else if (product.sizes[1] && product.sizes[1].stock > 0) {
+                    selectedSizeId = product.sizes[1].size_id._id;
+                  }
+
+                  if (selectedSizeId) {
+                    handleAddCart(user._id, product.id, selectedSizeId);
+                  } else {
+                    notification.warning(
+                      "Sản phẩm này đã hết hàng ở tất cả các size !"
+                    );
+                  }
+                }}
               >
-                Add to Cart
+                Thêm giỏ hàng
               </button>
               <Link to={`/SingleProduct/${product.id}`}>
                 <button
-                  className="bg-white py-2 px-4 font-poppins font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
+                  className="bg-white py-2 px-4 font-poppins   text-sm font-medium rounded-lg hover:bg-gray-200 text-yellow-600"
                   aria-label={`Xem chi tiết ${product.nameProduct}`}
                 >
-                  Show Detail
+                  Xem chi tiết
                 </button>
               </Link>
             </div>

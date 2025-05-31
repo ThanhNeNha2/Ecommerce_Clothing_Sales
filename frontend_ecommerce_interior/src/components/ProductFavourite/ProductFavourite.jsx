@@ -62,7 +62,7 @@ const ProductFavourite = () => {
       <div>
         <div className="flex items-center justify-between mb-3 mt-2 px-5 h-auto">
           <span className="font-poppins font-medium text-lg">
-            Products Favourite
+            Sản phẩm yêu thích
           </span>
           <span>
             <FaRegHeart />
@@ -97,7 +97,7 @@ const ProductFavourite = () => {
                       </span>
                     </Link>
                     <span className="text-sm font-normal">
-                      Price: {product.product.salePrice} $
+                      Price: {product.product.salePrice} VNĐ
                     </span>
                   </div>
                   <div>
