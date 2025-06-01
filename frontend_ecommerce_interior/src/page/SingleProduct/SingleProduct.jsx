@@ -70,7 +70,7 @@ const SingleProduct = () => {
           <span>Sản phẩm</span> <MdKeyboardArrowRight />
         </div>
         <div>
-          <span className="font-medium"> {nameProduct[0].nameProduct}</span>
+          <span className="font-medium"> {nameProduct[0]?.nameProduct}</span>
         </div>
       </div>
       <DetailProduct />
