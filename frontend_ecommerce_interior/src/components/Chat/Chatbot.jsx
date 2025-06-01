@@ -57,38 +57,39 @@ const Chatbot = ({ setOpenMessage }) => {
   // Hàm phân tích câu hỏi và trích xuất từ khóa
   const extractKeysFromMessage = (message) => {
     const keys = {};
-    for (const pattern of faqConfig.patterns) {
-      for (const example of pattern.examples) {
-        const regexPattern = example
-          .replace(/{price}/g, "(\\d+)")
-          .replace(/{minPrice}/g, "(\\d+)")
-          .replace(/{maxPrice}/g, "(\\d+)")
-          .replace(/{gender}/g, "(\\w+(?: \\w+)?)")
-          .replace(/{category}/g, "(\\w+(?: \\w+)?)")
-          .replace(/{subCategory}/g, "(\\w+(?: \\w+)?)")
-          .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const regex = new RegExp(regexPattern, "i");
-        const match = message.match(regex);
-        if (match) {
-          let index = 1;
-          for (const key in pattern.keys) {
-            let value = match[index];
-            if (value) {
-              if (key === "maxPrice" || key === "minPrice") {
-                keys[key] = Number(value);
-              } else {
-                keys[key] = translateToEnglish(value, key);
-              }
-              index++;
-            }
-          }
-          return keys;
-        }
+    const lowerMessage = message.toLowerCase().trim();
+
+    // Tìm giá
+    const priceMatch = lowerMessage.match(/(\d+)/g);
+    if (priceMatch) {
+      if (lowerMessage.includes("dưới") || lowerMessage.includes("nhỏ hơn")) {
+        keys.maxPrice = Number(priceMatch[0]);
+      } else if (
+        lowerMessage.includes("trên") ||
+        lowerMessage.includes("lớn hơn")
+      ) {
+        keys.minPrice = Number(priceMatch[0]);
+      } else if (lowerMessage.includes("từ") && lowerMessage.includes("đến")) {
+        keys.minPrice = Number(priceMatch[0]);
+        if (priceMatch[1]) keys.maxPrice = Number(priceMatch[1]);
       }
     }
+
+    // Tìm giới tính
+    if (lowerMessage.includes("nam")) keys.gender = "Men";
+    if (lowerMessage.includes("nữ")) keys.gender = "Women";
+    if (lowerMessage.includes("trẻ em") || lowerMessage.includes("trẻ"))
+      keys.gender = "Kids";
+
+    // Tìm loại sản phẩm
+    if (lowerMessage.includes("áo thun")) keys.subCategory = "T-Shirt";
+    if (lowerMessage.includes("quần jeans")) keys.subCategory = "Jeans";
+    if (lowerMessage.includes("áo")) keys.mainCategory = "Topwear";
+    if (lowerMessage.includes("quần")) keys.mainCategory = "Bottomwear";
+
+    console.log("Extracted keys:", keys);
     return keys;
   };
-
   // Hàm xử lý gửi tin nhắn
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
@@ -128,6 +129,7 @@ const Chatbot = ({ setOpenMessage }) => {
   // Hàm xử lý tin nhắn người dùng
   const processMessage = async (message) => {
     const keys = extractKeysFromMessage(message);
+    console.log("Extracted keys:", keys); // Gỡ lỗi để kiểm tra từ khóa
     let queryParams = "";
     if (keys.maxPrice) {
       queryParams += `maxPrice=${keys.maxPrice}`;
@@ -146,10 +148,12 @@ const Chatbot = ({ setOpenMessage }) => {
     if (keys.subCategory) {
       queryParams += `${queryParams ? "&" : ""}subCategory=${keys.subCategory}`;
     }
+    console.log("Query params:", queryParams); // Gỡ lỗi để kiểm tra tham số
 
     if (queryParams) {
       try {
         const response = await getAllProductChatbot(queryParams);
+        console.log("API response:", response); // Gỡ lỗi để kiểm tra phản hồi
         const { products, total } = response;
 
         if (products.length === 0) {
@@ -160,6 +164,7 @@ const Chatbot = ({ setOpenMessage }) => {
         if (total > 5) text += "\nNhập 'xem thêm' để thấy thêm sản phẩm.";
         return { text, products };
       } catch (error) {
+        console.error("API error:", error); // Gỡ lỗi lỗi API
         return {
           text: "Có lỗi xảy ra khi tìm kiếm sản phẩm. Vui lòng thử lại!",
           products: [],
@@ -172,7 +177,6 @@ const Chatbot = ({ setOpenMessage }) => {
       products: [],
     };
   };
-
   // Xử lý 'xem thêm'
   const handleSeeMore = async () => {
     const currentPage =
@@ -326,31 +330,44 @@ const Chatbot = ({ setOpenMessage }) => {
         {/* PHẦN NỘI DUNG GỬI */}
         <form
           onSubmit={handleSendMessage}
-          className="h-[40px] flex justify-between items-center"
+          className="min-h-[50px] max-h-[120px] flex justify-between items-end gap-2 p-2"
         >
-          <div className="w-full h-full flex items-center justify-center relative">
-            <input
-              type="text"
+          <div className="w-full flex items-end justify-center relative">
+            <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type a message"
-              className="w-[98%] px-3 h-full rounded"
+              className="w-full px-3 py-2 pr-20 min-h-[46px] max-h-[100px] rounded-lg border border-gray-300 resize-none overflow-y-auto leading-5"
+              rows={1}
+              onInput={(e) => {
+                // Auto-resize textarea
+                e.target.style.height = "auto";
+                e.target.style.height =
+                  Math.min(e.target.scrollHeight, 100) + "px";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(e);
+                }
+              }}
             />
-            <div className="absolute right-2 flex items-center h-full px-2 gap-2 text-lg">
-              <div className="cursor-pointer">
+            <div className="absolute right-3 bottom-2 flex items-center gap-2 text-lg text-gray-500">
+              <div className="cursor-pointer hover:text-gray-700 transition-colors">
                 <MdOutlineInsertPhoto />
               </div>
-              <div className="cursor-pointer">
+              <div className="cursor-pointer hover:text-gray-700 transition-colors">
                 <FaRegFaceSmile />
               </div>
             </div>
           </div>
-          <div
-            className="w-[10%] h-full bg-green-500 flex justify-center items-center text-white text-xl rounded cursor-pointer"
+          <button
+            type="submit"
+            className="min-w-[50px] h-[46px] bg-green-500 hover:bg-green-600 flex justify-center items-center text-white text-xl rounded-lg cursor-pointer transition-colors flex-shrink-0"
             onClick={handleSendMessage}
           >
             <IoIosSend />
-          </div>
+          </button>
         </form>
       </div>
     </>
