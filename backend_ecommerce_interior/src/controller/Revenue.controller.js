@@ -184,8 +184,8 @@ export const getDailyRevenueByMonthHandler = async (req, res) => {
   }
 };
 
-// Logic tính phần trăm doanh thu theo giới tính
-export const getGenderSalesPercentageHandler = async (req, res) => {
+// Logic tính phần trăm theo số lượng đơn hàng bán ra theo giới tính
+export const getGenderSalesPercentageByOrderHandler = async (req, res) => {
   try {
     const { period } = req.query;
     let matchStage = { status: "completed" };
@@ -218,11 +218,7 @@ export const getGenderSalesPercentageHandler = async (req, res) => {
       {
         $group: {
           _id: "$product.gender",
-          totalRevenue: {
-            $sum: {
-              $multiply: ["$order_items.quantity", "$order_items.price"],
-            },
-          },
+          totalItemsSold: { $sum: "$order_items.quantity" },
         },
       },
       {
@@ -231,10 +227,10 @@ export const getGenderSalesPercentageHandler = async (req, res) => {
           genderBreakdown: {
             $push: {
               gender: "$_id",
-              totalRevenue: "$totalRevenue",
+              totalItemsSold: "$totalItemsSold",
             },
           },
-          overallTotal: { $sum: "$totalRevenue" },
+          overallTotal: { $sum: "$totalItemsSold" },
         },
       },
       {
@@ -244,7 +240,7 @@ export const getGenderSalesPercentageHandler = async (req, res) => {
         $project: {
           _id: 0,
           gender: "$genderBreakdown.gender",
-          totalRevenue: "$genderBreakdown.totalRevenue",
+          totalItemsSold: "$genderBreakdown.totalItemsSold",
           percentage: {
             $cond: {
               if: { $eq: ["$overallTotal", 0] },
@@ -252,7 +248,10 @@ export const getGenderSalesPercentageHandler = async (req, res) => {
               else: {
                 $multiply: [
                   {
-                    $divide: ["$genderBreakdown.totalRevenue", "$overallTotal"],
+                    $divide: [
+                      "$genderBreakdown.totalItemsSold",
+                      "$overallTotal",
+                    ],
                   },
                   100,
                 ],
@@ -266,13 +265,13 @@ export const getGenderSalesPercentageHandler = async (req, res) => {
       },
     ]);
 
-    // Đảm bảo tất cả các danh mục giới tính đều được bao gồm, kể cả khi không có doanh thu
+    // Đảm bảo tất cả các danh mục giới tính đều được bao gồm, kể cả khi không có đơn hàng
     const allGenders = ["Men", "Women", "Unisex", "Kids"];
     const finalResult = allGenders.map((gender) => {
       const found = result.find((r) => r.gender === gender);
       return {
         gender,
-        totalRevenue: found ? found.totalRevenue : 0,
+        totalItemsSold: found ? found.totalItemsSold : 0,
         percentage: found ? Number(found.percentage.toFixed(2)) : 0,
       };
     });
@@ -280,11 +279,11 @@ export const getGenderSalesPercentageHandler = async (req, res) => {
     return res.status(200).json(finalResult);
   } catch (error) {
     console.error(
-      "Lỗi khi tính phần trăm doanh thu theo giới tính:",
+      "Lỗi khi tính phần trăm đơn hàng theo giới tính:",
       error.message
     );
     return res
       .status(500)
-      .json({ message: "Không thể tính phần trăm doanh thu theo giới tính" });
+      .json({ message: "Không thể tính phần trăm đơn hàng theo giới tính" });
   }
 };

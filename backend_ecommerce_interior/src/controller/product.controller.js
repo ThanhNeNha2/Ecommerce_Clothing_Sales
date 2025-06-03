@@ -434,6 +434,7 @@ export const getProductsForChatbot = async (req, res) => {
   try {
     const {
       maxPrice,
+      minPrice, // Thêm tham số giá tối thiểu
       gender,
       mainCategory,
       subCategory,
@@ -444,9 +445,15 @@ export const getProductsForChatbot = async (req, res) => {
     // Xây dựng query
     const query = {};
 
-    // Lọc theo giá tối đa
-    if (maxPrice) {
-      query.salePrice = { $lte: Number(maxPrice) };
+    // Lọc theo giá
+    if (maxPrice || minPrice) {
+      query.salePrice = {};
+      if (maxPrice) {
+        query.salePrice.$lte = Number(maxPrice); // Giá nhỏ hơn hoặc bằng
+      }
+      if (minPrice) {
+        query.salePrice.$gte = Number(minPrice); // Giá lớn hơn hoặc bằng
+      }
     }
 
     // Lọc theo giới tính

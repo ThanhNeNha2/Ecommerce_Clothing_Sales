@@ -1,7 +1,7 @@
 import express from "express";
 import {
   getDailyRevenueByMonthHandler,
-  getGenderSalesPercentageHandler,
+  getGenderSalesPercentageByOrderHandler,
   getMonthlyRevenueHandler,
   getProductRevenueHandler,
 } from "../controller/Revenue.controller.js";
@@ -12,6 +12,6 @@ const router = express.Router();
 router.get("/monthly-revenue", getMonthlyRevenueHandler);
 router.get("/product-revenue", getProductRevenueHandler);
 router.get("/day-revenue", getDailyRevenueByMonthHandler);
-router.get("/gender_percentage", getGenderSalesPercentageHandler);
+router.get("/gender_percentage", getGenderSalesPercentageByOrderHandler);
 
 export default router;
