@@ -36,7 +36,7 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    if (!["cash", "card", "transfer"].includes(payment_method)) {
+    if (!["cash", "card", "transfer", "wallet"].includes(payment_method)) {
       return res.status(400).json({
         message: "Phương thức thanh toán không hợp lệ",
         idCode: 1,
@@ -176,11 +176,13 @@ export const createOrder = async (req, res) => {
       payment_intent: paymentIntentRes?.id || null, // nếu không dùng card
     });
 
-    await Payment.create({
-      payment_intent: paymentIntentRes?.id,
-      price: final_amount,
-      OrderCode: order._id,
-    });
+    if (payment_method === "card") {
+      await Payment.create({
+        payment_intent: paymentIntentRes?.id,
+        price: final_amount,
+        OrderCode: order._id,
+      });
+    }
     // Xóa giỏ hàng
     await Cart.deleteMany({ user_id });
 
