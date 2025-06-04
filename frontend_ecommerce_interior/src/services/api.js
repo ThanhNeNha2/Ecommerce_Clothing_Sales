@@ -411,3 +411,15 @@ export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
     throw error;
   }
 };
+
+// thanh toán zalopay
+
+export const paymentZaloPay = async (price, idOrder) => {
+  try {
+    const response = await instance.post(`paymentZaloPay`, { price, idOrder });
+    return response.data;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
+  }
+};

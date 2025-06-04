@@ -8,10 +8,6 @@ import {
   getAllProductChatbot,
   getAllProductChatbotSeeMore,
 } from "../../services/api";
-import {
-  faqConfig,
-  translateToEnglish,
-} from "../../constants/ChatbotTranslate";
 
 const getTimeInVietnam = () => {
   const now = new Date();
