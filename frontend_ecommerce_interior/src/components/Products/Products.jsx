@@ -57,7 +57,7 @@ const Products = ({ listProducts }) => {
       {listProducts.map((product, i) => (
         <div
           key={i}
-          className="group relative w-full sm:w-[calc(25%-18px)] md:w-[calc(25%-24px)] h-[450px] rounded-lg shadow-md overflow-hidden bg-white transition-all duration-300 hover:shadow-xl"
+          className="group relative w-full sm:w-[calc(25%-18px)] md:w-[calc(25%-24px)] h-auto rounded-lg shadow-md overflow-hidden bg-white transition-all duration-300 hover:shadow-xl"
           aria-label={`Sản phẩm: ${product.nameProduct}`}
         >
           <div className="h-[70%] relative">
@@ -100,23 +100,26 @@ const Products = ({ listProducts }) => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 mt-2">
-                <span className="font-poppins font-semibold text-base text-gray-800">
-                  ${product.salePrice || "N/A"}
+            <div className="flex flex-col items-start justify-between mt-2">
+              {/* Giá */}
+              <div className="flex items-baseline gap-3">
+                <span className="font-bold text-lg text-red-600">
+                  {product.salePrice?.toLocaleString("vi-VN") || "N/A"} VNĐ
                 </span>
-                <del className="text-sm font-medium text-gray-400">
-                  ${product.originalPrice || "N/A"}
+                <del className="text-sm text-gray-400">
+                  {product.originalPrice?.toLocaleString("vi-VN") || "N/A"} VNĐ
                 </del>
               </div>
-              <span className="font-semibold">
+
+              {/* Giới tính */}
+              <span className="mt-1 text-sm text-gray-700 font-medium">
                 Dành cho:{" "}
                 {product.gender === "Men"
                   ? "Nam"
                   : product.gender === "Women"
                   ? "Nữ"
                   : product.gender === "Unisex"
-                  ? "Nam , Nữ"
+                  ? "Nam, Nữ"
                   : product.gender === "Kids"
                   ? "Trẻ em"
                   : "N/A"}

@@ -97,7 +97,8 @@ const ProductFavourite = () => {
                       </span>
                     </Link>
                     <span className="text-sm font-normal">
-                      Price: {product.product.salePrice} VNĐ
+                      Price: {product.product.salePrice.toLocaleString("vi-VN")}{" "}
+                      VNĐ
                     </span>
                   </div>
                   <div>

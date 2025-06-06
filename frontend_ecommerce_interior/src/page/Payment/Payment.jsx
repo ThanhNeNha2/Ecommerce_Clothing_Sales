@@ -269,7 +269,7 @@ const Payment = () => {
                               <p>
                                 • Vui lòng chuẩn bị đủ tiền mặt:{" "}
                                 <span className="font-semibold">
-                                  {formatPrice(final_price)}
+                                  {formatPrice(calculateTotal())}
                                 </span>
                               </p>
                               <p>
@@ -369,7 +369,7 @@ const Payment = () => {
                           <div className="flex justify-between">
                             <span className="text-gray-600">Số tiền:</span>
                             <span className="font-medium text-red-600">
-                              {formatPrice(final_price)}
+                              {formatPrice(calculateTotal())}
                             </span>
                           </div>
                           <div className="mt-4 p-3 bg-white rounded border">
