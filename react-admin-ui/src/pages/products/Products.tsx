@@ -106,7 +106,24 @@ const Products = () => {
       <div className="info">
         <h1>Products</h1>
         <Link to={"/addProduct"}>
-          <button className="ProductButton">Add New Products</button>{" "}
+          <button
+            style={{
+              backgroundColor: "#4CAF50",
+              border: "none",
+              color: "white",
+              padding: "8px 16px",
+              textAlign: "center",
+              textDecoration: "none",
+              display: "inline-block",
+              fontSize: "16px",
+              margin: "6px 3px",
+              cursor: "pointer",
+              borderRadius: "8px",
+              transition: "background-color 0.3s ease",
+            }}
+          >
+            Add New Products
+          </button>
         </Link>
       </div>
       <DataTable

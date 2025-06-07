@@ -106,7 +106,7 @@ const DetailOrder = () => {
         <div className="detail-order__header">
           <h1 className="detail-order__title">Chi tiết đơn hàng</h1>
           <div className="detail-order__order-id">
-            Mã đơn hàng: <span>#{singleOrder._id || "N/A"}</span>
+            Mã đơn hàng: <span>#{singleOrder?._id || "N/A"}</span>
           </div>
         </div>
 
@@ -116,25 +116,27 @@ const DetailOrder = () => {
             <div className="status-info">
               <h3>Trạng thái đơn hàng</h3>
               <span
-                className={`status-badge ${getStatusClass(singleOrder.status)}`}
+                className={`status-badge ${getStatusClass(
+                  singleOrder?.status
+                )}`}
               >
-                {getStatusText(singleOrder.status)}
+                {getStatusText(singleOrder?.status)}
               </span>
             </div>
             <div className="payment-info">
               <h3>Thanh toán</h3>
               <div className="payment-details">
                 <span className="payment-method">
-                  {getPaymentMethodText(singleOrder.payment_method)}
+                  {getPaymentMethodText(singleOrder?.payment_method)}
                 </span>
                 <span
                   className={`payment-status ${
-                    singleOrder.payment_status === "completed"
+                    singleOrder?.payment_status === "completed"
                       ? "completed"
                       : "pending"
                   }`}
                 >
-                  {getPaymentStatusText(singleOrder.payment_status)}
+                  {getPaymentStatusText(singleOrder?.payment_status)}
                 </span>
               </div>
             </div>
@@ -146,7 +148,7 @@ const DetailOrder = () => {
           <h2 className="section-title">Sản phẩm đã đặt</h2>
           <div className="items-list">
             {singleOrder?.order_items?.map((item, index) => (
-              <div key={item._id} className="item-card">
+              <div key={item?._id} className="item-card">
                 <div className="item-image">
                   <img
                     src={item.product_id.image_url[0]}
@@ -188,17 +190,17 @@ const DetailOrder = () => {
               <span>Tổng tiền hàng:</span>
               <span>{formatPrice(calculateSubtotal())}</span>
             </div>
-            {singleOrder.promotion_id && (
+            {singleOrder?.promotion_id && (
               <div className="summary-row promotion">
-                <span>Mã giảm giá ({singleOrder.promotion_id.code}):</span>
+                <span>Mã giảm giá ({singleOrder?.promotion_id.code}):</span>
                 <span className="discount">
-                  -{formatPrice(singleOrder.promotion_id.discount_value)}
+                  -{formatPrice(singleOrder?.promotion_id.discount_value)}
                 </span>
               </div>
             )}
             <div className="summary-row total">
               <span>Tổng cộng:</span>
-              <span>{formatPrice(singleOrder.final_amount)}</span>
+              <span>{formatPrice(singleOrder?.final_amount)}</span>
             </div>
           </div>
         </div>
@@ -208,11 +210,11 @@ const DetailOrder = () => {
           <div className="info-grid">
             <div className="info-card">
               <h3>Địa chỉ giao hàng</h3>
-              <p>{singleOrder.shipping_address}</p>
+              <p>{singleOrder?.shipping_address}</p>
             </div>
             <div className="info-card">
               <h3>Ghi chú</h3>
-              <p>{singleOrder.notes || "Không có ghi chú"}</p>
+              <p>{singleOrder?.notes || "Không có ghi chú"}</p>
             </div>
           </div>
         </div>
@@ -224,13 +226,13 @@ const DetailOrder = () => {
             <div className="timeline-item">
               <span className="timeline-label">Ngày đặt hàng:</span>
               <span className="timeline-value">
-                {formatDate(singleOrder.createdAt)}
+                {formatDate(singleOrder?.createdAt)}
               </span>
             </div>
             <div className="timeline-item">
               <span className="timeline-label">Cập nhật lần cuối:</span>
               <span className="timeline-value">
-                {formatDate(singleOrder.updatedAt)}
+                {formatDate(singleOrder?.updatedAt)}
               </span>
             </div>
           </div>
