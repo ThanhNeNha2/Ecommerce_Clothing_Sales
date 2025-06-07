@@ -19,6 +19,7 @@ const DetailOrder = () => {
       setSingleOrder(data.order);
     }
   }, [data]);
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -39,11 +40,15 @@ const DetailOrder = () => {
   const getStatusClass = (status) => {
     switch (status) {
       case "delivered":
+      case "completed": // Gộp "completed" với "delivered" để sử dụng cùng class
         return "status-delivered";
       case "pending":
         return "status-pending";
-      case "processing":
+      case "confirmed":
+      case "processing": // Gộp "confirmed" với "processing" nếu logic tương tự
         return "status-processing";
+      case "shipped":
+        return "status-shipped"; // Thêm class mới cho "shipped"
       case "cancelled":
         return "status-cancelled";
       default:
@@ -54,11 +59,15 @@ const DetailOrder = () => {
   const getStatusText = (status) => {
     switch (status) {
       case "delivered":
+      case "completed":
         return "Đã giao hàng";
       case "pending":
         return "Chờ xử lý";
+      case "confirmed":
       case "processing":
         return "Đang xử lý";
+      case "shipped":
+        return "Đang giao hàng"; // Văn bản cho trạng thái "shipped"
       case "cancelled":
         return "Đã hủy";
       default:
@@ -66,7 +75,7 @@ const DetailOrder = () => {
     }
   };
 
-  const getPaymentStatusText = (status: any) => {
+  const getPaymentStatusText = (status) => {
     switch (status) {
       case "completed":
         return "Đã thanh toán";
@@ -85,7 +94,9 @@ const DetailOrder = () => {
         return "Tiền mặt";
       case "card":
         return "Thẻ tín dụng";
-      case "bank_transfer":
+      case "wallet":
+        return "Ví điện tử";
+      case "transfer":
         return "Chuyển khoản";
       default:
         return method;

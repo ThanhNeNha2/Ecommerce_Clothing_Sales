@@ -41,7 +41,7 @@ $box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
   }
 }
 
-// Font Import (assume you have this in your main CSS)
+// Font Import
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 * {
@@ -86,7 +86,6 @@ body {
     }
   }
 
-  //
   .status-select {
     padding: 8px 12px;
     border: 1px solid #ccc;
@@ -96,16 +95,17 @@ body {
     font-size: 14px;
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      border-color: #999;
+    }
+
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+    }
   }
 
-  .status-select:hover {
-    border-color: #999;
-  }
-
-  .status-select:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
-  }
   .saveButton,
   .cancelButton {
     padding: 6px 8px;
@@ -116,14 +116,24 @@ body {
     font-size: 12px;
     margin-left: 5px;
     cursor: pointer;
+
+    &.saveButton {
+      background: rgb(62, 172, 18);
+
+      &:hover {
+        background: darken(rgb(62, 172, 18), 10%);
+      }
+    }
+
+    &.cancelButton {
+      background: rgb(240, 104, 86);
+
+      &:hover {
+        background: darken(rgb(240, 104, 86), 10%);
+      }
+    }
   }
-  .saveButton {
-    background: rgb(62, 172, 18);
-  }
-  .cancelButton {
-    background: rgb(240, 104, 86);
-  }
-  //
+
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -357,24 +367,39 @@ body {
       text-transform: uppercase;
       letter-spacing: 0.5px;
 
-      &.pending {
+      &.status-pending {
         background: #fef3c7;
         color: #92400e;
       }
 
-      &.confirmed {
+      &.status-confirmed {
         background: #d1fae5;
         color: #065f46;
       }
 
-      &.shipped {
+      &.status-shipped {
         background: #dbeafe;
         color: #1e40af;
       }
 
-      &.delivered {
+      &.status-delivered {
         background: #dcfce7;
         color: #166534;
+      }
+
+      &.status-cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      &.status-completed {
+        background: #d1fae5;
+        color: #065f46; // Tương tự delivered để chỉ hoàn tất
+      }
+
+      &.status-default {
+        background: $gray-300;
+        color: $gray-700;
       }
     }
 
@@ -393,6 +418,16 @@ body {
       &.card {
         background: #ede9fe;
         color: #7c3aed;
+      }
+
+      &.wallet {
+        background: #e0e7ff;
+        color: #1e40af;
+      }
+
+      &.transfer {
+        background: #f1f5f9;
+        color: $gray-600;
       }
     }
 

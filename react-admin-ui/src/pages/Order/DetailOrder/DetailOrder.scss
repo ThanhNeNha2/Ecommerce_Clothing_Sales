@@ -36,6 +36,82 @@ $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   transition: all 0.3s ease;
 }
 
+// Base style for section titles
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $gray-900;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid $primary-color;
+}
+
+// Status Badge Styles
+.status-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.status-delivered {
+    background: linear-gradient(135deg, $success-color, #059669);
+    color: white;
+  }
+
+  &.status-pending {
+    background: linear-gradient(135deg, $warning-color, #d97706);
+    color: white;
+  }
+
+  &.status-processing {
+    background: linear-gradient(135deg, #3b82f6, $primary-color);
+    color: white;
+  }
+
+  &.status-shipped {
+    background: linear-gradient(
+      135deg,
+      #9333ea,
+      #7e22ce
+    ); // Màu tím cho "shipped"
+    color: white;
+  }
+
+  &.status-cancelled {
+    background: linear-gradient(135deg, $danger-color, #dc2626);
+    color: white;
+  }
+
+  &.status-default {
+    background: $gray-300;
+    color: $gray-700;
+  }
+}
+
+// Payment Status Styles
+.payment-status {
+  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  display: inline-block;
+  width: fit-content;
+
+  &.completed {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+
+  &.pending {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+  }
+}
+
 // Main Component
 .detail-order {
   min-height: 100vh;
@@ -73,7 +149,6 @@ $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
   }
 
-  // Status Section
   &__status-section {
     margin-bottom: 2rem;
 
@@ -99,36 +174,6 @@ $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
       }
 
-      .status-badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-
-        &.status-delivered {
-          background: linear-gradient(135deg, #10b981, #059669);
-          color: white;
-        }
-
-        &.status-pending {
-          background: linear-gradient(135deg, #f59e0b, #d97706);
-          color: white;
-        }
-
-        &.status-processing {
-          background: linear-gradient(135deg, #3b82f6, #2563eb);
-          color: white;
-        }
-
-        &.status-cancelled {
-          background: linear-gradient(135deg, #ef4444, #dc2626);
-          color: white;
-        }
-      }
-
       .payment-details {
         display: flex;
         flex-direction: column;
@@ -138,41 +183,15 @@ $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
           font-weight: 600;
           color: $gray-700;
         }
-
-        .payment-status {
-          font-size: 0.9rem;
-          padding: 0.25rem 0.75rem;
-          border-radius: 20px;
-          display: inline-block;
-          width: fit-content;
-
-          &.completed {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-          }
-
-          &.pending {
-            background: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
-          }
-        }
       }
     }
   }
 
-  // Items Section
   &__items-section {
     margin-bottom: 2rem;
 
     .section-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: $gray-800;
-      margin-bottom: 1.5rem;
-      padding-left: 0.5rem;
-      border-left: 4px solid $primary-color;
+      @extend .section-title;
     }
 
     .items-list {
@@ -274,9 +293,12 @@ $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
   }
 
-  // Summary Section
   &__summary-section {
     margin-bottom: 2rem;
+
+    .section-title {
+      @extend .section-title;
+    }
 
     .summary-card {
       @include card-style;
@@ -321,7 +343,6 @@ $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
   }
 
-  // Info Section
   &__info-section {
     margin-bottom: 2rem;
 
@@ -365,8 +386,11 @@ $shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
   }
 
-  // Timeline Section
   &__timeline-section {
+    .section-title {
+      @extend .section-title;
+    }
+
     .timeline-card {
       @include card-style;
       padding: 1.5rem;

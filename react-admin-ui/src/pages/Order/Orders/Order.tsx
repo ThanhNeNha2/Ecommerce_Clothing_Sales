@@ -6,13 +6,14 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Order = () => {
-  const [activeFilter, setActiveFilter] = useState<any>("all");
-  const [filteredOrders, setFilteredOrders] = useState<any>([]);
-  const [openUpdate, setOpenUpdate] = useState<any>(false);
-  const [IdUpdateState, setIdUpdateState] = useState<any>("");
-  const [stateUpdate, setStateUpdate] = useState<any>("");
-  const navigator = useNavigate();
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [IdUpdateState, setIdUpdateState] = useState("");
+  const [stateUpdate, setStateUpdate] = useState("");
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
   const { isLoading, data, error } = useQuery({
     queryKey: ["allorders"],
     queryFn: () => apiCustom.get("/ordersAdmin").then((res) => res.data),
@@ -20,14 +21,14 @@ const Order = () => {
 
   const ordersData = data?.orders || [];
 
-  const formatCurrency = (amount: any) => {
+  const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(amount);
   };
 
-  const formatDate = (dateString: any) => {
+  const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("vi-VN", {
       year: "numeric",
       month: "2-digit",
@@ -37,41 +38,60 @@ const Order = () => {
     });
   };
 
-  const truncateText = (text: any, maxLength: any) => {
+  const truncateText = (text, maxLength) => {
     if (!text || text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
-  const filterOrders = (status: any) => {
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "delivered":
+      case "completed":
+        return "status-delivered";
+      case "pending":
+        return "status-pending";
+      case "confirmed":
+        return "status-confirmed";
+      case "shipped":
+        return "status-shipped";
+      case "cancelled":
+        return "status-cancelled";
+      default:
+        return "status-default";
+    }
+  };
+
+  const filterOrders = (status) => {
     setActiveFilter(status);
     if (status === "all") {
       setFilteredOrders(ordersData);
     } else {
-      setFilteredOrders(
-        ordersData.filter((order: any) => order.status === status)
-      );
+      setFilteredOrders(ordersData.filter((order) => order.status === status));
     }
   };
 
   const getOrderStats = () => {
     const totalOrders = ordersData.length;
     const pendingOrders = ordersData.filter(
-      (order: any) => order.status === "pending"
+      (order) => order.status === "pending"
     ).length;
     const confirmedOrders = ordersData.filter(
-      (order: any) => order.status === "confirmed"
+      (order) => order.status === "confirmed"
     ).length;
 
     return { totalOrders, pendingOrders, confirmedOrders };
   };
 
-  const handleViewOrder = (orderId: any) => {
-    navigator(`/detailorders/${orderId}`);
+  const handleViewOrder = (orderId) => {
+    navigate(`/detailorders/${orderId}`);
   };
 
-  const handleEditOrder = (orderId: any) => {
+  const handleEditOrder = (orderId) => {
     setOpenUpdate(true);
     setIdUpdateState(orderId);
+    // Đặt trạng thái ban đầu khi mở chỉnh sửa
+    const order = ordersData.find((o) => o._id === orderId);
+    setStateUpdate(order?.status || "pending");
   };
 
   const mutation = useMutation({
@@ -83,12 +103,11 @@ const Order = () => {
       queryClient.invalidateQueries(["allorders"]);
       setOpenUpdate(false);
     },
-    onError: (error: any) => {
+    onError: (error) => {
       console.log("error", error);
-
       toast.error(
-        `🚨 Lỗi khi tạo mã giảm giá: ${
-          error.response.data.message || "Vui lòng thử lại!"
+        `🚨 Lỗi khi cập nhật trạng thái: ${
+          error.response?.data?.message || "Vui lòng thử lại!"
         }`
       );
     },
@@ -97,14 +116,15 @@ const Order = () => {
   const handleConfirmUpdateOrder = async () => {
     mutation.mutate();
   };
-  const renderOrderItems = (items: any) => {
-    return items.map((item: any, index: any) => (
+
+  const renderOrderItems = (items) => {
+    return items.map((item, index) => (
       <div key={index} className="item">
         <img
           src={item.product_id.image_url[0]}
           alt={item.product_id.nameProduct}
           className="item-image"
-          onError={(e: any) => {
+          onError={(e) => {
             e.target.src = "https://via.placeholder.com/40x40?text=No+Image";
           }}
         />
@@ -210,6 +230,38 @@ const Order = () => {
             >
               Đã xác nhận
             </button>
+            <button
+              className={`filter-btn ${
+                activeFilter === "shipped" ? "active" : ""
+              }`}
+              onClick={() => filterOrders("shipped")}
+            >
+              Đang giao
+            </button>
+            <button
+              className={`filter-btn ${
+                activeFilter === "delivered" ? "active" : ""
+              }`}
+              onClick={() => filterOrders("delivered")}
+            >
+              Đã giao
+            </button>
+            <button
+              className={`filter-btn ${
+                activeFilter === "cancelled" ? "active" : ""
+              }`}
+              onClick={() => filterOrders("cancelled")}
+            >
+              Đã hủy
+            </button>
+            <button
+              className={`filter-btn ${
+                activeFilter === "completed" ? "active" : ""
+              }`}
+              onClick={() => filterOrders("completed")}
+            >
+              Hoàn tất
+            </button>
           </div>
         </div>
 
@@ -232,7 +284,7 @@ const Order = () => {
               {filteredOrders.length === 0 ? (
                 <EmptyState />
               ) : (
-                filteredOrders.map((order: any) => (
+                filteredOrders.map((order) => (
                   <tr key={order._id}>
                     <td>
                       <div className="order-id">
@@ -245,38 +297,40 @@ const Order = () => {
                       </div>
                     </td>
                     <td>
-                      {order._id === IdUpdateState && openUpdate === true ? (
+                      {order._id === IdUpdateState && openUpdate ? (
                         <select
                           className="status-select"
+                          value={stateUpdate}
                           onChange={(e) => setStateUpdate(e.target.value)}
                         >
                           <option value="pending">Đang chờ</option>
                           <option value="confirmed">Đã xác nhận</option>
-                          <option value="shipped">Đã giao hàng</option>
+                          <option value="shipped">Đang giao hàng</option>
                           <option value="delivered">Đã giao thành công</option>
                           <option value="cancelled">Đã hủy</option>
                           <option value="completed">Hoàn tất</option>
                         </select>
                       ) : (
-                        <span className={`status-badge ${order.status}`}>
-                          {order.status}
+                        <span
+                          className={`status-badge ${getStatusClass(
+                            order.status
+                          )}`}
+                        >
+                          {order.status.charAt(0).toUpperCase() +
+                            order.status.slice(1)}
                         </span>
                       )}
                       {order._id === IdUpdateState && openUpdate && (
                         <>
                           <button
                             className="cancelButton"
-                            onClick={() => {
-                              setOpenUpdate(false);
-                            }}
+                            onClick={() => setOpenUpdate(false)}
                           >
                             Hủy
                           </button>
                           <button
                             className="saveButton"
-                            onClick={() => {
-                              handleConfirmUpdateOrder();
-                            }}
+                            onClick={handleConfirmUpdateOrder}
                           >
                             Lưu
                           </button>
@@ -285,7 +339,13 @@ const Order = () => {
                     </td>
                     <td>
                       <span className={`payment-badge ${order.payment_method}`}>
-                        {order.payment_method === "cash" ? "Tiền mặt" : "Thẻ"}
+                        {order.payment_method === "cash"
+                          ? "Tiền mặt"
+                          : order.payment_method === "card"
+                          ? "Thẻ"
+                          : order.payment_method === "wallet"
+                          ? "Ví điện tử"
+                          : "Chuyển khoản"}
                       </span>
                       <div className="payment-status">
                         {order.payment_status === "pending"
