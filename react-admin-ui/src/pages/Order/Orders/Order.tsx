@@ -11,12 +11,27 @@ const Order = () => {
   const [openUpdate, setOpenUpdate] = useState(false);
   const [IdUpdateState, setIdUpdateState] = useState("");
   const [stateUpdate, setStateUpdate] = useState("");
+  const [searchParams, setSearchParams] = useState({
+    orderId: "",
+    userName: "",
+    paymentMethod: "",
+    startDate: "",
+    endDate: "",
+  });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { isLoading, data, error } = useQuery({
-    queryKey: ["allorders"],
-    queryFn: () => apiCustom.get("/ordersAdmin").then((res) => res.data),
+    queryKey: ["allorders", activeFilter, searchParams],
+    queryFn: () =>
+      apiCustom
+        .get("/ordersAdmin", {
+          params: {
+            status: activeFilter,
+            ...searchParams,
+          },
+        })
+        .then((res) => res.data),
   });
 
   const ordersData = data?.orders || [];
@@ -63,23 +78,44 @@ const Order = () => {
 
   const filterOrders = (status) => {
     setActiveFilter(status);
-    if (status === "all") {
-      setFilteredOrders(ordersData);
-    } else {
-      setFilteredOrders(ordersData.filter((order) => order.status === status));
-    }
   };
 
   const getOrderStats = () => {
     const totalOrders = ordersData.length;
+
     const pendingOrders = ordersData.filter(
       (order) => order.status === "pending"
     ).length;
+
     const confirmedOrders = ordersData.filter(
       (order) => order.status === "confirmed"
     ).length;
 
-    return { totalOrders, pendingOrders, confirmedOrders };
+    const shippedOrders = ordersData.filter(
+      (order) => order.status === "shipped"
+    ).length;
+
+    const deliveredOrders = ordersData.filter(
+      (order) => order.status === "delivered"
+    ).length;
+
+    const cancelledOrders = ordersData.filter(
+      (order) => order.status === "cancelled"
+    ).length;
+
+    const completedOrders = ordersData.filter(
+      (order) => order.status === "completed"
+    ).length;
+
+    return {
+      totalOrders,
+      pendingOrders,
+      confirmedOrders,
+      shippedOrders,
+      deliveredOrders,
+      cancelledOrders,
+      completedOrders,
+    };
   };
 
   const handleViewOrder = (orderId) => {
@@ -89,7 +125,6 @@ const Order = () => {
   const handleEditOrder = (orderId) => {
     setOpenUpdate(true);
     setIdUpdateState(orderId);
-    // Đặt trạng thái ban đầu khi mở chỉnh sửa
     const order = ordersData.find((o) => o._id === orderId);
     setStateUpdate(order?.status || "pending");
   };
@@ -115,6 +150,11 @@ const Order = () => {
 
   const handleConfirmUpdateOrder = async () => {
     mutation.mutate();
+  };
+
+  const handleSearchChange = (e) => {
+    const { name, value } = e.target;
+    setSearchParams((prev) => ({ ...prev, [name]: value }));
   };
 
   const renderOrderItems = (items) => {
@@ -157,7 +197,7 @@ const Order = () => {
 
   useEffect(() => {
     setFilteredOrders(ordersData);
-  }, [ordersData, activeFilter]);
+  }, [ordersData]);
 
   const stats = getOrderStats();
 
@@ -199,6 +239,89 @@ const Order = () => {
           </div>
           <div className="stat-value">{stats.confirmedOrders}</div>
           <div className="stat-label">Đã xác nhận</div>
+        </div>
+
+        <div className="stat-card shipped">
+          <div className="stat-header shipped">
+            <div className="stat-icon">
+              <i className="fas fa-truck"></i>
+            </div>
+          </div>
+          <div className="stat-value">{stats.shippedOrders}</div>
+          <div className="stat-label">Đang giao</div>
+        </div>
+
+        <div className="stat-card delivered">
+          <div className="stat-header delivered">
+            <div className="stat-icon">
+              <i className="fas fa-box-open"></i>
+            </div>
+          </div>
+          <div className="stat-value">{stats.deliveredOrders}</div>
+          <div className="stat-label">Đã giao</div>
+        </div>
+
+        <div className="stat-card cancelled">
+          <div className="stat-header cancelled">
+            <div className="stat-icon">
+              <i className="fas fa-times-circle"></i>
+            </div>
+          </div>
+          <div className="stat-value">{stats.cancelledOrders}</div>
+          <div className="stat-label">Đã hủy</div>
+        </div>
+
+        <div className="stat-card completed">
+          <div className="stat-header completed">
+            <div className="stat-icon">
+              <i className="fas fa-check-double"></i>
+            </div>
+          </div>
+          <div className="stat-value">{stats.completedOrders}</div>
+          <div className="stat-label">Hoàn tất</div>
+        </div>
+      </div>
+
+      <div className="search-section">
+        <h3>Tìm kiếm đơn hàng</h3>
+        <div className="search-form">
+          <input
+            type="text"
+            name="orderId"
+            placeholder="Mã đơn hàng"
+            value={searchParams.orderId}
+            onChange={handleSearchChange}
+          />
+          {/* <input
+            type="text"
+            name="userName"
+            placeholder="Tên khách hàng"
+            value={searchParams.userName}
+            onChange={handleSearchChange}
+          /> */}
+          <select
+            name="paymentMethod"
+            value={searchParams.paymentMethod}
+            onChange={handleSearchChange}
+          >
+            <option value="">Phương thức thanh toán</option>
+            <option value="cash">Tiền mặt</option>
+            <option value="card">Thẻ</option>
+            <option value="wallet">Ví điện tử</option>
+            <option value="bank_transfer">Chuyển khoản</option>
+          </select>
+          <input
+            type="date"
+            name="startDate"
+            value={searchParams.startDate}
+            onChange={handleSearchChange}
+          />
+          <input
+            type="date"
+            name="endDate"
+            value={searchParams.endDate}
+            onChange={handleSearchChange}
+          />
         </div>
       </div>
 
