@@ -1,23 +1,56 @@
 import "./Products.scss";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert, CircularProgress } from "@mui/material";
 import { Link } from "react-router-dom";
 import { apiCustom } from "../../../custom/customApi";
+import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal";
+import { useState } from "react";
 
 const Products = () => {
-  const { isLoading, data, error } = useQuery({
-    queryKey: ["allproduct"],
-    queryFn: () => apiCustom.get("/product").then((res) => res.data),
+  const queryClient = useQueryClient();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<{
+    id: string;
+    name: string;
+    image: string;
+  } | null>(null);
+
+  // State cho pagination
+  const [limit, setLimit] = useState(32);
+  const [allProducts, setAllProducts] = useState<any[]>([]);
+
+  const { isLoading, data, error, isFetching } = useQuery({
+    queryKey: ["allproduct", limit],
+    queryFn: () =>
+      apiCustom.get(`/product?limit=${limit}`).then((res) => res.data),
+    onSuccess: (newData) => {
+      // Cập nhật danh sách sản phẩm
+      const products = Array.isArray(newData?.products)
+        ? newData?.products
+        : newData
+        ? [newData]
+        : [];
+      setAllProducts(products);
+    },
   });
 
-  // Ensure productsRows is always an array
-  const productsRows = Array.isArray(data?.products)
-    ? data?.products
-    : data
-    ? [data]
-    : [];
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => apiCustom.delete(`/product/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allproduct"] });
+      setDeleteModalOpen(false);
+    },
+    onError: (error) => {
+      alert(`Failed to delete product: ${error}`);
+      setDeleteModalOpen(false);
+    },
+  });
 
-  if (isLoading) {
+  const productsRows = allProducts;
+  const totalProducts = data?.total || 0;
+  const hasMoreProducts = productsRows.length < totalProducts;
+
+  if (isLoading && limit === 32) {
     return (
       <div className="flex justify-center p-5">
         <CircularProgress />
@@ -33,28 +66,37 @@ const Products = () => {
     );
   }
 
-  const handleDelete = (id: any) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      // Implement API call to delete product
-      console.log(`Delete product with ID: ${id}`);
+  const handleDelete = (id: string, name: string, image: string) => {
+    setSelectedProduct({ id, name, image });
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedProduct) {
+      deleteMutation.mutate(selectedProduct.id);
     }
+  };
+
+  const handleLoadMore = () => {
+    setLimit((prevLimit) => prevLimit + 32);
   };
 
   return (
     <div className="products p-5">
       <div className="info flex justify-between items-center mb-5">
         <h1
-          className="text-2xl font-bold "
+          className="text-2xl font-bold"
           style={{
             color: "white",
           }}
         >
-          Products
+          Products ({productsRows.length}/{totalProducts})
         </h1>
         <Link to="/addProduct">
           <button className="add-product-button">Add New Product</button>
         </Link>
       </div>
+
       <div className="table-container">
         <table className="product-table">
           <thead>
@@ -97,9 +139,16 @@ const Products = () => {
                     </Link>
                     <button
                       className="delete-button"
-                      onClick={() => handleDelete(product.id)}
+                      onClick={() =>
+                        handleDelete(
+                          product.id,
+                          product.nameProduct,
+                          product.image_url[0]
+                        )
+                      }
+                      disabled={deleteMutation.isLoading}
                     >
-                      Delete
+                      {deleteMutation.isLoading ? "Deleting..." : "Delete"}
                     </button>
                   </div>
                 </td>
@@ -108,6 +157,48 @@ const Products = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Load More Button */}
+      {hasMoreProducts && (
+        <div className="flex justify-center mt-5">
+          <button
+            className="load-more-button"
+            onClick={handleLoadMore}
+            disabled={isFetching}
+            style={{
+              padding: "12px 24px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: isFetching ? "not-allowed" : "pointer",
+              fontSize: "16px",
+              fontWeight: "500",
+              opacity: isFetching ? 0.7 : 1,
+              transition: "all 0.3s ease",
+            }}
+          >
+            {isFetching ? (
+              <div className="flex items-center gap-2">
+                <CircularProgress size={16} color="inherit" />
+                Đang tải...
+              </div>
+            ) : (
+              `Xem thêm sản phẩm (${
+                totalProducts - productsRows.length
+              } còn lại)`
+            )}
+          </button>
+        </div>
+      )}
+
+      <DeleteConfirmationModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        productName={selectedProduct?.name || ""}
+        productImage={selectedProduct?.image || ""}
+      />
     </div>
   );
 };
