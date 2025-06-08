@@ -1,22 +1,20 @@
 import Home from "./pages/home/Home";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Users from "./pages/users/Users";
-import Products from "./pages/products/Products";
+
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import Menu from "./components/menu/Menu";
 import Login from "./pages/login/Login";
 import "./styles/global.scss";
 import User from "./pages/user/User";
-import Product from "./pages/product/Product";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Posts from "./pages/Blog/blogs/Blogs";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import AddBlog from "./pages/Blog/addBlog/AddBlog";
-
 import Messages from "./pages/Messages/Messages";
 import PrivateRoute from "./utils/PrivateRoute";
-import AddProduct from "./pages/addProduct/AddProduct";
+
 import BlogUpdate from "./pages/Blog/blogUpdate/BlogUpdate";
 import Promotions from "./pages/Promotion/promotions/promotions";
 import AddPromotion from "./pages/Promotion/addPromotions/AddPromotion";
@@ -25,6 +23,9 @@ import Order from "./pages/Order/Orders/Order";
 import DetailOrder from "./pages/Order/DetailOrder/DetailOrder";
 import MoneyStatistics from "./pages/Money_Statistics/MoneyStatistics";
 import ProductOrderStatistics from "./pages/Product_Statistics/Product_Order_Statistics";
+import Products from "./pages/Product/Products/Products";
+import UpdateProduct from "./pages/Product/UpdateProduct/UpdateProduct";
+import AddProduct from "./pages/Product/addProduct/AddProduct";
 
 const queryClient = new QueryClient();
 
@@ -80,8 +81,8 @@ function App() {
               element: <AddProduct />,
             },
             {
-              path: "/products/:id",
-              element: <Product />,
+              path: "/UpdateProduct/:id",
+              element: <UpdateProduct />,
             },
             // promotion
             {

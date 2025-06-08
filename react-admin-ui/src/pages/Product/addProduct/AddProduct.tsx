@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./AddProduct.scss";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { apiCustom } from "../../custom/customApi";
+
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Editor } from "@tinymce/tinymce-react";
-import upload from "../../utils/upload";
+import { apiCustom } from "../../../custom/customApi";
+import upload from "../../../utils/upload";
 
 interface ProductInfo {
   nameProduct: string;
