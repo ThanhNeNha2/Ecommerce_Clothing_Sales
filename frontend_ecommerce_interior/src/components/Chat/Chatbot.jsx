@@ -40,7 +40,7 @@ const Chatbot = ({ setOpenMessage }) => {
     {
       sender: false,
       content: {
-        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam', 'sản phẩm từ 200 đến 500 cho nữ loại áo thun'",
+        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay ?",
         products: [],
       },
       time: getTimeInVietnam().time, // Sử dụng giờ mới
@@ -83,6 +83,26 @@ const Chatbot = ({ setOpenMessage }) => {
     if (lowerMessage.includes("áo")) keys.mainCategory = "Topwear";
     if (lowerMessage.includes("quần")) keys.mainCategory = "Bottomwear";
 
+    // Nhận diện câu hỏi chung
+    if (lowerMessage.includes("mở cửa") || lowerMessage.includes("giờ mở")) {
+      keys.questionType = "openHours";
+    } else if (
+      lowerMessage.includes("giao hàng") ||
+      lowerMessage.includes("ship")
+    ) {
+      keys.questionType = "shipping";
+    } else if (
+      lowerMessage.includes("trả hàng") ||
+      lowerMessage.includes("đổi")
+    ) {
+      keys.questionType = "returnPolicy";
+    } else if (
+      lowerMessage.includes("địa chỉ") ||
+      lowerMessage.includes("ở đâu")
+    ) {
+      keys.questionType = "address";
+    }
+
     console.log("Extracted keys:", keys);
     return keys;
   };
@@ -122,10 +142,47 @@ const Chatbot = ({ setOpenMessage }) => {
     ]);
   };
 
+  // Hàm gọi Gemini API
+  const callGeminiAPI = async (message) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Bạn là một trợ lý chatbot thân thiện. Hãy trả lời câu hỏi của người dùng một cách tự nhiên và hữu ích bằng tiếng Việt. Câu hỏi: "${message}"`,
+                },
+              ],
+            },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Lỗi khi gọi Gemini API");
+      }
+
+      const data = await response.json();
+      const geminiResponse =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Không thể tạo phản hồi từ Gemini.";
+      return geminiResponse;
+    } catch (error) {
+      console.error("Lỗi Gemini API:", error);
+      return "Có lỗi xảy ra khi xử lý yêu cầu. Vui lòng thử lại!";
+    }
+  };
+
   // Hàm xử lý tin nhắn người dùng
   const processMessage = async (message) => {
     const keys = extractKeysFromMessage(message);
-    console.log("Extracted keys:", keys); // Gỡ lỗi để kiểm tra từ khóa
+    console.log("Extracted keys:", keys);
     let queryParams = "";
     if (keys.maxPrice) {
       queryParams += `maxPrice=${keys.maxPrice}`;
@@ -144,35 +201,52 @@ const Chatbot = ({ setOpenMessage }) => {
     if (keys.subCategory) {
       queryParams += `${queryParams ? "&" : ""}subCategory=${keys.subCategory}`;
     }
-    console.log("Query params:", queryParams); // Gỡ lỗi để kiểm tra tham số
 
     if (queryParams) {
       try {
         const response = await getAllProductChatbot(queryParams);
-        console.log("API response:", response); // Gỡ lỗi để kiểm tra phản hồi
+        console.log("API response:", response);
         const { products, total } = response;
 
         if (products.length === 0) {
-          return { text: "Không tìm thấy sản phẩm nào phù hợp.", products: [] };
+          const geminiResponse = await callGeminiAPI(
+            `Không tìm thấy sản phẩm nào phù hợp với yêu cầu: "${message}". Hãy gợi ý hoặc trả lời thân thiện bằng tiếng Việt.`
+          );
+          return { text: geminiResponse, products: [] };
         }
 
         let text = "Dưới đây là các sản phẩm phù hợp:\n";
         if (total > 5) text += "\nNhập 'xem thêm' để thấy thêm sản phẩm.";
         return { text, products };
       } catch (error) {
-        console.error("API error:", error); // Gỡ lỗi lỗi API
-        return {
-          text: "Có lỗi xảy ra khi tìm kiếm sản phẩm. Vui lòng thử lại!",
-          products: [],
-        };
+        console.error("API error:", error);
+        const geminiResponse = await callGeminiAPI(
+          `Có lỗi khi tìm kiếm sản phẩm cho yêu cầu: "${message}". Hãy trả lời thân thiện và gợi ý cách khác bằng tiếng Việt.`
+        );
+        return { text: geminiResponse, products: [] };
       }
     }
 
-    return {
-      text: "Xin lỗi, tôi chưa hiểu yêu cầu của bạn. Bạn có thể nói rõ hơn không? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam', 'sản phẩm từ 200 đến 500 cho nữ loại áo thun'",
-      products: [],
-    };
+    // Xử lý câu hỏi chung dựa trên questionType
+    if (keys.questionType) {
+      let prompt = "";
+      if (keys.questionType === "openHours") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Giả sử cửa hàng mở cửa từ 8:00 sáng đến 9:00 tối mỗi ngày. Đừng thêm thông tin không cần thiết.`;
+      } else if (keys.questionType === "shipping") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Giả sử giao hàng miễn phí cho đơn hàng trên 500.000 VNĐ và giao trong 2-3 ngày. Đừng thêm thông tin không cần thiết.`;
+      } else if (keys.questionType === "returnPolicy") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Giả sử cửa hàng chấp nhận đổi trả trong 7 ngày nếu sản phẩm còn nguyên vẹn. Đừng thêm thông tin không cần thiết.`;
+      } else if (keys.questionType === "address") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Cửa hàng của tôi có địa chỉ tại H33/07 k502 đường tháng 9, Hòa Cường Nam, Đà Nẵng. Đừng thêm thông tin không cần thiết.`;
+      }
+      const geminiResponse = await callGeminiAPI(prompt);
+      return { text: geminiResponse, products: [] };
+    }
+
+    const geminiResponse = await callGeminiAPI(message);
+    return { text: geminiResponse, products: [] };
   };
+
   // Xử lý 'xem thêm'
   const handleSeeMore = async () => {
     const currentPage =
@@ -204,7 +278,10 @@ const Chatbot = ({ setOpenMessage }) => {
         const { products, total } = response;
 
         if (products.length === 0) {
-          return { text: "Không còn sản phẩm nào để hiển thị.", products: [] };
+          const geminiResponse = await callGeminiAPI(
+            "Không còn sản phẩm nào để hiển thị. Hãy gợi ý hoặc trả lời thân thiện bằng tiếng Việt."
+          );
+          return { text: geminiResponse, products: [] };
         }
 
         let text = "Các sản phẩm tiếp theo:\n";
@@ -212,12 +289,18 @@ const Chatbot = ({ setOpenMessage }) => {
           text += "\nNhập 'xem thêm' để thấy thêm sản phẩm.";
         return { text, products };
       } catch (error) {
-        return { text: "Có lỗi xảy ra. Vui lòng thử lại!", products: [] };
+        const geminiResponse = await callGeminiAPI(
+          "Có lỗi khi tải thêm sản phẩm. Hãy trả lời thân thiện và gợi ý cách khác bằng tiếng Việt."
+        );
+        return { text: geminiResponse, products: [] };
       }
     }
-    return { text: "Không thể xử lý yêu cầu 'xem thêm'.", products: [] };
-  };
 
+    const geminiResponse = await callGeminiAPI(
+      "Không thể xử lý yêu cầu 'xem thêm'. Hãy trả lời thân thiện bằng tiếng Việt."
+    );
+    return { text: geminiResponse, products: [] };
+  };
   // Lấy ngày để hiển thị
   const { date } = getTimeInVietnam();
 
