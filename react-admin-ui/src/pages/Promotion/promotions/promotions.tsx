@@ -9,7 +9,7 @@ import { CircularProgress, Alert } from "@mui/material";
 
 const Promotions = () => {
   const { isLoading, data, error } = useQuery({
-    queryKey: ["promotions"],
+    queryKey: ["allpromotions"],
     queryFn: () => apiCustom.get("/promotions").then((res) => res.data),
   });
 
@@ -66,12 +66,15 @@ const Promotions = () => {
       },
     },
     {
-      field: "quantity",
+      field: "maxUses",
       type: "string",
       align: "center", // canh giữa nội dung
       headerAlign: "center", // canh giữa tiêu đề cột
       headerName: "Quantity",
       width: 130,
+      renderCell: (params) => {
+        return `${params.row.usedCount} / ${params.row.maxUses}`;
+      },
     },
   ];
 
@@ -106,10 +109,10 @@ const Promotions = () => {
         </Link>
       </div>
       <DataTable
-        slug="blog"
+        slug="promotions"
         columns={columns}
         rows={promotionsRows}
-        infoSearch="titleBlog"
+        infoSearch="code"
       />
     </div>
   );

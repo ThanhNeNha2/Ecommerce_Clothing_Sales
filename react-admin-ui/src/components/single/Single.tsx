@@ -52,12 +52,12 @@ const Single = (props: Props) => {
   useEffect(() => {
     const updateInfo = () => {
       setInfo({
-        username: data?.user.username,
-        email: data?.user.email,
-        role: data?.user.role,
-        phone: data?.user.phone,
-        image: data?.user.image,
-        address: data?.user.address,
+        username: data?.user?.username,
+        email: data?.user?.email,
+        role: data?.user?.role,
+        phone: data?.user?.phone,
+        image: data?.user?.image,
+        address: data?.user?.address,
       });
     };
     updateInfo();

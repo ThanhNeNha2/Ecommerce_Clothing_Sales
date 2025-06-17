@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import "./AddPromotion.scss";
-import { useMutation } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import "./UpdatePromotion.scss";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { parseISO, isAfter, isBefore, startOfDay, format } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { apiCustom } from "../../../custom/customApi";
 
-const AddPromotion = () => {
+const UpdatePromotion = () => {
   // Quản lý thông tin mã giảm giá
   const [promotionInfo, setPromotionInfo] = useState({
     code: "",
@@ -17,6 +17,34 @@ const AddPromotion = () => {
     discount_value: 0,
     discount_type: "percentage",
   });
+
+  const { id } = useParams();
+
+  // Lấy dữ liệu mã giảm giá từ API
+  const { isLoading, data, error } = useQuery({
+    queryKey: ["singlePromotion", id],
+    queryFn: () => apiCustom.get(`/promotions/${id}`).then((res) => res.data),
+  });
+
+  // Cập nhật promotionInfo khi dữ liệu từ API được tải
+  useEffect(() => {
+    if (data) {
+      const promotionData = data.promotion || data; // Kiểm tra cấu trúc dữ liệu từ API
+      setPromotionInfo({
+        code: promotionData?.code || "",
+        description: promotionData?.description || "",
+        maxUses: promotionData?.maxUses || 0,
+        start_date: promotionData?.start_date
+          ? format(new Date(promotionData.start_date), "yyyy-MM-dd")
+          : "",
+        end_date: promotionData?.end_date
+          ? format(new Date(promotionData.end_date), "yyyy-MM-dd")
+          : "",
+        discount_value: promotionData?.discount_value || 0,
+        discount_type: promotionData?.discount_type || "percentage",
+      });
+    }
+  }, [data]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -30,28 +58,26 @@ const AddPromotion = () => {
     }));
   };
 
-  // API CREATE
+  // API UPDATE
   const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: (info: any) => {
-      return apiCustom.post("/promotions", info);
+      return apiCustom.put(`/promotions/${id}`, info);
     },
     onSuccess: () => {
-      toast.success("🎉 Mã giảm giá đã được tạo thành công!");
+      toast.success("🎉 Mã giảm giá đã được cập nhật thành công!");
       navigate("/promotions");
     },
     onError: (error: any) => {
-      console.log("error", error);
-
       toast.error(
-        `🚨 Lỗi khi tạo mã giảm giá: ${
-          error.response.data.message || "Vui lòng thử lại!"
+        `🚨 Lỗi khi cập nhật mã giảm giá: ${
+          error.response?.data?.message || "Vui lòng thử lại!"
         }`
       );
     },
   });
 
-  // Xác nhận tạo mã giảm giá
+  // Xác nhận cập nhật mã giảm giá
   const handleConfirm = () => {
     const {
       code,
@@ -137,10 +163,24 @@ const AddPromotion = () => {
   // Định dạng ngày hiện tại (15/05/2025) thành YYYY-MM-DD để đặt giá trị min cho input date
   const todayFormatted = format(new Date(), "yyyy-MM-dd");
 
+  // Hiển thị trạng thái loading hoặc lỗi
+  if (isLoading) {
+    return <div className="add-promotion">Đang tải dữ liệu...</div>;
+  }
+
+  if (error || !data) {
+    return (
+      <div className="add-promotion">
+        Lỗi khi tải dữ liệu mã giảm giá:{" "}
+        {(error as Error)?.message || "Không tìm thấy mã giảm giá!"}
+      </div>
+    );
+  }
+
   return (
     <div className="add-promotion">
       <div className="content">
-        <h2>Thêm Mã Giảm Giá Mới</h2>
+        <h2>Cập Nhật Mã Giảm Giá</h2>
         <hr />
         <div className="form">
           <div className="item">
@@ -226,4 +266,4 @@ const AddPromotion = () => {
   );
 };
 
-export default AddPromotion;
+export default UpdatePromotion;
