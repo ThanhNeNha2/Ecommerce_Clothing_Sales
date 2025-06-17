@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Clock,
   Calendar,
-  Users,
   Percent,
   DollarSign,
   Tag,
@@ -11,73 +10,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import Header from "../../components/Header/Header";
-import CoverImg from "../../components/Cover/CoverImg";
 import { getAllPromotion } from "../../services/api";
-import { message, notification } from "antd";
-
-// Mock data for demonstration
-const mockPromotions = [
-  {
-    code: "SUMMER2024",
-    description: "Giảm giá mùa hè cho toàn bộ bộ sưu tập thời trang",
-    discount_type: "Percentage",
-    discount_value: 30,
-    start_date: "2024-06-01",
-    end_date: "2024-12-31",
-    status: "Active",
-    usedCount: 45,
-    maxUses: 100,
-    category: "seasonal",
-  },
-  {
-    code: "NEWUSER50",
-    description: "Ưu đãi đặc biệt dành cho khách hàng mới",
-    discount_type: "Fixed",
-    discount_value: 50000,
-    start_date: "2024-05-01",
-    end_date: "2024-12-31",
-    status: "Active",
-    usedCount: 12,
-    maxUses: 50,
-    category: "new-customer",
-  },
-  {
-    code: "FLASHSALE",
-    description: "Flash sale cuối tuần - Giảm giá sốc",
-    discount_type: "Percentage",
-    discount_value: 25,
-    start_date: "2024-05-20",
-    end_date: "2024-05-25",
-    status: "Active",
-    usedCount: 89,
-    maxUses: 200,
-    category: "flash-sale",
-  },
-  {
-    code: "OLDCODE",
-    description: "Mã giảm giá đã hết hạn",
-    discount_type: "Percentage",
-    discount_value: 20,
-    start_date: "2024-01-01",
-    end_date: "2024-04-30",
-    status: "Inactive",
-    usedCount: 150,
-    maxUses: 150,
-    category: "expired",
-  },
-  {
-    code: "FUTURE2025",
-    description: "Khuyến mãi đặc biệt 2025-2026",
-    discount_type: "Percentage",
-    discount_value: 15,
-    start_date: "2025-05-23",
-    end_date: "2026-06-20",
-    status: "Active",
-    usedCount: 10,
-    maxUses: 100,
-    category: "seasonal",
-  },
-];
+import { notification } from "antd";
 
 const Promotion = () => {
   const [promotions, setPromotions] = useState([]);
@@ -247,7 +181,7 @@ const Promotion = () => {
               const isActive = !isExpired && !isNotStarted;
 
               const DiscountIcon =
-                promo.discount_type === "Percentage" ? Percent : DollarSign;
+                promo.discount_type === "percentage" ? Percent : DollarSign;
               const usagePercentage = promo.maxUses
                 ? (promo.usedCount / promo.maxUses) * 100
                 : 0;
@@ -302,7 +236,7 @@ const Promotion = () => {
                           {promo.discount_value}
                         </span>
                         <span className="text-xl">
-                          {promo.discount_type === "Percentage" ? "%" : "₫"}
+                          {promo.discount_type === "percentage" ? "%" : "VNĐ"}
                         </span>
                       </div>
                       <div className="text-sm opacity-90">GIẢM GIÁ</div>

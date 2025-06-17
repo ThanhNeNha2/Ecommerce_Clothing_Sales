@@ -171,7 +171,7 @@ const DetailProduct = () => {
             {singleItem.image_url?.[0] ? (
               <img
                 src={singleItem.image_url[0]}
-                alt={singleItem.nameProduct || "Product image"}
+                alt={singleItem?.nameProduct || "Product image"}
                 className="w-[90%] h-full object-cover rounded cursor-pointer"
                 onClick={() => setIsOpen(true)}
               />
@@ -184,7 +184,7 @@ const DetailProduct = () => {
         </div>
         <div className="flex-1 flex flex-col gap-3 min-w-[300px]">
           <span className="font-poppins text-[28px] font-medium">
-            {singleItem.nameProduct || "Tên sản phẩm"}
+            {singleItem?.nameProduct || "Tên sản phẩm"}
           </span>
           <p className="font-poppins text-[18px]">
             <span className="text-red-500 font-semibold mr-2">
@@ -346,7 +346,7 @@ const DetailProduct = () => {
       </div>
       <hr className="my-7" />
       <DescriptionAndReviews
-        description={singleItem.description}
+        description={singleItem?.description}
         quantityReview={reviews.length}
       />
     </div>

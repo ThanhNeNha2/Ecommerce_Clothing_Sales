@@ -13,14 +13,18 @@ import Footer from "../../components/Footer/Footer";
 import HeroSection from "../../components/Home/HeroSection/HeroSection";
 import ItemType from "../../components/Home/ItemType/ItemType";
 import { instance } from "../../Custom/Axios/AxiosCustom";
+import { useNavigate, useNavigation } from "react-router-dom";
 
 const Home = () => {
-  const [addProduct, setAddProduct] = useState(8);
+  const [addProduct, setAddProduct] = useState(16);
   const [listProducts, setListProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const productRef = useRef(null); // ref để scroll đến cuối danh sách sản phẩm
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const getAllProduct = async () => {
     try {
@@ -40,11 +44,6 @@ const Home = () => {
   }, [addProduct]);
 
   // Tự động cuộn xuống sau khi sản phẩm mới được thêm
-  useEffect(() => {
-    if (!loading && listProducts.length > 0 && productRef.current) {
-      productRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  }, [listProducts]);
 
   if (loading) return <div className="text-center py-8">Đang tải...</div>;
   if (error)
@@ -70,9 +69,11 @@ const Home = () => {
       <div className="flex justify-center items-center mt-7">
         <button
           className="py-2 px-5 bg-white border border-colorMain text-colorMain text-base font-medium font-poppins hover:bg-gray-200 rounded"
-          onClick={() => setAddProduct(addProduct + 8)}
+          onClick={() => {
+            navigate("/ListProduct");
+          }}
         >
-          Xem thêm
+          Xem tất cả
         </button>
       </div>
 

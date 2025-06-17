@@ -8,10 +8,6 @@ import {
   getAllProductChatbot,
   getAllProductChatbotSeeMore,
 } from "../../services/api";
-import {
-  faqConfig,
-  translateToEnglish,
-} from "../../constants/ChatbotTranslate";
 
 const getTimeInVietnam = () => {
   const now = new Date();
@@ -44,7 +40,7 @@ const Chatbot = ({ setOpenMessage }) => {
     {
       sender: false,
       content: {
-        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam', 'sản phẩm từ 200 đến 500 cho nữ loại áo thun'",
+        text: "Xin chào! Tôi là trợ lý chatbot. Bạn cần giúp gì hôm nay ?",
         products: [],
       },
       time: getTimeInVietnam().time, // Sử dụng giờ mới
@@ -57,38 +53,59 @@ const Chatbot = ({ setOpenMessage }) => {
   // Hàm phân tích câu hỏi và trích xuất từ khóa
   const extractKeysFromMessage = (message) => {
     const keys = {};
-    for (const pattern of faqConfig.patterns) {
-      for (const example of pattern.examples) {
-        const regexPattern = example
-          .replace(/{price}/g, "(\\d+)")
-          .replace(/{minPrice}/g, "(\\d+)")
-          .replace(/{maxPrice}/g, "(\\d+)")
-          .replace(/{gender}/g, "(\\w+(?: \\w+)?)")
-          .replace(/{category}/g, "(\\w+(?: \\w+)?)")
-          .replace(/{subCategory}/g, "(\\w+(?: \\w+)?)")
-          .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const regex = new RegExp(regexPattern, "i");
-        const match = message.match(regex);
-        if (match) {
-          let index = 1;
-          for (const key in pattern.keys) {
-            let value = match[index];
-            if (value) {
-              if (key === "maxPrice" || key === "minPrice") {
-                keys[key] = Number(value);
-              } else {
-                keys[key] = translateToEnglish(value, key);
-              }
-              index++;
-            }
-          }
-          return keys;
-        }
+    const lowerMessage = message.toLowerCase().trim();
+
+    // Tìm giá
+    const priceMatch = lowerMessage.match(/(\d+)/g);
+    if (priceMatch) {
+      if (lowerMessage.includes("dưới") || lowerMessage.includes("nhỏ hơn")) {
+        keys.maxPrice = Number(priceMatch[0]);
+      } else if (
+        lowerMessage.includes("trên") ||
+        lowerMessage.includes("lớn hơn")
+      ) {
+        keys.minPrice = Number(priceMatch[0]);
+      } else if (lowerMessage.includes("từ") && lowerMessage.includes("đến")) {
+        keys.minPrice = Number(priceMatch[0]);
+        if (priceMatch[1]) keys.maxPrice = Number(priceMatch[1]);
       }
     }
+
+    // Tìm giới tính
+    if (lowerMessage.includes("nam")) keys.gender = "Men";
+    if (lowerMessage.includes("nữ")) keys.gender = "Women";
+    if (lowerMessage.includes("trẻ em") || lowerMessage.includes("trẻ"))
+      keys.gender = "Kids";
+
+    // Tìm loại sản phẩm
+    if (lowerMessage.includes("áo thun")) keys.subCategory = "T-Shirt";
+    if (lowerMessage.includes("quần jeans")) keys.subCategory = "Jeans";
+    if (lowerMessage.includes("áo")) keys.mainCategory = "Topwear";
+    if (lowerMessage.includes("quần")) keys.mainCategory = "Bottomwear";
+
+    // Nhận diện câu hỏi chung
+    if (lowerMessage.includes("mở cửa") || lowerMessage.includes("giờ mở")) {
+      keys.questionType = "openHours";
+    } else if (
+      lowerMessage.includes("giao hàng") ||
+      lowerMessage.includes("ship")
+    ) {
+      keys.questionType = "shipping";
+    } else if (
+      lowerMessage.includes("trả hàng") ||
+      lowerMessage.includes("đổi")
+    ) {
+      keys.questionType = "returnPolicy";
+    } else if (
+      lowerMessage.includes("địa chỉ") ||
+      lowerMessage.includes("ở đâu")
+    ) {
+      keys.questionType = "address";
+    }
+
+    console.log("Extracted keys:", keys);
     return keys;
   };
-
   // Hàm xử lý gửi tin nhắn
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
@@ -125,9 +142,47 @@ const Chatbot = ({ setOpenMessage }) => {
     ]);
   };
 
+  // Hàm gọi Gemini API
+  const callGeminiAPI = async (message) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Bạn là một trợ lý chatbot thân thiện. Hãy trả lời câu hỏi của người dùng một cách tự nhiên và hữu ích bằng tiếng Việt. Câu hỏi: "${message}"`,
+                },
+              ],
+            },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Lỗi khi gọi Gemini API");
+      }
+
+      const data = await response.json();
+      const geminiResponse =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Không thể tạo phản hồi từ Gemini.";
+      return geminiResponse;
+    } catch (error) {
+      console.error("Lỗi Gemini API:", error);
+      return "Có lỗi xảy ra khi xử lý yêu cầu. Vui lòng thử lại!";
+    }
+  };
+
   // Hàm xử lý tin nhắn người dùng
   const processMessage = async (message) => {
     const keys = extractKeysFromMessage(message);
+    console.log("Extracted keys:", keys);
     let queryParams = "";
     if (keys.maxPrice) {
       queryParams += `maxPrice=${keys.maxPrice}`;
@@ -150,27 +205,46 @@ const Chatbot = ({ setOpenMessage }) => {
     if (queryParams) {
       try {
         const response = await getAllProductChatbot(queryParams);
+        console.log("API response:", response);
         const { products, total } = response;
 
         if (products.length === 0) {
-          return { text: "Không tìm thấy sản phẩm nào phù hợp.", products: [] };
+          const geminiResponse = await callGeminiAPI(
+            `Không tìm thấy sản phẩm nào phù hợp với yêu cầu: "${message}". Hãy gợi ý hoặc trả lời thân thiện bằng tiếng Việt.`
+          );
+          return { text: geminiResponse, products: [] };
         }
 
         let text = "Dưới đây là các sản phẩm phù hợp:\n";
         if (total > 5) text += "\nNhập 'xem thêm' để thấy thêm sản phẩm.";
         return { text, products };
       } catch (error) {
-        return {
-          text: "Có lỗi xảy ra khi tìm kiếm sản phẩm. Vui lòng thử lại!",
-          products: [],
-        };
+        console.error("API error:", error);
+        const geminiResponse = await callGeminiAPI(
+          `Có lỗi khi tìm kiếm sản phẩm cho yêu cầu: "${message}". Hãy trả lời thân thiện và gợi ý cách khác bằng tiếng Việt.`
+        );
+        return { text: geminiResponse, products: [] };
       }
     }
 
-    return {
-      text: "Xin lỗi, tôi chưa hiểu yêu cầu của bạn. Bạn có thể nói rõ hơn không? Ví dụ: 'sản phẩm dưới 500', 'sản phẩm trên 200', 'loại áo thun', 'phụ loại quần jeans', 'sản phẩm cho nam', 'sản phẩm từ 200 đến 500 cho nữ loại áo thun'",
-      products: [],
-    };
+    // Xử lý câu hỏi chung dựa trên questionType
+    if (keys.questionType) {
+      let prompt = "";
+      if (keys.questionType === "openHours") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Giả sử cửa hàng mở cửa từ 8:00 sáng đến 9:00 tối mỗi ngày. Đừng thêm thông tin không cần thiết.`;
+      } else if (keys.questionType === "shipping") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Giả sử giao hàng miễn phí cho đơn hàng trên 500.000 VNĐ và giao trong 2-3 ngày. Đừng thêm thông tin không cần thiết.`;
+      } else if (keys.questionType === "returnPolicy") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Giả sử cửa hàng chấp nhận đổi trả trong 7 ngày nếu sản phẩm còn nguyên vẹn. Đừng thêm thông tin không cần thiết.`;
+      } else if (keys.questionType === "address") {
+        prompt = `Bạn là trợ lý chatbot của một cửa hàng. Hãy trả lời câu hỏi "${message}" bằng tiếng Việt một cách thân thiện và ngắn gọn. Cửa hàng của tôi có địa chỉ tại H33/07 k502 đường tháng 9, Hòa Cường Nam, Đà Nẵng. Đừng thêm thông tin không cần thiết.`;
+      }
+      const geminiResponse = await callGeminiAPI(prompt);
+      return { text: geminiResponse, products: [] };
+    }
+
+    const geminiResponse = await callGeminiAPI(message);
+    return { text: geminiResponse, products: [] };
   };
 
   // Xử lý 'xem thêm'
@@ -204,7 +278,10 @@ const Chatbot = ({ setOpenMessage }) => {
         const { products, total } = response;
 
         if (products.length === 0) {
-          return { text: "Không còn sản phẩm nào để hiển thị.", products: [] };
+          const geminiResponse = await callGeminiAPI(
+            "Không còn sản phẩm nào để hiển thị. Hãy gợi ý hoặc trả lời thân thiện bằng tiếng Việt."
+          );
+          return { text: geminiResponse, products: [] };
         }
 
         let text = "Các sản phẩm tiếp theo:\n";
@@ -212,12 +289,18 @@ const Chatbot = ({ setOpenMessage }) => {
           text += "\nNhập 'xem thêm' để thấy thêm sản phẩm.";
         return { text, products };
       } catch (error) {
-        return { text: "Có lỗi xảy ra. Vui lòng thử lại!", products: [] };
+        const geminiResponse = await callGeminiAPI(
+          "Có lỗi khi tải thêm sản phẩm. Hãy trả lời thân thiện và gợi ý cách khác bằng tiếng Việt."
+        );
+        return { text: geminiResponse, products: [] };
       }
     }
-    return { text: "Không thể xử lý yêu cầu 'xem thêm'.", products: [] };
-  };
 
+    const geminiResponse = await callGeminiAPI(
+      "Không thể xử lý yêu cầu 'xem thêm'. Hãy trả lời thân thiện bằng tiếng Việt."
+    );
+    return { text: geminiResponse, products: [] };
+  };
   // Lấy ngày để hiển thị
   const { date } = getTimeInVietnam();
 
@@ -326,31 +409,44 @@ const Chatbot = ({ setOpenMessage }) => {
         {/* PHẦN NỘI DUNG GỬI */}
         <form
           onSubmit={handleSendMessage}
-          className="h-[40px] flex justify-between items-center"
+          className="min-h-[50px] max-h-[120px] flex justify-between items-end gap-2 p-2"
         >
-          <div className="w-full h-full flex items-center justify-center relative">
-            <input
-              type="text"
+          <div className="w-full flex items-end justify-center relative">
+            <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type a message"
-              className="w-[98%] px-3 h-full rounded"
+              className="w-full px-3 py-2 pr-20 min-h-[46px] max-h-[100px] rounded-lg border border-gray-300 resize-none overflow-y-auto leading-5"
+              rows={1}
+              onInput={(e) => {
+                // Auto-resize textarea
+                e.target.style.height = "auto";
+                e.target.style.height =
+                  Math.min(e.target.scrollHeight, 100) + "px";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(e);
+                }
+              }}
             />
-            <div className="absolute right-2 flex items-center h-full px-2 gap-2 text-lg">
-              <div className="cursor-pointer">
+            <div className="absolute right-3 bottom-2 flex items-center gap-2 text-lg text-gray-500">
+              <div className="cursor-pointer hover:text-gray-700 transition-colors">
                 <MdOutlineInsertPhoto />
               </div>
-              <div className="cursor-pointer">
+              <div className="cursor-pointer hover:text-gray-700 transition-colors">
                 <FaRegFaceSmile />
               </div>
             </div>
           </div>
-          <div
-            className="w-[10%] h-full bg-green-500 flex justify-center items-center text-white text-xl rounded cursor-pointer"
+          <button
+            type="submit"
+            className="min-w-[50px] h-[46px] bg-green-500 hover:bg-green-600 flex justify-center items-center text-white text-xl rounded-lg cursor-pointer transition-colors flex-shrink-0"
             onClick={handleSendMessage}
           >
             <IoIosSend />
-          </div>
+          </button>
         </form>
       </div>
     </>

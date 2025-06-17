@@ -204,7 +204,7 @@ const Cart = () => {
                       Size: {item.size.name}
                     </span>
                     <span className="font-medium text-gray-700">
-                      ${item.product.salePrice.toFixed(2)}
+                      {item.product.salePrice.toLocaleString("vi-VN")} VNĐ
                     </span>
                   </div>
                 </div>
@@ -256,7 +256,10 @@ const Cart = () => {
                 {/* Total Price */}
                 <div className="text-right min-w-[80px]">
                   <span className="font-bold text-lg text-gray-900">
-                    ${(item.product.salePrice * item.quantity).toFixed(2)}
+                    {(item.product.salePrice * item.quantity).toLocaleString(
+                      "vi-VN"
+                    )}{" "}
+                    VNĐ
                   </span>
                 </div>
 
@@ -289,7 +292,7 @@ const Cart = () => {
               <div className="flex gap-3">
                 <span className="min-w-[100px] text-left">Tổng cộng</span>
                 <p className="text-[15px] text-gray-400 text-left">
-                  ${subtotal.toFixed(2)}
+                  {subtotal.toLocaleString("vi-VN")} VNĐ
                 </p>
               </div>
 
@@ -317,7 +320,7 @@ const Cart = () => {
                   {voucher.discount_type === "percentage"
                     ? "%"
                     : voucher.discount_type === "fixed"
-                    ? "$"
+                    ? "VNĐ"
                     : ""}
                 </p>
               </div>
@@ -326,7 +329,7 @@ const Cart = () => {
               <div className="flex gap-3">
                 <span className="min-w-[100px] text-left">Giá cuối cùng</span>
                 <p className="text-[15px] text-colorMain font-medium text-left">
-                  $ {calculateTotal().toFixed(2)}
+                  {calculateTotal().toLocaleString("vi-VN")} VNĐ
                 </p>
               </div>
             </div>

@@ -395,8 +395,8 @@ export const getAllProductChatbot = async (queryParams) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error in getAllProductChatbot:", error);
-    throw error; // để có thể bắt được lỗi ở useEffect
+    console.error("API Error:", error);
+    throw error;
   }
 };
 
@@ -407,7 +407,19 @@ export const getAllProductChatbotSeeMore = async (queryParams, currentPage) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error in getAllProductChatbotSeeMore:", error);
-    throw error; // để có thể bắt được lỗi ở useEffect
+    console.error("API Error:", error);
+    throw error;
+  }
+};
+
+// thanh toán zalopay
+
+export const paymentZaloPay = async (price, idOrder) => {
+  try {
+    const response = await instance.post(`paymentZaloPay`, { price, idOrder });
+    return response.data;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
   }
 };
