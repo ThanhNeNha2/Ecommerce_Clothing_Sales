@@ -292,12 +292,13 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+
 // GET PRODUCT BY ID
 export const getProductById = async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id }).populate(
       "sizes.size_id",
-      "nameProduct"
+      "name nameProduct"
     );
 
     if (!product) {
@@ -424,6 +425,87 @@ export const deleteProduct = async (req, res) => {
     console.log("Error", error);
     return res.status(500).json({
       message: "Xóa sản phẩm không thành công",
+      idCode: 1,
+    });
+  }
+};
+
+export const getProductsForChatbot = async (req, res) => {
+  try {
+    const {
+      maxPrice,
+      minPrice, // Thêm tham số giá tối thiểu
+      gender,
+      mainCategory,
+      subCategory,
+      page = 1,
+      limit = 5, // Giới hạn 5 sản phẩm cho chatbot
+    } = req.query;
+
+    // Xây dựng query
+    const query = {};
+
+    // Lọc theo giá
+    if (maxPrice || minPrice) {
+      query.salePrice = {};
+      if (maxPrice) {
+        query.salePrice.$lte = Number(maxPrice); // Giá nhỏ hơn hoặc bằng
+      }
+      if (minPrice) {
+        query.salePrice.$gte = Number(minPrice); // Giá lớn hơn hoặc bằng
+      }
+    }
+
+    // Lọc theo giới tính
+    if (gender) {
+      query.gender = gender;
+    }
+
+    // Lọc theo mainCategory
+    if (mainCategory) {
+      query.mainCategory = mainCategory;
+    }
+
+    // Lọc theo subCategory
+    if (subCategory) {
+      query.subCategory = { $in: [subCategory] };
+    }
+
+    // Thêm index để tối ưu hóa truy vấn
+    const sortOptions = { salePrice: 1 }; // Sắp xếp giá tăng dần
+
+    // Truy vấn sản phẩm
+    const products = await Product.find(query)
+      .select("nameProduct salePrice image_url mainCategory subCategory")
+      .sort(sortOptions)
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit))
+      .lean();
+
+    // Tổng số sản phẩm
+    const total = await Product.countDocuments(query);
+
+    // Định dạng kết quả cho chatbot
+    const formattedProducts = products.map((product) => ({
+      id: product._id,
+      name: product.nameProduct,
+      price: product.salePrice,
+      image: product.image_url,
+      category: product.mainCategory,
+    }));
+
+    return res.status(200).json({
+      message: "OK",
+      idCode: 0,
+      products: formattedProducts,
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / Number(limit)),
+    });
+  } catch (error) {
+    console.error("Error in getProductsForChatbot:", error);
+    return res.status(500).json({
+      message: "Tìm kiếm sản phẩm cho chatbot không thành công",
       idCode: 1,
     });
   }

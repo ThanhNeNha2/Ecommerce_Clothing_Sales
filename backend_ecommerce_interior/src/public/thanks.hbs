@@ -1,0 +1,122 @@
+
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cảm ơn bạn đã đặt hàng!</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; } body { font-family:
+      'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color:
+      #333; background-color: #f4f4f4; } .email-container { max-width: 600px;
+      margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0,
+      0, 0, 0.1); } .header { background: linear-gradient(135deg, #667eea 0%,
+      #764ba2 100%); color: white; padding: 40px 30px; text-align: center; }
+      .header h1 { font-size: 28px; margin-bottom: 10px; font-weight: 600; }
+      .success-icon { width: 60px; height: 60px; background-color: #4CAF50;
+      border-radius: 50%; margin: 0 auto 20px; display: flex; align-items:
+      center; justify-content: center; font-size: 30px; } .content { padding:
+      40px 30px; } .greeting { font-size: 18px; margin-bottom: 20px; color:
+      #2c3e50; } .message { font-size: 16px; margin-bottom: 30px; line-height:
+      1.8; color: #555; } .order-details { background-color: #f8f9fa;
+      border-radius: 8px; padding: 25px; margin: 30px 0; border-left: 4px solid
+      #667eea; } .order-details h3 { color: #2c3e50; margin-bottom: 15px;
+      font-size: 18px; } .detail-row { display: flex; justify-content:
+      space-between; align-items: center; padding: 8px 0; border-bottom: 1px
+      solid #e9ecef; } .detail-row:last-child { border-bottom: none; }
+      .detail-label { font-weight: 600; color: #495057; } .detail-value { color:
+      #6c757d; } .total-row { font-weight: bold; font-size: 18px; color:
+      #2c3e50; border-top: 2px solid #667eea; padding-top: 12px; margin-top:
+      10px; } .cta-section { text-align: center; margin: 30px 0; } .cta-button {
+      display: inline-block; background: linear-gradient(135deg, #667eea 0%,
+      #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none;
+      border-radius: 25px; font-weight: 600; transition: transform 0.3s ease; }
+      .cta-button:hover { transform: translateY(-2px); } .next-steps {
+      background-color: #e3f2fd; border-radius: 8px; padding: 20px; margin: 30px
+      0; } .next-steps h4 { color: #1565c0; margin-bottom: 15px; } .next-steps
+      ul { list-style: none; padding: 0; } .next-steps li { padding: 5px 0;
+      color: #424242; } .next-steps li:before { content: "✓"; color: #4CAF50;
+      font-weight: bold; margin-right: 10px; } .contact-info { background-color:
+      #fff3e0; border-radius: 8px; padding: 20px; margin: 30px 0; text-align:
+      center; } .contact-info h4 { color: #e65100; margin-bottom: 10px; }
+      .footer { background-color: #2c3e50; color: white; padding: 30px;
+      text-align: center; } .footer p { margin-bottom: 10px; } .social-links {
+      margin: 20px 0; } .social-links a { color: white; text-decoration: none;
+      margin: 0 10px; font-size: 18px; } @media (max-width: 600px) {
+      .email-container { margin: 0; width: 100%; } .header, .content, .footer {
+      padding: 20px; } .detail-row { flex-direction: column; align-items:
+      flex-start; } .detail-value { margin-top: 5px; } }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <!-- Header -->
+      <div class="header">
+        <div class="success-icon">✓</div>
+        <h1>Đặt hàng thành công!</h1>
+        <p>Cảm ơn bạn đã tin tưởng và lựa chọn chúng tôi</p>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <div class="greeting">
+          Xin chào
+          {{customerName}},
+        </div>
+
+        <div class="message">
+          Chúng tôi xin chân thành cảm ơn bạn đã đặt hàng tại
+          <strong>TRENDORY</strong>. Đơn hàng của bạn đã được tiếp nhận và đang
+          được xử lý. Chúng tôi sẽ chuẩn bị và giao hàng đến bạn trong thời gian
+          sớm nhất.
+        </div>
+
+        <!-- Order Details -->
+        <div class="order-details">
+          <h3>📋 Thông tin đơn hàng</h3>
+
+          <div class="detail-row">
+            <span class="detail-label">Mã đơn hàng:</span>
+            <span class="detail-value">#{{orderNumber}}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Ngày đặt hàng:</span>
+            <span class="detail-value">{{orderDate}}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Phương thức thanh toán:</span>
+            <span class="detail-value">{{paymentMethod}}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Địa chỉ giao hàng:</span>
+            <span class="detail-value">{{shippingAddress}}</span>
+          </div>
+
+          <div class="detail-row total-row">
+            <span class="detail-label">Tổng tiền:</span>
+            <span class="detail-value">{{totalAmount}} VNĐ</span>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="cta-section">
+          <a href="{{orderTrackingUrl}}" class="cta-button">
+            🔍 Theo dõi đơn hàng
+          </a>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info">
+          <h4>🤝 Cần hỗ trợ?</h4>
+          <p>Liên hệ với chúng tôi qua:</p>
+          <p>📞 Hotline: 0338635587</p>
+          <p>📧 Email: ta.coaching.v2@gmail.com</p>
+        </div>
+
+      </div>
+
+    </div>
+  </body>
+</html>

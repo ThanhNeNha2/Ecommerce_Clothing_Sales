@@ -3,7 +3,7 @@ const fs = require("fs");
 const handlebars = require("handlebars");
 const path = require("path");
 
-export const sendEmail = async (name, activationCode, toEmail) => {
+export const sendCodeAccess = async (name, activationCode, toEmail) => {
   // Đọc template từ file
   const templateSource = fs.readFileSync(
     path.join(__dirname, "../public/register.hbs"),

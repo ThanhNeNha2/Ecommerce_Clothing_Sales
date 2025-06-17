@@ -1,19 +1,20 @@
 import mongoose from "mongoose";
-import Cart from "../models/Cart.model.js"; // Đường dẫn tới model Cart
-import Product from "../models/Product.model.js"; // Đường dẫn tới model Product
+import Cart from "../models/Cart.model.js";
+import Product from "../models/Product.model.js";
 
 // Thêm sản phẩm vào giỏ hàng
 export const addToCart = async (req, res) => {
   try {
-    const { user_id, product_id, quantity = 1 } = req.body;
+    const { user_id, product_id, size_id, quantity = 1 } = req.body;
 
     // Kiểm tra dữ liệu đầu vào
     if (
       !mongoose.Types.ObjectId.isValid(user_id) ||
-      !mongoose.Types.ObjectId.isValid(product_id)
+      !mongoose.Types.ObjectId.isValid(product_id) ||
+      !mongoose.Types.ObjectId.isValid(size_id)
     ) {
       return res.status(400).json({
-        message: "ID người dùng hoặc sản phẩm không hợp lệ",
+        message: "ID người dùng, sản phẩm hoặc kích thước không hợp lệ",
         idCode: 1,
       });
     }
@@ -34,17 +35,28 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    // Kiểm tra số lượng tồn kho
-    if (product.stock_quantity < quantity) {
+    // Kiểm tra kích thước tồn tại
+    const size = product.sizes.find(
+      (s) => s.size_id.toString() === size_id.toString()
+    );
+    if (!size) {
       return res.status(400).json({
-        message: "Số lượng yêu cầu vượt quá số lượng tồn kho",
+        message: "Kích thước không hợp lệ cho sản phẩm này",
+        idCode: 1,
+      });
+    }
+
+    // Kiểm tra số lượng tồn kho của kích thước
+    if (size.stock < quantity) {
+      return res.status(400).json({
+        message: `Sản phẩm ${product.nameProduct} (kích thước ${size_id}) không đủ tồn kho`,
         idCode: 1,
       });
     }
 
     // Thêm hoặc cập nhật giỏ hàng
     const cartItem = await Cart.findOneAndUpdate(
-      { user_id, product_id },
+      { user_id, product_id, size_id },
       { $set: { quantity } },
       { upsert: true, new: true, runValidators: true }
     );
@@ -55,7 +67,6 @@ export const addToCart = async (req, res) => {
       cartItem,
     });
   } catch (error) {
-    // Xử lý lỗi trùng lặp (không cần vì findOneAndUpdate xử lý upsert)
     console.log("Error in addToCart:", error);
     return res.status(500).json({
       message: "Thêm sản phẩm vào giỏ hàng không thành công",
@@ -77,32 +88,45 @@ export const getCart = async (req, res) => {
       });
     }
 
-    // Lấy danh sách giỏ hàng và populate thông tin sản phẩm
+    // Lấy danh sách giỏ hàng và populate thông tin sản phẩm và kích thước
     const cartItems = await Cart.find({ user_id })
       .populate({
         path: "product_id",
         select:
-          "nameProduct salePrice image_url mainCategory subCategory stock_quantity",
+          "nameProduct salePrice image_url mainCategory subCategory stock_quantity sizes",
+      })
+      .populate({
+        path: "size_id",
+        select: "name", // Giả sử Size có trường name
       })
       .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit))
       .lean();
 
     // Định dạng kết quả
-    const formattedCart = cartItems.map((item) => ({
-      id: item._id,
-      user_id: item.user_id,
-      product: {
-        id: item.product_id._id,
-        nameProduct: item.product_id.nameProduct,
-        salePrice: item.product_id.salePrice,
-        image_url: item.product_id.image_url,
-        mainCategory: item.product_id.mainCategory,
-        subCategory: item.product_id.subCategory,
-        stock_quantity: item.product_id.stock_quantity,
-      },
-      quantity: item.quantity,
-    }));
+    const formattedCart = cartItems.map((item) => {
+      const size = item.product_id.sizes.find(
+        (s) => s.size_id.toString() === item.size_id._id.toString()
+      );
+      return {
+        id: item._id,
+        user_id: item.user_id,
+        product: {
+          id: item.product_id._id,
+          nameProduct: item.product_id.nameProduct,
+          salePrice: item.product_id.salePrice,
+          image_url: item.product_id.image_url,
+          mainCategory: item.product_id.mainCategory,
+          subCategory: item.product_id.subCategory,
+          stock_quantity: size ? size.stock : 0, // Tồn kho theo kích thước
+        },
+        size: {
+          id: item.size_id._id,
+          name: item.size_id.name,
+        },
+        quantity: item.quantity,
+      };
+    });
 
     // Tổng số bản ghi
     const total = await Cart.countDocuments({ user_id });
@@ -147,7 +171,7 @@ export const updateCart = async (req, res) => {
     }
 
     // Kiểm tra bản ghi giỏ hàng tồn tại
-    const cartItem = await Cart.findById(id);
+    const cartItem = await Cart.findById(id).populate("product_id size_id");
     if (!cartItem) {
       return res.status(404).json({
         message: "Sản phẩm không có trong giỏ hàng",
@@ -156,7 +180,7 @@ export const updateCart = async (req, res) => {
     }
 
     // Kiểm tra sản phẩm tồn tại
-    const product = await Product.findById(cartItem.product_id);
+    const product = cartItem.product_id;
     if (!product) {
       return res.status(404).json({
         message: "Sản phẩm không tồn tại",
@@ -164,10 +188,21 @@ export const updateCart = async (req, res) => {
       });
     }
 
-    // Kiểm tra số lượng tồn kho
-    if (product.stock_quantity < quantity) {
+    // Kiểm tra kích thước tồn tại
+    const size = product.sizes.find(
+      (s) => s.size_id.toString() === cartItem.size_id._id.toString()
+    );
+    if (!size) {
       return res.status(400).json({
-        message: "Số lượng yêu cầu vượt quá số lượng tồn kho",
+        message: "Kích thước không hợp lệ cho sản phẩm này",
+        idCode: 1,
+      });
+    }
+
+    // Kiểm tra số lượng tồn kho của kích thước
+    if (size.stock < quantity) {
+      return res.status(400).json({
+        message: `Sản phẩm ${product.nameProduct} (kích thước ${cartItem.size_id._id}) không đủ tồn kho`,
         idCode: 1,
       });
     }
@@ -221,7 +256,7 @@ export const removeFromCart = async (req, res) => {
       idCode: 0,
     });
   } catch (error) {
-    console.log("Error", error);
+    console.log("Error in removeFromCart:", error);
     return res.status(500).json({
       message: "Xóa sản phẩm khỏi giỏ hàng không thành công",
       idCode: 1,

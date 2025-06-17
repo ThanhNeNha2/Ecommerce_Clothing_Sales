@@ -7,6 +7,10 @@ const promotionSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    description: {
+      type: String,
+      required: true,
+    },
     discount_type: {
       type: String,
       enum: ["percentage", "fixed"],
@@ -25,7 +29,12 @@ const promotionSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    quantity: {
+    usedCount: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    maxUses: {
       type: Number,
       required: true,
       min: 0,
