@@ -1,104 +1,96 @@
-Ecommerce Clothing Sales
+# 🛍️ Ecommerce Clothing Sales
 
-Overview
+## Overview
 
-This is a full-stack e-commerce platform built with modern technologies for both frontend and backend. The application provides a robust set of features for managing users, products, orders, and more, with a focus on scalability, user experience, and secure transactions.\
+This is a full-stack e-commerce platform built with modern web technologies for both frontend and backend. The application provides a comprehensive set of features for managing users, products, orders, and more — with a strong focus on scalability, user experience, and secure transactions.
 
-Link Test Project
+## 🔗 Test Project
 
-https://trendory.vercel.app/
+[👉 Live Demo](https://trendory.vercel.app/)
 
-Features
+---
 
-User Management: Register, login, profile management, and role-based access control.
+## ✨ Features
 
-Product Management: Add, edit, delete, and categorize products with rich text descriptions.
+- **User Management**: Register, login, profile management, and role-based access control.
+- **Product Management**: Add, edit, delete, and categorize products with rich text descriptions.
+- **Discount Code Management**: Create and apply discount codes for promotions.
+- **Cart Management**: Add, remove, and update items in the shopping cart.
+- **Wishlist**: Save favorite products for later.
+- **Order Management**: Track and manage customer orders with status updates.
+- **Product Reviews**: Allow users to leave personal comments and ratings.
+- **Recommendation System**: Suggest products based on user behavior.
+- **Blog System**: Create and manage blog posts for content marketing.
+- **Search & Filters**: Search products by keywords, categories, or advanced filters.
+- **Payment Integration**: Secure payments via **ZaloPay** and **Stripe**.
+- **AI Chatbot**: Interactive customer support chatbot.
+- **Revenue Statistics**: Generate sales and revenue reports.
+- **Product Analytics**: Analyze product performance and popularity.
 
-Discount Code Management: Create and apply discount codes for promotions.
+---
 
-Cart Management: Add, remove, and update items in the shopping cart.
+## 🧱 Tech Stack
 
-Wishlist Management: Save favorite products for later purchase.
+### Admin Dashboard
 
-Order Management: Track and manage customer orders with status updates.
+- `@mui/material`: UI components for building admin interfaces.
+- `@tanstack/react-query`: State and async data management.
+- `tinymce`: Rich text editor.
+- `recharts`: Charts and visual analytics.
+- `vite`: Frontend build tool.
+- `typescript`: Strongly typed JavaScript.
 
-Product Reviews: Allow users to leave personal comments and ratings for products.
+### Frontend
 
-Recommendation System: Suggest products based on user behavior and preferences.
+- `react`: Core UI library.
+- `zustand`: State management.
+- `react-query`: Data fetching and caching.
+- `antd`: Component UI library.
+- `tailwindcss`: Utility-first CSS.
+- `stripe`: Payment processing integration.
+- `lightbox.js-react`: Product image gallery.
 
-Blog System: Create and manage blog posts for content marketing.
+### Backend
 
-Product Search: Search products by keywords, categories, or filters.
+- `express`: Web server framework.
+- `mongoose`: MongoDB ODM.
+- `jsonwebtoken`: Authentication with JWT.
+- `stripe`: Payment processing.
+- `nodemailer`: Email sending.
+- `bcrypt`: Password hashing.
+- `dotenv`: Environment configuration.
+- `cloudinary`: Image storage and optimization.
 
-Payment Integration: Secure payments via ZaloPay and Stripe.
+---
 
-Chatbot: Interactive customer support chatbot for user queries.
+## ⚙️ Installation
 
-Revenue Statistics: Generate reports on sales and revenue trends.
+### Prerequisites
 
-Product Statistics: Analyze product performance and popularity.
+- Node.js (v18 or above)
+- MongoDB
+- Cloudinary account
+- Stripe account
+- ZaloPay account
 
-Tech Stack
+### Setup Steps
 
-Admin
+1. Clone the repository
+2. Install dependencies for both frontend and backend
+3. Set up your `.env` files (see example below)
+4. Run the frontend and backend
 
-@mui/material: UI component library for admin dashboard.
+```bash
+# Frontend
+cd frontend
+npm install
+npm run dev
 
-@tanstack/react-query: Data fetching and state management.
+# Backend
+cd ../backend
+npm install
+npm start
 
-tinymce: Rich text editor for content creation.
 
-recharts: Charting library for data visualization.
-
-vite: Fast build tool for frontend development.
-
-typescript: Type-safe JavaScript for robust code.
-
-Frontend
-
-react: JavaScript library for building user interfaces.
-
-zustand: Lightweight state management.
-
-react-query: Efficient data fetching and caching.
-
-antd: Enterprise-grade UI components.
-
-tailwindcss: Utility-first CSS framework.
-
-stripe: Payment processing integration.
-
-lightbox.js-react: Image gallery and lightbox for product images.
-
-Backend
-
-express: Web framework for Node.js.
-
-mongoose: MongoDB object modeling.
-
-jsonwebtoken: Authentication with JWT.
-
-stripe: Payment processing.
-
-nodemailer: Email notifications.
-
-bcrypt: Password hashing.
-
-dotenv: Environment variable management.
-
-cloudinary: Cloud-based image storage and optimization.
-
-Installation
-
-Prerequisites
-
-Node.js (>= 18.x)
-
-MongoDB
-
-Cloudinary account
-
-Stripe account
-
-ZaloPay account
 ![alt text](image.png)
+```
