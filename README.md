@@ -96,187 +96,91 @@ npm start
 
 ## 🖼️ Screenshot
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centered UI Images</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+### CUSTOMER
 
-        h1, h2 {
-            text-align: center;
-            color: #333;
-        }
+### Register
 
-        .section {
-            margin: 40px 20px;
-        }
+![alt text](./imageUi/image-18.png)
 
-        .image-gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
+### Login
 
-        .image-container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            max-width: 300px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
+![alt text](./imageUi/image-2.png)
 
-        .image-container:hover {
-            transform: scale(1.05);
-        }
+### HomePage
 
-        .image-container img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            object-fit: contain;
-        }
+![alt text](./imageUi/image-19.png)
 
-        .image-caption {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #555;
-        }
+### Product list page
 
-        @media (max-width: 600px) {
-            .image-container {
-                max-width: 100%;
-            }
-        }
-    </style>
+![alt text](./imageUi/image-20.png)
 
-</head>
-<body>
-    <h1>UI Design Showcase</h1>
+### Product detail page
 
-    <!-- Customer Section -->
-    <div class="section">
-        <h2>Customer Interfaces</h2>
-        <div class="image-gallery">
-            <div class="image-container">
-                <img src="./imageUi/image-18.png" alt="Register Page">
-                <div class="image-caption">Register Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-2.png" alt="Login Page">
-                <div class="image-caption">Login Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-19.png" alt="Home Page">
-                <div class="image-caption">Home Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-20.png" alt="Product List Page">
-                <div class="image-caption">Product List Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-3.png" alt="Product Detail Page">
-                <div class="image-caption">Product Detail Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-5.png" alt="Favorite Products Section">
-                <div class="image-caption">Favorite Products Section</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-6.png" alt="Product Review Section">
-                <div class="image-caption">Product Review Section</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-7.png" alt="Shop Article Page">
-                <div class="image-caption">Shop Article Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-8.png" alt="Personal Information Page">
-                <div class="image-caption">Personal Information Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-9.png" alt="Coupon Code Page">
-                <div class="image-caption">Coupon Code Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-10.png" alt="Cart Page">
-                <div class="image-caption">Cart Page</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-11.png" alt="Payment Interface Page 1">
-                <div class="image-caption">Payment Interface Page 1</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-12.png" alt="Payment Interface Page 2">
-                <div class="image-caption">Payment Interface Page 2</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-13.png" alt="Payment Interface Page 3">
-                <div class="image-caption">Payment Interface Page 3</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-14.png" alt="Order Management Page 1">
-                <div class="image-caption">Order Management Page 1</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-15.png" alt="Order Management Page 2">
-                <div class="image-caption">Order Management Page 2</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-16.png" alt="Order Management Page 3">
-                <div class="image-caption">Order Management Page 3</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-17.png" alt="ChatBot Interface">
-                <div class="image-caption">ChatBot Interface</div>
-            </div>
-        </div>
-    </div>
+![alt text](./imageUi/image-3.png)
 
-    <!-- Admin Section -->
-    <div class="section">
-        <h2>Admin Interfaces</h2>
-        <div class="image-gallery">
-            <div class="image-container">
-                <img src="./imageUi/image-21.png" alt="Statistics Interface 1">
-                <div class="image-caption">Statistics Interface 1</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-22.png" alt="Statistics Interface 2">
-                <div class="image-caption">Statistics Interface 2</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-23.png" alt="User Management Interface">
-                <div class="image-caption">User Management Interface</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-24.png" alt="Discount Code Management Interface">
-                <div class="image-caption">Discount Code Management Interface</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-25.png" alt="Article Management Interface">
-                <div class="image-caption">Article Management Interface</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-26.png" alt="Order Management Interface">
-                <div class="image-caption">Order Management Interface</div>
-            </div>
-            <div class="image-container">
-                <img src="./imageUi/image-27.png" alt="Product Management Interface">
-                <div class="image-caption">Product Management Interface</div>
-            </div>
-        </div>
-    </div>
+### Favorite products section
 
-</body>
-</html>
+![alt text](./imageUi/image-5.png)
+
+### Product review section
+
+![alt text](./imageUi/image-6.png)
+
+### Shop article page
+
+![alt text](./imageUi/image-7.png)
+
+### Personal information page
+
+![alt text](./imageUi/image-8.png)
+
+### Coupon Code Page
+
+![alt text](./imageUi/image-9.png)
+
+### Page Cart
+
+![alt text](./imageUi/image-10.png)
+
+### Payment interface page
+
+![alt text](./imageUi/image-11.png)
+![alt text](./imageUi/image-12.png)
+![alt text](./imageUi/image-13.png)
+
+### Order Management Page
+
+![alt text](./imageUi/image-14.png)
+![alt text](./imageUi/image-15.png)
+![alt text](./imageUi/image-16.png)
+
+### ChatBot Interface
+
+![alt text](./imageUi/image-17.png)
+
+### ADMIN
+
+### Statistics interface
+
+![alt text](./imageUi/image-21.png)
+![alt text](./imageUi/image-22.png)
+
+### User management interface
+
+![alt text](./imageUi/image-23.png)
+
+### Discount code management interface
+
+![alt text](./imageUi/image-24.png)
+
+### Article management interface
+
+![alt text](./imageUi/image-25.png)
+
+### Order management interface
+
+![alt text](./imageUi/image-26.png)
+
+### Product management interface
+
+![alt text](./imageUi/image-27.png)
