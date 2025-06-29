@@ -92,5 +92,95 @@ npm install
 npm start
 
 
-![alt text](image.png)
 ```
+
+## 🖼️ Screenshot
+
+### CUSTOMER
+
+### Register
+
+![alt text](image-18.png)
+
+### Login
+
+![alt text](image-2.png)
+
+### HomePage
+
+![alt text](image-19.png)
+
+### Product list page
+
+![alt text](image-20.png)
+
+### Product detail page
+
+![alt text](image-3.png)
+
+### Favorite products section
+
+![alt text](image-5.png)
+
+### Product review section
+
+![alt text](image-6.png)
+
+### Shop article page
+
+![alt text](image-7.png)
+
+### Personal information page
+
+![alt text](image-8.png)
+
+### Coupon Code Page
+
+![alt text](image-9.png)
+
+### Page Cart
+
+![alt text](image-10.png)
+
+### Payment interface page
+
+![alt text](image-11.png)
+![alt text](image-12.png)
+![alt text](image-13.png)
+
+### Order Management Page
+
+![alt text](image-14.png)
+![alt text](image-15.png)
+![alt text](image-16.png)
+
+### ChatBot Interface
+
+![alt text](image-17.png)
+
+### ADMIN
+
+### Statistics interface
+
+![alt text](image-21.png)
+![alt text](image-22.png)
+
+### User management interface
+
+![alt text](image-23.png)
+
+### Discount code management interface
+
+![alt text](image-24.png)
+
+### Article management interface
+
+![alt text](image-25.png)
+
+### Order management interface
+
+![alt text](image-26.png)
+
+### Product management interface
+
+![alt text](image-27.png)
