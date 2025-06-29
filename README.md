@@ -100,7 +100,7 @@ npm start
 
 ### Register
 
-![alt text](image-18.png)
+![alt text](./imageUi/image-18.png)
 
 ### Login
 
